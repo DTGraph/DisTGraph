@@ -1,0 +1,7 @@
+Communication.pd.pipeline.handler.DTGStoreStatsValidator
+Communication.pd.pipeline.handler.DTGRegionStatsValidator
+Communication.pd.pipeline.handler.DTGStoreStatsPersistenceHandler
+Communication.pd.pipeline.handler.DTGRegionStatsPersistenceHandler
+Communication.pd.pipeline.handler.DTGRegionLeaderBalanceHandler
+Communication.pd.pipeline.handler.DTGSplittingJudgeByApproximateKeysHandler
+

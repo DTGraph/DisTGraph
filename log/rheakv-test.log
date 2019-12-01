@@ -1,0 +1,1561 @@
+2019-11-29 21:00:27 [main] ERROR PlacementDriverStartup:41 - Usage: com.alipay.sofa.jraft.rhea.PlacementDriverStartup <ConfigFilePath>
+2019-11-29 21:04:05 [main] ERROR PlacementDriverStartup:41 - Usage: com.alipay.sofa.jraft.rhea.PlacementDriverStartup <ConfigFilePath>
+2019-11-29 21:04:36 [main] ERROR PlacementDriverStartup:41 - Usage: com.alipay.sofa.jraft.rhea.PlacementDriverStartup <ConfigFilePath>
+2019-11-29 21:04:53 [main] ERROR PlacementDriverStartup:41 - Usage: com.alipay.sofa.jraft.rhea.PlacementDriverStartup <ConfigFilePath>
+2019-11-29 21:08:45 [RpcTaskScannerThread-9-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset$$$capture(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-29 21:10:20 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8183, remoting exception: Create connection failed. The address is 127.0.0.1:8183.
+2019-11-29 21:10:22 [RpcTaskScannerThread-9-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset$$$capture(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-29 21:10:29 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8182, remoting exception: Create connection failed. The address is 127.0.0.1:8182.
+2019-11-29 21:28:09 [RpcTaskScannerThread-9-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset$$$capture(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-29 21:33:31 [RpcTaskScannerThread-9-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset$$$capture(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-29 22:04:15 [RpcTaskScannerThread-9-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset$$$capture(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-29 22:11:36 [RpcTaskScannerThread-9-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset$$$capture(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-29 22:12:12 [RpcTaskScannerThread-9-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset$$$capture(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-29 23:01:12 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8183, remoting exception: Create connection failed. The address is 127.0.0.1:8183.
+2019-11-29 23:01:13 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8182, remoting exception: Create connection failed. The address is 127.0.0.1:8182.
+2019-11-29 23:01:16 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8183, remoting exception: Create connection failed. The address is 127.0.0.1:8183.
+2019-11-29 23:01:17 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8182, remoting exception: Create connection failed. The address is 127.0.0.1:8182.
+2019-11-29 23:01:20 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8183, remoting exception: Create connection failed. The address is 127.0.0.1:8183.
+2019-11-29 23:01:21 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8182, remoting exception: Create connection failed. The address is 127.0.0.1:8182.
+2019-11-29 23:01:24 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8183, remoting exception: Create connection failed. The address is 127.0.0.1:8183.
+2019-11-29 23:01:25 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8182, remoting exception: Create connection failed. The address is 127.0.0.1:8182.
+2019-11-29 23:01:27 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8183, remoting exception: Create connection failed. The address is 127.0.0.1:8183.
+2019-11-29 23:01:27 [RpcTaskScannerThread-9-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset$$$capture(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-29 23:02:59 [RpcTaskScannerThread-9-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset$$$capture(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-29 23:12:50 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8183, remoting exception: Create connection failed. The address is 127.0.0.1:8183.
+2019-11-29 23:12:51 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8182, remoting exception: Create connection failed. The address is 127.0.0.1:8182.
+2019-11-29 23:12:53 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8183, remoting exception: Create connection failed. The address is 127.0.0.1:8183.
+2019-11-29 23:12:54 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8182, remoting exception: Create connection failed. The address is 127.0.0.1:8182.
+2019-11-29 23:12:57 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8183, remoting exception: Create connection failed. The address is 127.0.0.1:8183.
+2019-11-29 23:12:58 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8182, remoting exception: Create connection failed. The address is 127.0.0.1:8182.
+2019-11-29 23:13:00 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8183, remoting exception: Create connection failed. The address is 127.0.0.1:8183.
+2019-11-29 23:13:01 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8182, remoting exception: Create connection failed. The address is 127.0.0.1:8182.
+2019-11-29 23:13:04 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8183, remoting exception: Create connection failed. The address is 127.0.0.1:8183.
+2019-11-29 23:13:05 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8182, remoting exception: Create connection failed. The address is 127.0.0.1:8182.
+2019-11-29 23:13:07 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8183, remoting exception: Create connection failed. The address is 127.0.0.1:8183.
+2019-11-29 23:13:08 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8182, remoting exception: Create connection failed. The address is 127.0.0.1:8182.
+2019-11-29 23:13:10 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8183, remoting exception: Create connection failed. The address is 127.0.0.1:8183.
+2019-11-29 23:13:11 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8182, remoting exception: Create connection failed. The address is 127.0.0.1:8182.
+2019-11-29 23:13:14 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8183, remoting exception: Create connection failed. The address is 127.0.0.1:8183.
+2019-11-29 23:13:15 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8182, remoting exception: Create connection failed. The address is 127.0.0.1:8182.
+2019-11-29 23:13:18 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8183, remoting exception: Create connection failed. The address is 127.0.0.1:8183.
+2019-11-29 23:13:19 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8182, remoting exception: Create connection failed. The address is 127.0.0.1:8182.
+2019-11-30 13:18:09 [RpcTaskScannerThread-9-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset$$$capture(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 13:20:50 [RpcTaskScannerThread-9-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset$$$capture(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 14:19:33 [RpcTaskScannerThread-9-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset$$$capture(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 14:19:48 [RpcTaskScannerThread-9-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset$$$capture(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 14:20:24 [RpcTaskScannerThread-9-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset$$$capture(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 14:20:37 [RpcTaskScannerThread-9-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset$$$capture(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 14:20:58 [RpcTaskScannerThread-9-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset$$$capture(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 14:23:14 [RpcTaskScannerThread-9-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset$$$capture(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 14:36:29 [RpcTaskScannerThread-9-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset$$$capture(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 14:43:28 [RpcTaskScannerThread-9-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset$$$capture(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 14:56:20 [RpcTaskScannerThread-9-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset$$$capture(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 18:59:30 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 18:59:31 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-11-30 18:59:33 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 18:59:34 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-11-30 18:59:37 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 18:59:38 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-11-30 18:59:40 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 18:59:41 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-11-30 18:59:44 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 18:59:45 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-11-30 18:59:47 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 18:59:48 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 18:59:48 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-11-30 18:59:51 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 18:59:52 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-11-30 18:59:54 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 18:59:55 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-11-30 18:59:57 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 18:59:58 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 18:59:58 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-11-30 19:00:00 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:01 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-11-30 19:00:04 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:05 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-11-30 19:00:07 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:10 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:12 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:15 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:18 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:18 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:20 [JRaft-RPC-Processor-4] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:20 [JRaft-RPC-Processor-0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:21 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:21 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:24 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:24 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:25 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 19:00:26 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:27 [JRaft-RPC-Processor-4] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:27 [JRaft-RPC-Processor-4] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-11-30 19:00:27 [JRaft-RPC-Processor-4] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-11-30 19:00:27 [JRaft-RPC-Processor-4] ERROR NodeImpl:989 - Fail to add replicator, peer=127.0.0.1:8186.
+2019-11-30 19:00:28 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 19:00:28 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:30 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:30 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-11-30 19:00:30 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-11-30 19:00:33 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:34 [JRaft-RPC-Processor-5] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:34 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:35 [JRaft-RPC-Processor-6] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:35 [JRaft-RPC-Processor-6] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-11-30 19:00:35 [JRaft-RPC-Processor-6] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-11-30 19:00:35 [JRaft-RPC-Processor-6] ERROR NodeImpl:989 - Fail to add replicator, peer=127.0.0.1:8186.
+2019-11-30 19:00:36 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:36 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-11-30 19:00:36 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-11-30 19:00:38 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:38 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-11-30 19:00:38 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-11-30 19:00:39 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:39 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-11-30 19:00:39 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-11-30 19:00:41 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:41 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-11-30 19:00:41 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-11-30 19:00:42 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:42 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-11-30 19:00:42 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-11-30 19:00:44 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:44 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-11-30 19:00:44 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-11-30 19:00:45 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 19:00:45 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 19:00:45 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-11-30 19:00:45 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-11-30 20:10:26 [main] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8182, remoting exception: Create connection failed. The address is 127.0.0.1:8182.
+2019-11-30 20:10:26 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8183, remoting exception: Create connection failed. The address is 127.0.0.1:8183.
+2019-11-30 20:10:27 [main] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8183, remoting exception: Create connection failed. The address is 127.0.0.1:8183.
+2019-11-30 20:10:28 [main] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8183, remoting exception: Create connection failed. The address is 127.0.0.1:8183.
+2019-11-30 20:10:32 [JRaft-Closure-Executor-2] ERROR NodeImpl:1946 - Fail to run ConfigurationChangeDone, status: Status[EPERM<1008>: Leader stepped down].
+2019-11-30 20:12:45 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:12:46 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-11-30 20:12:48 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:12:49 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-11-30 20:12:52 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:12:53 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 20:12:53 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-11-30 20:12:56 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:12:57 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-11-30 20:12:59 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:13:00 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-11-30 20:13:03 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 20:13:03 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:13:04 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-11-30 20:13:04 [RpcTaskScannerThread-2-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 20:13:06 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:13:09 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:13:12 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:13:12 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:13:13 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 20:13:13 [JRaft-RPC-Processor-2] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:13:13 [JRaft-RPC-Processor-0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:13:15 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:13:15 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:13:18 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:13:18 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:13:20 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 20:13:20 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:13:21 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:13:23 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-11-30 20:13:23 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:13:23 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:13:25 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-11-30 20:13:25 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:53:01 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8183, remoting exception: Create connection failed. The address is 127.0.0.1:8183.
+2019-12-01 18:53:23 [RpcTaskScannerThread-2-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 18:53:37 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:53:38 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 18:53:41 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:53:42 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 18:53:44 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:53:45 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 18:53:45 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 18:53:47 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:53:48 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 18:53:51 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:53:52 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 18:53:55 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:53:55 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 18:53:56 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 18:53:58 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:53:59 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 18:54:01 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:02 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 18:54:05 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 18:54:05 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:06 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 18:54:09 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:10 [RpcTaskScannerThread-2-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 18:54:10 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 18:54:13 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:15 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:17 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:19 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:20 [JRaft-RPC-Processor-3] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:21 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:22 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:23 [JRaft-RPC-Processor-5] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:23 [JRaft-RPC-Processor-5] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 18:54:23 [JRaft-RPC-Processor-5] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 18:54:23 [JRaft-RPC-Processor-5] ERROR NodeImpl:989 - Fail to add replicator, peer=127.0.0.1:8186.
+2019-12-01 18:54:25 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:25 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 18:54:25 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 18:54:26 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:26 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 18:54:26 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 18:54:28 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:28 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 18:54:28 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 18:54:29 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:29 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 18:54:29 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 18:54:31 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:31 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 18:54:31 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 18:54:32 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:32 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 18:54:32 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 18:54:34 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:34 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 18:54:34 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 18:54:35 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 18:54:35 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:35 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 18:54:35 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 18:54:37 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:37 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 18:54:37 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 18:54:38 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:38 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 18:54:38 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 18:54:40 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 18:54:40 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 18:54:40 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 18:55:51 [main] ERROR RegionRouteTable:407 - There is a high probability that the data in the region table is corrupted.
+2019-12-01 18:55:51 [main] ERROR RegionRouteTable:408 - ---------------------------------------------------------------------------
+2019-12-01 18:55:51 [main] ERROR RegionRouteTable:409 - * RelatedKey:  ACED00057372000E6A6176612E6C616E672E4C6F6E673B8BE490CC8F23DF0200014A000576616C7565787200106A6176612E6C616E672E4E756D62657286AC951D0B94E08B02000078700000000000000000.
+2019-12-01 18:55:51 [main] ERROR RegionRouteTable:410 - * RangeTable:  {[-84, -19, 0, 5, 115, 114, 0, 14, 106, 97, 118, 97, 46, 108, 97, 110, 103, 46, 76, 111, 110, 103, 59, -117, -28, -112, -52, -113, 35, -33, 2, 0, 1, 74, 0, 5, 118, 97, 108, 117, 101, 120, 114, 0, 16, 106, 97, 118, 97, 46, 108, 97, 110, 103, 46, 78, 117, 109, 98, 101, 114, -122, -84, -107, 29, 11, -108, -32, -117, 2, 0, 0, 120, 112, -1, -1, -1, -1, -1, -1, -1, -1]=-1}.
+2019-12-01 18:55:51 [main] ERROR RegionRouteTable:411 - * RegionTable: {-1=Region{id=-1, regionEpoch=RegionEpoch{confVer=-1, version=-1}, peers=[Peer{id=-1, storeId=-1, endpoint=127.0.0.1:8184}, Peer{id=-1, storeId=-1, endpoint=127.0.0.1:8185}, Peer{id=-1, storeId=-1, endpoint=127.0.0.1:8186}]}}.
+2019-12-01 18:55:51 [main] ERROR RegionRouteTable:412 - ---------------------------------------------------------------------------
+2019-12-01 19:59:08 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:09 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 19:59:11 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:12 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 19:59:14 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:15 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 19:59:17 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:18 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 19:59:21 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:23 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:26 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 19:59:26 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:26 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:27 [JRaft-RPC-Processor-2] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:27 [JRaft-RPC-Processor-0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:29 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:29 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:31 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:31 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:33 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:33 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:36 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 19:59:36 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:36 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:38 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:39 [JRaft-RPC-Processor-8] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:39 [JRaft-RPC-Processor-8] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 19:59:39 [JRaft-RPC-Processor-8] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 19:59:39 [JRaft-RPC-Processor-8] ERROR NodeImpl:989 - Fail to add replicator, peer=127.0.0.1:8186.
+2019-12-01 19:59:41 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:41 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 19:59:41 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 19:59:42 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:42 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 19:59:42 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 19:59:44 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:44 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 19:59:44 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 19:59:45 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:45 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 19:59:45 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 19:59:47 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:47 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 19:59:47 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 19:59:48 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:48 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 19:59:48 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 19:59:50 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:50 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 19:59:50 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 19:59:51 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:51 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 19:59:51 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 19:59:53 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:53 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 19:59:53 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 19:59:54 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:54 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 19:59:54 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 19:59:56 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 19:59:56 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:56 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 19:59:56 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 19:59:57 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:57 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 19:59:57 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 19:59:59 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 19:59:59 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 19:59:59 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:00:00 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:00:00 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:00:00 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:00:02 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:00:02 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:00:02 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:00:03 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:00:03 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:00:03 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:00:05 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:00:05 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:00:05 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:00:06 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 20:00:06 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:00:06 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:00:06 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:00:07 [main] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8181, remoting exception: Rpc invocation timeout[responseCommand TIMEOUT]! the address is 127.0.0.1:8181.
+2019-12-01 20:00:08 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:00:08 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:00:08 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:00:58 [main] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8181, remoting exception: Rpc invocation timeout[responseCommand TIMEOUT]! the address is 127.0.0.1:8181.
+2019-12-01 20:01:45 [main] ERROR RegionRouteTable:407 - There is a high probability that the data in the region table is corrupted.
+2019-12-01 20:01:45 [main] ERROR RegionRouteTable:408 - ---------------------------------------------------------------------------
+2019-12-01 20:01:45 [main] ERROR RegionRouteTable:409 - * RelatedKey:  ACED00057372000E6A6176612E6C616E672E4C6F6E673B8BE490CC8F23DF0200014A000576616C7565787200106A6176612E6C616E672E4E756D62657286AC951D0B94E08B02000078700000000000000000.
+2019-12-01 20:01:45 [main] ERROR RegionRouteTable:410 - * RangeTable:  {[-84, -19, 0, 5, 115, 114, 0, 14, 106, 97, 118, 97, 46, 108, 97, 110, 103, 46, 76, 111, 110, 103, 59, -117, -28, -112, -52, -113, 35, -33, 2, 0, 1, 74, 0, 5, 118, 97, 108, 117, 101, 120, 114, 0, 16, 106, 97, 118, 97, 46, 108, 97, 110, 103, 46, 78, 117, 109, 98, 101, 114, -122, -84, -107, 29, 11, -108, -32, -117, 2, 0, 0, 120, 112, -1, -1, -1, -1, -1, -1, -1, -1]=-1}.
+2019-12-01 20:01:45 [main] ERROR RegionRouteTable:411 - * RegionTable: {-1=Region{id=-1, regionEpoch=RegionEpoch{confVer=-1, version=-1}, peers=[Peer{id=-1, storeId=-1, endpoint=127.0.0.1:8184}, Peer{id=-1, storeId=-1, endpoint=127.0.0.1:8185}, Peer{id=-1, storeId=-1, endpoint=127.0.0.1:8186}]}}.
+2019-12-01 20:01:45 [main] ERROR RegionRouteTable:412 - ---------------------------------------------------------------------------
+2019-12-01 20:03:28 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:03:29 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 20:03:32 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:03:33 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 20:03:35 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:03:36 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 20:03:36 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 20:03:39 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:03:43 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:03:45 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:03:46 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 20:03:47 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:03:48 [JRaft-RPC-Processor-3] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:03:48 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:03:49 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:03:50 [JRaft-RPC-Processor-5] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:03:50 [JRaft-RPC-Processor-5] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:03:50 [JRaft-RPC-Processor-5] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:03:50 [JRaft-RPC-Processor-5] ERROR NodeImpl:989 - Fail to add replicator, peer=127.0.0.1:8186.
+2019-12-01 20:03:51 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:03:51 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:03:51 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:03:53 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:03:53 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:03:53 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:03:54 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:03:54 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:03:54 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:03:56 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:03:56 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:03:56 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:03:57 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:03:57 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:03:57 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:03:59 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:03:59 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:03:59 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:00 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:00 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:00 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:02 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:02 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:02 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:03 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:03 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:03 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:05 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:05 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:05 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:06 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 20:04:06 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:06 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:06 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:08 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:08 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:08 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:10 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:10 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:10 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:11 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:11 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:11 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:13 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:13 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:13 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:14 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:14 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:14 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:16 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:16 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:16 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:16 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 20:04:17 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:17 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:17 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:19 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:19 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:19 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:20 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:20 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:20 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:22 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:22 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:22 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:23 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:23 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:23 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:25 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:25 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:25 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:26 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:26 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:26 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:28 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:28 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:28 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:29 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:29 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:29 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:31 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:31 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:31 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:32 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:32 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:32 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:34 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:34 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:34 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:35 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:35 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:35 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:36 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 20:04:37 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:37 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:37 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:38 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:38 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:38 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:40 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:40 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:40 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:41 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:41 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:41 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:43 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:43 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:43 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:44 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:44 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:44 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:46 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:46 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:46 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:46 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 20:04:47 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:47 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:47 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:49 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:49 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:49 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:50 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:50 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:50 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:52 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:52 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:52 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:53 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:53 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:53 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:55 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:55 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:55 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:56 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:56 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:56 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:58 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:58 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:58 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:04:59 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:04:59 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:04:59 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:01 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:01 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:01 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:02 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:02 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:02 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:04 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:04 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:04 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:05 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:05 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:05 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:06 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 20:05:07 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:07 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:07 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:08 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:08 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:08 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:10 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:10 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:10 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:11 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:11 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:11 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:13 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:13 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:13 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:14 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:14 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:14 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:16 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:16 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:16 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:16 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 20:05:17 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:17 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:27 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:29 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:29 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:29 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:30 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:30 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:30 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:32 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:32 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:32 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:33 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:33 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:33 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:35 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:35 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:35 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:36 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:36 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:36 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:38 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:38 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:38 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:39 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:39 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:39 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:41 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:41 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:41 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:42 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:42 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:42 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:44 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:44 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:44 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:45 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:45 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:45 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:46 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 20:05:47 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:47 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:47 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:05:48 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:05:48 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:05:48 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:06:56 [main] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8181, remoting exception: Rpc invocation timeout[responseCommand TIMEOUT]! the address is 127.0.0.1:8181.
+2019-12-01 20:11:22 [RpcTaskScannerThread-2-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 20:36:53 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:36:56 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:36:59 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:37:00 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 20:37:01 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:37:01 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:37:02 [JRaft-RPC-Processor-0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:37:02 [JRaft-RPC-Processor-3] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:37:04 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:37:04 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:37:06 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:37:06 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:37:09 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 20:37:09 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:37:09 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:37:12 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:37:13 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:37:15 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:37:16 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:38:05 [main] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8181, remoting exception: Rpc invocation timeout[responseCommand TIMEOUT]! the address is 127.0.0.1:8181.
+2019-12-01 20:44:53 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8183, remoting exception: Create connection failed. The address is 127.0.0.1:8183.
+2019-12-01 20:45:03 [main] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8181, remoting exception: Rpc invocation timeout[responseCommand TIMEOUT]! the address is 127.0.0.1:8181.
+2019-12-01 20:45:18 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:19 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 20:45:22 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:23 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 20:45:25 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 20:45:25 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:27 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:29 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:32 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:32 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:33 [JRaft-RPC-Processor-3] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:33 [JRaft-RPC-Processor-0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:35 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:35 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:37 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:37 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:39 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:39 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:42 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:42 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:44 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:45 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:47 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:47 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:49 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:50 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 20:45:50 [JRaft-RPC-Processor-8] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:50 [JRaft-RPC-Processor-8] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:45:50 [JRaft-RPC-Processor-8] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:45:50 [JRaft-RPC-Processor-8] ERROR NodeImpl:989 - Fail to add replicator, peer=127.0.0.1:8186.
+2019-12-01 20:45:51 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:51 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:45:51 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:45:53 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:53 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:45:53 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:45:54 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:54 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:45:54 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:45:56 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:56 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:45:56 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:45:57 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:57 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:45:57 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:45:59 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:45:59 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:45:59 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:46:00 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 20:46:45 [main] ERROR RegionRouteTable:407 - There is a high probability that the data in the region table is corrupted.
+2019-12-01 20:46:45 [main] ERROR RegionRouteTable:408 - ---------------------------------------------------------------------------
+2019-12-01 20:46:45 [main] ERROR RegionRouteTable:409 - * RelatedKey:  ACED00057372000E6A6176612E6C616E672E4C6F6E673B8BE490CC8F23DF0200014A000576616C7565787200106A6176612E6C616E672E4E756D62657286AC951D0B94E08B02000078700000000000000000.
+2019-12-01 20:46:45 [main] ERROR RegionRouteTable:410 - * RangeTable:  {[-84, -19, 0, 5, 115, 114, 0, 14, 106, 97, 118, 97, 46, 108, 97, 110, 103, 46, 76, 111, 110, 103, 59, -117, -28, -112, -52, -113, 35, -33, 2, 0, 1, 74, 0, 5, 118, 97, 108, 117, 101, 120, 114, 0, 16, 106, 97, 118, 97, 46, 108, 97, 110, 103, 46, 78, 117, 109, 98, 101, 114, -122, -84, -107, 29, 11, -108, -32, -117, 2, 0, 0, 120, 112, -1, -1, -1, -1, -1, -1, -1, -1]=-1}.
+2019-12-01 20:46:45 [main] ERROR RegionRouteTable:411 - * RegionTable: {-1=Region{id=-1, regionEpoch=RegionEpoch{confVer=-1, version=-1}, peers=[Peer{id=-1, storeId=-1, endpoint=127.0.0.1:8184}, Peer{id=-1, storeId=-1, endpoint=127.0.0.1:8185}, Peer{id=-1, storeId=-1, endpoint=127.0.0.1:8186}]}, 0=Region{id=0, regionEpoch=RegionEpoch{confVer=-1, version=-1}, peers=[Peer{id=-1, storeId=-1, endpoint=127.0.0.1:8184}, Peer{id=-1, storeId=-1, endpoint=127.0.0.1:8185}, Peer{id=-1, storeId=-1, endpoint=127.0.0.1:8186}]}}.
+2019-12-01 20:46:45 [main] ERROR RegionRouteTable:412 - ---------------------------------------------------------------------------
+2019-12-01 20:54:45 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:54:46 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 20:54:48 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:54:49 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 20:54:52 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:54:52 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 20:54:53 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8185, remoting exception: Create connection failed. The address is 127.0.0.1:8185.
+2019-12-01 20:54:55 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:54:58 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:00 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:01 [JRaft-RPC-Processor-2] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:02 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 20:55:02 [JRaft-ElectionTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:03 [JRaft-VoteTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:04 [JRaft-RPC-Processor-4] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:04 [JRaft-RPC-Processor-4] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:55:04 [JRaft-RPC-Processor-4] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:55:04 [JRaft-RPC-Processor-4] ERROR NodeImpl:989 - Fail to add replicator, peer=127.0.0.1:8186.
+2019-12-01 20:55:05 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:05 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:55:05 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:55:07 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:07 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:55:07 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:55:08 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:08 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:55:08 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:55:10 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:10 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:55:10 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:55:11 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:11 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:55:11 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:55:12 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 20:55:13 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:13 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:55:13 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:55:14 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:14 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:55:14 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:55:16 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:16 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:55:16 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:55:17 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:17 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:55:17 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:55:19 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:19 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:55:19 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:55:20 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:20 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:55:20 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:55:22 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:22 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:55:22 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:55:23 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:23 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:55:23 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:55:25 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:25 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:55:25 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:55:26 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:26 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:55:26 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:55:28 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:28 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:55:28 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:55:29 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:29 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:55:29 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:55:31 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:31 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:55:31 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:55:32 [main] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8181, remoting exception: Rpc invocation timeout[responseCommand TIMEOUT]! the address is 127.0.0.1:8181.
+2019-12-01 20:55:32 [RpcTaskScannerThread-10-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
+2019-12-01 20:55:32 [JRaft-StepDownTimer0] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8186, remoting exception: Create connection failed. The address is 127.0.0.1:8186.
+2019-12-01 20:55:32 [JRaft-StepDownTimer0] ERROR Replicator:785 - Fail to init sending channel to 127.0.0.1:8186
+2019-12-01 20:55:32 [JRaft-StepDownTimer0] ERROR ReplicatorGroupImpl:114 - Fail to start replicator to peer=127.0.0.1:8186.
+2019-12-01 20:56:36 [main] ERROR AbstractBoltClientService:145 - Fail to connect 127.0.0.1:8181, remoting exception: Rpc invocation timeout[responseCommand TIMEOUT]! the address is 127.0.0.1:8181.
+2019-12-01 21:04:23 [main] ERROR RegionRouteTable:407 - There is a high probability that the data in the region table is corrupted.
+2019-12-01 21:04:23 [main] ERROR RegionRouteTable:408 - ---------------------------------------------------------------------------
+2019-12-01 21:04:23 [main] ERROR RegionRouteTable:409 - * RelatedKey:  ACED00057372000E6A6176612E6C616E672E4C6F6E673B8BE490CC8F23DF0200014A000576616C7565787200106A6176612E6C616E672E4E756D62657286AC951D0B94E08B02000078700000000000000000.
+2019-12-01 21:04:23 [main] ERROR RegionRouteTable:410 - * RangeTable:  {[-84, -19, 0, 5, 115, 114, 0, 14, 106, 97, 118, 97, 46, 108, 97, 110, 103, 46, 76, 111, 110, 103, 59, -117, -28, -112, -52, -113, 35, -33, 2, 0, 1, 74, 0, 5, 118, 97, 108, 117, 101, 120, 114, 0, 16, 106, 97, 118, 97, 46, 108, 97, 110, 103, 46, 78, 117, 109, 98, 101, 114, -122, -84, -107, 29, 11, -108, -32, -117, 2, 0, 0, 120, 112, -1, -1, -1, -1, -1, -1, -1, -1]=-1}.
+2019-12-01 21:04:23 [main] ERROR RegionRouteTable:411 - * RegionTable: {-1=Region{id=-1, regionEpoch=RegionEpoch{confVer=-1, version=-1}, peers=[Peer{id=-1, storeId=-1, endpoint=127.0.0.1:8184}, Peer{id=-1, storeId=-1, endpoint=127.0.0.1:8185}, Peer{id=-1, storeId=-1, endpoint=127.0.0.1:8186}]}, 0=Region{id=0, regionEpoch=RegionEpoch{confVer=-1, version=-1}, peers=[Peer{id=-1, storeId=-1, endpoint=127.0.0.1:8184}, Peer{id=-1, storeId=-1, endpoint=127.0.0.1:8185}, Peer{id=-1, storeId=-1, endpoint=127.0.0.1:8186}]}}.
+2019-12-01 21:04:23 [main] ERROR RegionRouteTable:412 - ---------------------------------------------------------------------------
+2019-12-01 21:04:29 [RpcTaskScannerThread-2-thread-1] ERROR CommonDefault:51 - Future task has not completed!
+com.alipay.remoting.util.FutureTaskNotCompleted
+	at com.alipay.remoting.util.RunStateRecordedFutureTask.getAfterRun(RunStateRecordedFutureTask.java:49) ~[bolt-1.5.3.jar:?]
+	at com.alipay.remoting.util.FutureTaskUtil.getFutureTaskResult(FutureTaskUtil.java:43) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.getConnectionPool(DefaultConnectionManager.java:566) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.DefaultConnectionManager.scan(DefaultConnectionManager.java:442) [bolt-1.5.3.jar:?]
+	at com.alipay.remoting.rpc.RpcTaskScanner$1.run(RpcTaskScanner.java:56) [bolt-1.5.3.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_181]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_181]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_181]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_181]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_181]
