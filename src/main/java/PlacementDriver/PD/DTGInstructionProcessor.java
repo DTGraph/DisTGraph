@@ -53,6 +53,7 @@ public class DTGInstructionProcessor {
                 continue;
             }
             //processSplit(instruction);
+            processAddRegion(instruction);
             processTransferLeader(instruction);
         }
     }
@@ -102,7 +103,7 @@ public class DTGInstructionProcessor {
 //    }
 
     private boolean processAddRegion(final DTGInstruction instruction){
-        try{
+        try{System.out.println("prepare add region...");
             final DTGInstruction.AddRegion newRegionInfo = instruction.getAddRegion();
             final Long newRegionId = newRegionInfo.getNewRegionId();
             if (newRegionId == null) {
@@ -116,7 +117,7 @@ public class DTGInstructionProcessor {
             }
             final CompletableFuture<Status> future = new CompletableFuture<>();
             this.storeEngine.addRegion(newRegionInfo.getFullRegionId(), newRegionInfo.getNewRegionId(),
-                    newRegionInfo.getStartNodeId(), newRegionInfo.getStartRelationId(), new BaseStoreClosure() {
+                    newRegionInfo.getStartNodeId(), newRegionInfo.getStartRelationId(), newRegionInfo.getStartTempProId(), new BaseStoreClosure() {
                         @Override
                         public void run(Status status) {
                             future.complete(status);
@@ -128,7 +129,7 @@ public class DTGInstructionProcessor {
                 LOG.info("ADD REGION succeeded, instruction: {}.", instruction);
             } else {
                 LOG.warn("ADD REGION failed: {}, instruction: {}.", status, instruction);
-            }
+            }System.out.println("success add region");
             return ret;
         }catch (final Throwable t) {
             LOG.error("Caught an exception on #processADDREGION: {}.", StackTraceUtil.stackTrace(t));

@@ -19,6 +19,8 @@ public class DTGPlacementDriverServerOptions extends PlacementDriverServerOption
     private int                       pipelineMaximumPoolSize;
     private boolean                   isPDServer;
     private DTGPlacementDriverOptions dtgPlacementDriverOptions;
+    private long                      NewRegionNodeStartId;
+    private long                      NewRegionRelationStartId;
 
     public DTGStoreOptions getDTGStoreOptions() {
         return DTGStoreOptionsOpts;
@@ -66,6 +68,22 @@ public class DTGPlacementDriverServerOptions extends PlacementDriverServerOption
 
     public void setDtgPlacementDriverOptions(DTGPlacementDriverOptions dtgPlacementDriverOptions) {
         this.dtgPlacementDriverOptions = dtgPlacementDriverOptions;
+    }
+
+    public long getNewRegionNodeStartId() {
+        return NewRegionNodeStartId;
+    }
+
+    public long getNewRegionRelationStartId() {
+        return NewRegionRelationStartId;
+    }
+
+    public void setNewRegionNodeStartId(long newRegionNodeStartId) {
+        NewRegionNodeStartId = newRegionNodeStartId;
+    }
+
+    public void setNewRegionRelationStartId(long newRegionRelationStartId) {
+        NewRegionRelationStartId = newRegionRelationStartId;
     }
 
     @Override

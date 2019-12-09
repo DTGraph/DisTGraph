@@ -1,13 +1,10 @@
 package raft;
 
-import Element.DTGOpreration;
-import Element.EntityEntry;
+import Element.DTGOperation;
 import com.alipay.sofa.jraft.Status;
 import com.alipay.sofa.jraft.rhea.errors.Errors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 /**
  * @author :jinkai
@@ -22,14 +19,14 @@ public class EntityEntryClosureAdapter implements EntityStoreClosure{
     private static final Logger LOG = LoggerFactory.getLogger(EntityEntryClosureAdapter.class);
 
     private final EntityStoreClosure done;
-    private final DTGOpreration op;
+    private final DTGOperation op;
 
-    public EntityEntryClosureAdapter(final EntityStoreClosure done, final DTGOpreration op){
+    public EntityEntryClosureAdapter(final EntityStoreClosure done, final DTGOperation op){
         this.done = done;
         this.op = op;
     }
 
-    public DTGOpreration getOperation() {
+    public DTGOperation getOperation() {
         return op;
     }
 

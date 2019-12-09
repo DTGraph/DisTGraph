@@ -17,19 +17,22 @@
 package storage;
 
 import Communication.HeartbeatSender;
-import Element.DTGOpreration;
+import Element.DTGOperation;
 import Element.EntityEntry;
 import Element.OperationName;
 import LocalDBMachine.LocalDB;
 import PlacementDriver.DTGPlacementDriverClient;
 import com.alipay.remoting.rpc.RpcServer;
 import com.alipay.sofa.jraft.Lifecycle;
+import com.alipay.sofa.jraft.RouteTable;
 import com.alipay.sofa.jraft.Status;
+import com.alipay.sofa.jraft.conf.Configuration;
 import com.alipay.sofa.jraft.entity.Task;
 import com.alipay.sofa.jraft.option.NodeOptions;
 import com.alipay.sofa.jraft.rhea.*;
 import com.alipay.sofa.jraft.rhea.errors.Errors;
 import com.alipay.sofa.jraft.rhea.errors.RheaRuntimeException;
+import com.alipay.sofa.jraft.rhea.metadata.Peer;
 import com.alipay.sofa.jraft.rhea.metadata.RegionEpoch;
 import com.alipay.sofa.jraft.rhea.metrics.KVMetrics;
 import com.alipay.sofa.jraft.rhea.options.*;
@@ -93,6 +96,7 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
 
     protected LocalDB                                       localDB;
     protected BatchRawKVStore<?>                            rawKVStore;
+    private   DTGStore                                      store;
 
     protected HeartbeatSender                               heartbeatSender;
     protected DTGStoreEngineOptions                         storeOpts;
@@ -109,6 +113,8 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
     protected ScheduledReporter                          kvMetricsReporter;
     protected ScheduledReporter                          threadPoolMetricsReporter;
 
+    private   Endpoint                                   endpoint;
+
     protected boolean                                    started;
 
     public DTGStoreEngine(DTGPlacementDriverClient pdClient) {
@@ -124,6 +130,7 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
         }
         this.storeOpts = Requires.requireNonNull(opts, "opts");
         Endpoint serverAddress = Requires.requireNonNull(opts.getServerAddress(), "opts.serverAddress");
+        this.endpoint = serverAddress;
         final int port = serverAddress.getPort();
         final String ip = serverAddress.getIp();
         if (ip == null || Utils.IP_ANY.equals(ip)) {
@@ -158,7 +165,7 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
             }
         }
         // init store
-        final DTGStore store = this.pdClient.getStoreMetadata(opts);
+        store = this.pdClient.getStoreMetadata(opts);
         if (store == null || store.getRegions() == null || store.getRegions().isEmpty()) {
             LOG.error("Empty store metadata: {}.", store);
             return false;
@@ -211,6 +218,7 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
         }
         // heartbeat sender
         if (!this.pdClient.isRemotePd()) {
+            this.pdClient.refreshRouteTable(true);
             HeartbeatOptions heartbeatOpts = opts.getHeartbeatOptions();
             if (heartbeatOpts == null) {
                 heartbeatOpts = new HeartbeatOptions();
@@ -664,7 +672,7 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
 //        return true;
 //    }
 
-    public void addRegion(final long fullRegionid, final long newRegionId, final long nodeIdStart, final long relationIdStart, final EntityStoreClosure closure){
+    public void addRegion(final long fullRegionid, final long newRegionId, final long nodeIdStart, final long relationIdStart, final long tempProStart, final EntityStoreClosure closure){
         if (this.regionEngineTable.containsKey(newRegionId)) {
             closure.setError(Errors.CONFLICT_REGION_ID);
             closure.run(new Status(-1, "Conflict region id %d", newRegionId));
@@ -683,22 +691,23 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
             this.splitting.set(false);
             return;
         }
-        final DTGOpreration op = new DTGOpreration(new ArrayList<EntityEntry>(), OperationName.ADDREGION);
-        op.setRegionId(newRegionId);
+        final DTGOperation op = new DTGOperation(new ArrayList<EntityEntry>(), OperationName.ADDREGION);
+        op.setRegionId(fullRegionid);
         op.setStartNodeId(nodeIdStart);
         op.setStartRelationId(relationIdStart);
         op.setNewRegionId(newRegionId);
+        op.setStartTempProId(tempProStart);
         final Task task = new Task();
         task.setData(ByteBuffer.wrap(Serializers.getDefault().writeObject(op)));
         task.setDone(new EntityEntryClosureAdapter(closure, op));
         parentEngine.getNode().apply(task);
     }
 
-    public void doAddRegion(final long fullRegionid, final long newRegionId, final long nodeIdStart, final long relationIdStart){
+    public void doAddRegion(final long fullRegionid, final long newRegionId, final long nodeIdStart, final long relationIdStart, final long tempProStart){
         Requires.requireNonNull(fullRegionid, "regionId");
-        Requires.requireNonNull(newRegionId, "newRegionId");
+        Requires.requireNonNull(newRegionId, "newRegionId");//System.out.println("add new region : " + nodeIdStart + ", " + relationIdStart);
         final DTGRegionEngine parent = getRegionEngine(fullRegionid);
-        final DTGRegion region = parent.getRegion().copyNull(newRegionId, nodeIdStart, relationIdStart);
+        final DTGRegion region = parent.getRegion().copyNull(newRegionId, nodeIdStart, relationIdStart,tempProStart);
         final RegionEngineOptions rOpts = parent.copyNullRegionOpts();
         region.setRegionEpoch(new RegionEpoch(-1, -1));
         rOpts.setRegionId(newRegionId);
@@ -719,7 +728,7 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
         final DTGRegion pRegion = parent.getRegion();
         final RegionEpoch pEpoch = pRegion.getRegionEpoch();
         final long version = pEpoch.getVersion();
-        pEpoch.setVersion(version + 1); // version + 1
+        pEpoch.setVersion(version); // version + 1
 
         // the following two lines of code can make a relation of 'happens-before' for
         // read 'pRegion', because that a write to a ConcurrentMap happens-before every
@@ -729,9 +738,20 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
 
         // update local regionRouteTable
 
-        this.pdClient.getRegionRouteTable(NODETYPE).addOrUpdateRegion(region);
-        this.pdClient.getRegionRouteTable(RELATIONTYPE).addOrUpdateRegion(region);
-        this.pdClient.getRegionRouteTable(TEMPORALPROPERTYTYPE).addOrUpdateRegion(region);
+        String serverList = "";
+        for(Peer peer : region.getPeers()){
+            serverList = serverList + peer.getEndpoint().toString() + ",";
+        }
+        final Configuration conf = new Configuration();
+        conf.parse(serverList);
+        // update raft route table
+        RouteTable.getInstance().updateConfiguration(JRaftHelper.getJRaftGroupId(this.pdClient.getClusterName(), region.getId()), conf);
+
+        this.pdClient.getRegionRouteTable(NODETYPE).addOrUpdateRegion(region, true);
+        this.pdClient.getRegionRouteTable(RELATIONTYPE).addOrUpdateRegion(region, true);
+        this.pdClient.getRegionRouteTable(TEMPORALPROPERTYTYPE).addOrUpdateRegion(region, true);
+        store.getRegions().add(region);
+        this.pdClient.getDTGMetadataRpcClient().updateStoreInfo(clusterId, store);
 
         System.out.println("add region success, id = " + region.getId());
 
@@ -755,6 +775,7 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
         final List<RegionEngineOptions> rOptsList = opts.getRegionEngineOptionsList();
         final List<DTGRegion> regionList = store.getRegions();
         Requires.requireTrue(rOptsList.size() == regionList.size());
+
         for (int i = 0; i < rOptsList.size(); i++) {
             final RegionEngineOptions rOpts = rOptsList.get(i);
             final DTGRegion region = regionList.get(i);
@@ -784,6 +805,8 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
                                            + "] has already been registered, can not register again!");
         }
     }
+
+
 
     @Override
     public String toString() {

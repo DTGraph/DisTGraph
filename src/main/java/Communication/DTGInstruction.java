@@ -35,6 +35,7 @@ public class DTGInstruction implements Serializable {
     private TransferLeader    transferLeader;
     private RangeSplit        rangeSplit;
     private AddRegion         addRegion;
+    private long              storeId;
 
     public DTGRegion getRegion() {
         return region;
@@ -74,6 +75,14 @@ public class DTGInstruction implements Serializable {
 
     public void setAddRegion(AddRegion addRegion) {
         this.addRegion = addRegion;
+    }
+
+    public long getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(long storeId) {
+        this.storeId = storeId;
     }
 
     @Override
@@ -146,6 +155,7 @@ public class DTGInstruction implements Serializable {
         private long newRegionId;
         private long startNodeId;
         private long startRelationId;
+        private long startTempProId;
 
         public long getNewRegionId() {
             return newRegionId;
@@ -177,6 +187,14 @@ public class DTGInstruction implements Serializable {
 
         public void setFullRegionId(long fullRegionId) {
             this.fullRegionId = fullRegionId;
+        }
+
+        public long getStartTempProId() {
+            return startTempProId;
+        }
+
+        public void setStartTempProId(long startTempProId) {
+            this.startTempProId = startTempProId;
         }
 
         @Override

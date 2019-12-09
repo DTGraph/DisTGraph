@@ -13,7 +13,7 @@ import java.util.List;
  * @version:
  */
 
-public class DTGOpreration implements Serializable {
+public class DTGOperation implements Serializable {
     private static final long serialVersionUID = -1252903871896272256L;
     private List<EntityEntry> entityEntries;
     private final byte type;
@@ -24,8 +24,9 @@ public class DTGOpreration implements Serializable {
     private long newRegionId;
     private long startNodeId;
     private long startRelationId;
+    private long startTempProId;
 
-    public DTGOpreration(List<EntityEntry> entityEntries, byte type){
+    public DTGOperation(List<EntityEntry> entityEntries, byte type){
         this.type = type;
         if(entityEntries != null){
             this.entityEntries = entityEntries;
@@ -34,7 +35,7 @@ public class DTGOpreration implements Serializable {
         else size = 0;
     }
 
-    public DTGOpreration(byte type){
+    public DTGOperation(byte type){
         this.type = type;
     }
 
@@ -88,5 +89,13 @@ public class DTGOpreration implements Serializable {
 
     public long getNewRegionId() {
         return newRegionId;
+    }
+
+    public void setStartTempProId(long startTempProId) {
+        this.startTempProId = startTempProId;
+    }
+
+    public long getStartTempProId() {
+        return startTempProId;
     }
 }

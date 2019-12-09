@@ -4,9 +4,8 @@ import Communication.RequestAndResponse.CommitRequest;
 import Communication.RequestAndResponse.CommitResponse;
 import Communication.RequestAndResponse.TransactionRequest;
 import Communication.RequestAndResponse.TransactionResponse;
-import Element.DTGOpreration;
+import Element.DTGOperation;
 import Element.EntityEntry;
-import LocalDBMachine.ExecuteTransactionOp;
 import LocalDBMachine.LocalDB;
 import LocalDBMachine.LocalTransaction;
 import LocalDBMachine.LocalTx.TransactionThreadLock;
@@ -19,11 +18,11 @@ import com.alipay.sofa.jraft.rhea.metadata.RegionEpoch;
 import com.alipay.sofa.jraft.rhea.util.KVParameterRequires;
 import com.alipay.sofa.jraft.rhea.util.StackTraceUtil;
 import com.alipay.sofa.jraft.util.Requires;
-import org.neo4j.graphdb.GraphDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import raft.BaseStoreClosure;
 import raft.DTGRawStore;
+import tool.ObjectAndByte;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,34 +66,32 @@ public class DTGRegionService implements RegionService {
     }
 
     @Override
-    public void handleTransactionRequest(TransactionRequest request, RequestProcessClosure<BaseRequest, BaseResponse<?>> closure) {
-        System.out.println("get transaction request");
+    public void handleTransactionRequest(final TransactionRequest request, final RequestProcessClosure<BaseRequest, BaseResponse<?>> closure) {
+        System.out.println("get transaction request  " + region.getId());
         final TransactionResponse response = new TransactionResponse();
         response.setRegionId(getRegionId());
         response.setRegionEpoch(getRegionEpoch());
-        try {
-            KVParameterRequires.requireSameEpoch(request, getRegionEpoch());
-            final DTGOpreration op = KVParameterRequires
+        Map<Integer, Object> resultMap = new HashMap<>();
+        try {System.out.println("run op... ：1  " +region.getId());
+            KVParameterRequires.requireSameEpoch(request, getRegionEpoch());System.out.println("run op... ：2  " + region.getId());
+            final DTGOperation op = KVParameterRequires
                     .requireNonNull(request.getDTGOpreration(), "put.DRGOperation");
-            System.out.println("run op... ：" + op.getTxId());
-            Map<Integer, Object> resultMap = new HashMap<>();
-            CompletableFuture<LocalTransaction> future = CompletableFuture.supplyAsync(() -> {
+            //System.out.println("run op... ：" + op.getTxId());
+            final CompletableFuture<LocalTransaction> future = CompletableFuture.supplyAsync(() -> {
                 try {
-                    if(op.getTxId().equals("E8-6A-64-04-DF-451")){
-                        int a = 0;
-                    }
                     TransactionThreadLock txLock = new TransactionThreadLock(op.getTxId());
-                    LocalTransaction tx = new LocalTransaction(localdb.getDb(), op, resultMap, txLock, region);
-                    tx.start();
+                    LocalTransaction tx = new LocalTransaction(localdb.getDb(), op, resultMap, txLock, region);System.out.println("run op... ：3  " + region.getId());
+                    tx.start();System.out.println("run op... ：4  " + region.getId());
                     synchronized (resultMap){
-                        resultMap.wait(FutureHelper.DEFAULT_TIMEOUT_MILLIS);
+                        resultMap.wait(FutureHelper.DEFAULT_TIMEOUT_MILLIS);System.out.println("run op... ：5  " + region.getId());
                     }
-                    this.localdb.addToCommitMap(txLock, op.getTxId());
+                    this.localdb.addToCommitMap(txLock, op.getTxId());System.out.println("run op... ：6  " + region.getId());
                     return tx;
                     //return new ExecuteTransactionOp().getTransaction(this.localdb.getDb(), op, resultMap);
 //                    return localdb.getTransaction(op, resultMap);
                 } catch (Throwable throwable) {
-                    System.out.println("error!");
+                    System.out.println("error!");System.out.println("tx error response request" + region.getId());
+                    response.setValue(ObjectAndByte.toByteArray(resultMap));
                     response.setError(Errors.forException(throwable));
                     closure.sendResponse(response);
                     return null;
@@ -102,7 +99,7 @@ public class DTGRegionService implements RegionService {
             });
             LocalTransaction tx = FutureHelper.get(future, FutureHelper.DEFAULT_TIMEOUT_MILLIS);
             Requires.requireNonNull(tx, "remote transaction null");
-            System.out.println("get tx and wait commit... ：" + op.getTxId());
+            //System.out.println("get tx and wait commit... ：" + op.getTxId());
 //            this.localdb.addToCommitMap(tx, op.getTxId());
             this.rawStore.ApplyEntityEntries(op, new BaseStoreClosure() {
 
@@ -112,19 +109,22 @@ public class DTGRegionService implements RegionService {
                         response.setValue(toByteArray(resultMap));
                         //System.out.println(resultMap.size());
                     } else {
-                        System.out.println("error!");
+                        response.setValue(ObjectAndByte.toByteArray(resultMap));
+                        System.out.println("error!" + region.getId());
                         setFailure(request, response, status, getError());
                     }
+                    System.out.println("response request" + region.getId());
                     closure.sendResponse(response);
                 }
             });
         } catch (final Throwable t) {
-            System.out.println("error!");
+            System.out.println("error!" + region.getId());
             LOG.error("Failed to handle: {}, {}.", request, StackTraceUtil.stackTrace(t));
-            response.setError(Errors.forException(t));
+            response.setValue(ObjectAndByte.toByteArray(resultMap));
+            response.setError(Errors.forException(t));System.out.println("error response request" + region.getId());
             closure.sendResponse(response);
         }
-        System.out.println("finish transaction request");
+        //System.out.println("finish transaction request");
     }
 
     @Override
@@ -139,22 +139,23 @@ public class DTGRegionService implements RegionService {
 
     public void handleCommitRequest(final CommitRequest request,
                                         final RequestProcessClosure<BaseRequest, BaseResponse<?>> closure){
-        System.out.println("get commit request");
+        //System.out.println("get commit request");
         final CommitResponse response = new CommitResponse();
         response.setRegionId(getRegionId());
         response.setRegionEpoch(getRegionEpoch());
         try {
             KVParameterRequires.requireSameEpoch(request, getRegionEpoch());
-            final DTGOpreration op = KVParameterRequires
+            final DTGOperation op = KVParameterRequires
                     .requireNonNull(request.getDTGOpreration(), "put.DTGOperation");
             this.rawStore.ApplyEntityEntries(op, new BaseStoreClosure() {
                 @Override
                 public void run(final Status status) {
                     if (status.isOk()) {
-                        System.out.println("success commit..:" + op.getTxId());
+                        //System.out.println("success commit..:" + op.getTxId());
                         response.setValue((Boolean) getData());
                     } else {
-                        System.out.println("failed commit..:" + op.getTxId());
+                        //System.out.println("failed commit..:" + op.getTxId());
+                        response.setValue(false);
                         setFailure(request, response, status, getError());
                     }
                     System.out.println("return commit..");
@@ -164,10 +165,11 @@ public class DTGRegionService implements RegionService {
         } catch (final Throwable t) {
             System.out.println("failed commit..");
             LOG.error("Failed to handle: {}, {}.", request, StackTraceUtil.stackTrace(t));
+            response.setValue(false);
             response.setError(Errors.forException(t));
             closure.sendResponse(response);
         }
-        System.out.println("finish commit request");
+        //System.out.println("finish commit request");
     }
 
 //    public void handlePutRequest(final PutRequest request,

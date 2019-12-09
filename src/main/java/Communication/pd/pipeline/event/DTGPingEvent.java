@@ -16,10 +16,9 @@
  */
 package Communication.pd.pipeline.event;
 
+import Communication.DTGInstruction;
 import Communication.util.pipeline.event.DTGInboundMessageEvent;
 import PlacementDriver.PD.DTGMetadataStore;
-import com.alipay.sofa.jraft.rhea.metadata.Instruction;
-
 import java.util.Collection;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -28,7 +27,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public abstract class DTGPingEvent<T> extends DTGInboundMessageEvent<T> {
 
-    private final Collection<Instruction> instructions = new LinkedBlockingDeque<>();
+    private final Collection<DTGInstruction> instructions = new LinkedBlockingDeque<>();
     private final DTGMetadataStore           metadataStore;
 
     public DTGPingEvent(T message, DTGMetadataStore metadataStore) {
@@ -40,11 +39,11 @@ public abstract class DTGPingEvent<T> extends DTGInboundMessageEvent<T> {
         return metadataStore;
     }
 
-    public Collection<Instruction> getInstructions() {
+    public Collection<DTGInstruction> getInstructions() {
         return instructions;
     }
 
-    public void addInstruction(Instruction instruction) {
+    public void addInstruction(DTGInstruction instruction) {
         this.instructions.add(instruction);
     }
 

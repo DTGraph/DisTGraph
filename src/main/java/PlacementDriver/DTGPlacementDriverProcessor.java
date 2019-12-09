@@ -1,5 +1,6 @@
 package PlacementDriver;
 
+import Communication.RequestAndResponse.CreateRegionRequest;
 import Communication.RequestAndResponse.DTGRegionHeartbeatRequest;
 import Communication.RequestAndResponse.SetDTGStoreInfoRequest;
 import com.alipay.remoting.AsyncContext;
@@ -64,6 +65,9 @@ public class DTGPlacementDriverProcessor<T extends BaseRequest> extends AsyncUse
                 break;
             case BaseRequest.RETURNIDS:
                 this.placementDriverService.handleReturnIdsRequest((ReturnIdsRequest) request, closure);
+                break;
+            case BaseRequest.CREATE_REGION:
+                this.placementDriverService.handleCreateRegionRequest((CreateRegionRequest) request, closure);
                 break;
             default:
                 throw new RheaRuntimeException("Unsupported request type: " + request.getClass().getName());

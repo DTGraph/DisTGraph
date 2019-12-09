@@ -25,6 +25,9 @@ import org.slf4j.LoggerFactory;
 import java.util.LinkedList;
 import java.util.Map;
 
+import static config.MainType.NODETYPE;
+import static config.MainType.RELATIONTYPE;
+
 
 public class DTGTransaction implements AutoCloseable {
 
@@ -37,6 +40,8 @@ public class DTGTransaction implements AutoCloseable {
     private DTGSaveStore store;
     private boolean readOnly;
     private Map<Integer, Object> result;
+    private long maxNodeId = -1;
+    private long maxRelationId = -1;
 
     private LinkedList<EntityEntry> entityEntryList;
 
@@ -58,6 +63,7 @@ public class DTGTransaction implements AutoCloseable {
     public void start(final Throwable lastCause){
         System.out.println("START : " + System.currentTimeMillis());
         this.isClose = false;
+        store.checkMaxId(maxNodeId, maxRelationId);
         result =  store.applyRequest(this.entityEntryList, this.txId, this.failoverRetries, null, true);
         System.out.println(result.size());
     }
@@ -75,6 +81,13 @@ public class DTGTransaction implements AutoCloseable {
     public void addEntityEntries(EntityEntry entityEntry){
         //entityEntry.setTransactionNum(entityNum++);
         entityEntryList.add(entityEntry);
+        if(entityEntry.getOperationType() == EntityEntry.ADD){
+            if(entityEntry.getType() == NODETYPE && entityEntry.getId() > maxNodeId){
+                maxNodeId = entityEntry.getId();
+            }else if(entityEntry.getType() == RELATIONTYPE && entityEntry.getId() > maxRelationId){
+                maxRelationId = entityEntry.getId();
+            }
+        }
     }
 
     public boolean commit(){

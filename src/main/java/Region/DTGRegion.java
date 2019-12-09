@@ -64,12 +64,13 @@ public class DTGRegion implements Copiable<DTGRegion>, Serializable {
 
     private int nodeUpperBound, relationUpperBound;
     private int nodecount, relationcount;
+    private boolean hasNextRegion;
 
     private RegionEpoch       regionEpoch;                                    // region term
     private List<Peer>        peers;                                          // all peers in the region
 
-    public DTGRegion(long nodeIdStart, long relationIdStart) {
-        this(DefaultOptions.DEFAULTREGIONNODESIZE, DefaultOptions.DEFAULTREGIONRELATIONSIZE,nodeIdStart, relationIdStart);
+    public DTGRegion(long nodeIdStart, long relationIdStart, long tempProStart) {
+        this(DefaultOptions.DEFAULTREGIONNODESIZE, DefaultOptions.DEFAULTREGIONRELATIONSIZE,nodeIdStart, relationIdStart, tempProStart);
     }
 
     public DTGRegion(int nodeUpperBound, int relationUpperBound){
@@ -77,32 +78,38 @@ public class DTGRegion implements Copiable<DTGRegion>, Serializable {
         this.nodeUpperBound = nodeUpperBound;
         nodecount = 0;
         relationcount = 0;
-    }
-
-    public DTGRegion(int nodeUpperBound, int relationUpperBound, long nodeIdStart, long relationIdStart){
-        this(nodeUpperBound, relationUpperBound);
         this.NodeIdRangeList = new ArrayList<>();
         this.RelationIdRangeList = new ArrayList<>();
         this.TemporalPropertyTimeRangeList = new ArrayList<>();
-        addToNodeRange(nodeIdStart - 1);
-        addToRelationRange(relationIdStart - 1);
     }
 
-    public DTGRegion(long id, int nodeUpperBound, int relationUpperBound, long nodeIdStart, long relationIdStart){
-        this(nodeUpperBound, relationUpperBound, nodeIdStart, relationIdStart);
+    public DTGRegion(int nodeUpperBound, int relationUpperBound, long nodeIdStart, long relationIdStart, long tempProStart){
+        this(nodeUpperBound, relationUpperBound);
+        addToNodeRange(nodeIdStart);
+        addToRelationRange(relationIdStart);
+        addToTempRange(tempProStart);
+    }
+
+    public DTGRegion(long id, int nodeUpperBound, int relationUpperBound, long nodeIdStart, long relationIdStart, long tempProStart, List<Peer> peers){
+        this(nodeUpperBound, relationUpperBound, nodeIdStart, relationIdStart, tempProStart);
         this.id = id;
+        this.peers = peers;
     }
 
     public DTGRegion(long id, List<long[]> NodeIdRegionList, List<long[]> RelationIdRegionList,
                      List<long[]> TemporalPropertyTimeRegionList, RegionEpoch regionEpoch,
-                     List<Peer> peers, int nodeUpperBound, int relationUpperBound) {
-        this(nodeUpperBound, relationUpperBound);
+                     List<Peer> peers, int nodeUpperBound, int relationUpperBound, int nodecount, int relationcount) {
+//        this(nodeUpperBound, relationUpperBound);
+        this.relationUpperBound = relationUpperBound;
+        this.nodeUpperBound = nodeUpperBound;
         this.id = id;
         this.NodeIdRangeList = NodeIdRegionList;
         this.RelationIdRangeList = RelationIdRegionList;
         this.TemporalPropertyTimeRangeList = TemporalPropertyTimeRegionList;
         this.regionEpoch = regionEpoch;
         this.peers = peers;
+        this.nodecount = nodecount;
+        this.relationcount = relationcount;
     }
 
 //    public DTGRegion(long id, byte[] nodeStartId, byte[] nodeEndId, byte[] relationStartId, byte[] relationEndId,
@@ -192,11 +199,11 @@ public class DTGRegion implements Copiable<DTGRegion>, Serializable {
 //    }
 
 
-    public List<long[]> getNodeIdRegionList() {
+    public List<long[]> getNodeIdRangeList() {
         return NodeIdRangeList;
     }
 
-    public void setNodeIdRegionList(List<long[]> nodeIdRegionList) {
+    public void setNodeIdRangeList(List<long[]> nodeIdRegionList) {
         NodeIdRangeList = nodeIdRegionList;
         IsNodeChange = true;
     }
@@ -209,11 +216,11 @@ public class DTGRegion implements Copiable<DTGRegion>, Serializable {
         IsNodeChange = true;
     }
 
-    public List<long[]> getRelationIdRegionList() {
+    public List<long[]> getRelationIdRangeList() {
         return RelationIdRangeList;
     }
 
-    public void setRelationIdRegionList(List<long[]> relationIdRegionList) {
+    public void setRelationIdRangeList(List<long[]> relationIdRegionList) {
         RelationIdRangeList = relationIdRegionList;
         IsRelationChange = true;
     }
@@ -226,11 +233,11 @@ public class DTGRegion implements Copiable<DTGRegion>, Serializable {
         IsRelationChange = true;
     }
 
-    public List<long[]> getTemporalPropertyTimeRegionList() {
+    public List<long[]> getTemporalPropertyTimeRangeList() {
         return TemporalPropertyTimeRangeList;
     }
 
-    public void setTemporalPropertyTimeRegionList(List<long[]> temporalPropertyTimeRegionList) {
+    public void setTemporalPropertyTimeRangeList(List<long[]> temporalPropertyTimeRegionList) {
         TemporalPropertyTimeRangeList = temporalPropertyTimeRegionList;
         IsTemporalPropertyChange = true;
     }
@@ -273,22 +280,22 @@ public class DTGRegion implements Copiable<DTGRegion>, Serializable {
             }
         }
         return new DTGRegion(this.id, this.NodeIdRangeList, this.RelationIdRangeList, this.TemporalPropertyTimeRangeList, regionEpoch,
-                peers, this.nodeUpperBound, this.relationUpperBound);
+                peers, this.nodeUpperBound, this.relationUpperBound, this.nodecount, this.relationcount);
     }
 
-    public DTGRegion copyNull(long regionId, long nodeIdStart, long relationIdStart) {
+    public DTGRegion copyNull(long regionId, long nodeIdStart, long relationIdStart, long tempProStart) {
         RegionEpoch regionEpoch = null;
         if (this.regionEpoch != null) {
             regionEpoch = this.regionEpoch.copy();
         }
         List<Peer> peers = null;
-        if (this.peers != null) {
+        if (this.peers != null) {System.out.println("copy peers...");
             peers = Lists.newArrayListWithCapacity(this.peers.size());
             for (Peer peer : this.peers) {
                 peers.add(peer.copy());
             }
         }
-        return new DTGRegion(regionId, this.nodeUpperBound, this.relationUpperBound, nodeIdStart, relationIdStart);
+        return new DTGRegion(regionId, this.nodeUpperBound, this.relationUpperBound, nodeIdStart, relationIdStart, tempProStart, peers);
     }
 
     @Override
@@ -346,6 +353,14 @@ public class DTGRegion implements Copiable<DTGRegion>, Serializable {
         this.relationUpperBound = this.relationUpperBound / 2;
     }
 
+    public int getNodecount() {
+        return this.nodecount;
+    }
+
+    public int getRelationcount() {
+        return this.relationcount;
+    }
+
     public synchronized void addNode() throws RegionStoreException {
         if(isNodeFull())throw new RegionStoreException("region " + this.id + " save enough node! please choose other region");
         nodecount++;
@@ -392,6 +407,16 @@ public class DTGRegion implements Copiable<DTGRegion>, Serializable {
         IsRelationChange = true;
     }
 
+    public synchronized void addToTempRange(long id){
+        RangeTool.addNumberToRange(TemporalPropertyTimeRangeList, id);
+        //IsRelationChange = true;
+    }
+
+    public synchronized void removeFromTempRange(long id){
+        RangeTool.removeNumber(TemporalPropertyTimeRangeList, id);
+        //IsRelationChange = true;
+    }
+
     public boolean isNodeChange() {
         return IsNodeChange;
     }
@@ -402,6 +427,24 @@ public class DTGRegion implements Copiable<DTGRegion>, Serializable {
 
     public boolean isTemporalPropertyChange() {
         return IsTemporalPropertyChange;
+    }
+
+
+    public long[] getNextRegionObjectStartId(){
+        long[] result = new long[2]; //first number is node start id, second number is relation start id
+        result[0] = nodeUpperBound - nodecount + getMaxNodeId();//System.out.println("node : " + nodeUpperBound + ", " + nodecount + ", " + getMaxNodeId());
+        result[1] = relationUpperBound - relationcount + getMaxRelationId();//System.out.println("relation : " + relationUpperBound + ", " + relationcount + ", " + getMaxRelationId());
+        return result;
+    }
+
+    public long getMaxNodeId(){
+        long[] maxNodeId = NodeIdRangeList.get(NodeIdRangeList.size() - 1);
+        return  maxNodeId[1] - 1;
+    }
+
+    public long getMaxRelationId(){
+        long[] maxRelationId = RelationIdRangeList.get(RelationIdRangeList.size() - 1);
+        return  maxRelationId[1] - 1;
     }
 
     @Override

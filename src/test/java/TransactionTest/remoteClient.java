@@ -34,6 +34,7 @@ public class remoteClient {
             System.out.println(tx.getTxId());
             NodeAgent node = db.getNodeById(0);
             NodeAgent node2 = db.addNode();
+            db.addNode();
             RelationshipAgent r = db.addRelationship(node, node2);
             r.setProperty("a","this is a");
             r.setTemporalProperty("b", 0, 3, "this is b");
@@ -42,6 +43,14 @@ public class remoteClient {
         }
         System.out.println("END : " + System.currentTimeMillis());
 
+        try (DTGTransaction tx = db.CreateTransaction()){
+            db.addNode();
+            db.addNode();
+            db.addNode();
+            db.addNode();
+            tx.start(null);
+            tx.commit();
+        }
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             db.shutdown();
         }));

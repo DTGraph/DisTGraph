@@ -16,7 +16,9 @@
  */
 package PlacementDriver;
 
+import Communication.DTGMetadataRpcClient;
 import Element.EntityEntry;
+import PlacementDriver.PD.DTGMetadataStore;
 import com.alipay.sofa.jraft.Lifecycle;
 import com.alipay.sofa.jraft.rhea.client.pd.PlacementDriverClient;
 import com.alipay.sofa.jraft.rhea.client.pd.PlacementDriverRpcService;
@@ -57,12 +59,12 @@ public interface DTGPlacementDriverClient extends Lifecycle<DTGPlacementDriverOp
     /**
      * Returns the region to which the id belongs.
      */
-    DTGRegion findRegionById(final byte[] id, final boolean forceRefresh, byte type);
-
+//    DTGRegion findRegionById(final byte[] id, final boolean forceRefresh, byte type);
+    DTGRegion findRegionById(final long id, final boolean forceRefresh, byte type);
     /**
      * Returns the regions to which the ids belongs.
      */
-    Map<DTGRegion, List<byte[]>> findRegionsByIds(final List<byte[]> ids, final boolean forceRefresh, byte type);
+    Map<DTGRegion, List<Long>> findRegionsByIds(final long[] ids, final boolean forceRefresh, byte type);
 
     /**
      * Returns the regions to which the entities belongs.
@@ -74,12 +76,14 @@ public interface DTGPlacementDriverClient extends Lifecycle<DTGPlacementDriverOp
     /**
      * Returns the list of regions covered by startId and endId.
      */
-    List<DTGRegion> findRegionsByIdRange(final byte[] startId, final byte[] endId, final boolean forceRefresh, byte type);
+    //List<DTGRegion> findRegionsByIdRange(final byte[] startId, final byte[] endId, final boolean forceRefresh, byte type);
+    List<DTGRegion> findRegionsByIdRange(final long startId, final long endId, final boolean forceRefresh, byte type);
 
     /**
      * Returns the startId of next region.
      */
-    byte[] findStartIdOfNextRegion(final byte[] Id, final boolean forceRefresh, byte type);
+//    byte[] findStartIdOfNextRegion(final byte[] Id, final boolean forceRefresh, byte type);
+    long findStartIdOfNextRegion(final long Id, final boolean forceRefresh, byte type);
 
     /**
      * Returns the regionRouteTable instance.
@@ -140,7 +144,7 @@ public interface DTGPlacementDriverClient extends Lifecycle<DTGPlacementDriverOp
      */
     PlacementDriverRpcService getPdRpcService();
 
-    void refreshRouteTable();
+    void refreshRouteTable(boolean needLock);
 
     boolean isRemotePd();
 
@@ -151,5 +155,7 @@ public interface DTGPlacementDriverClient extends Lifecycle<DTGPlacementDriverOp
     void getIds(byte type);
 
     long getId(byte type);
+
+    DTGMetadataRpcClient getDTGMetadataRpcClient();
 
 }

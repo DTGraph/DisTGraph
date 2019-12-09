@@ -1,6 +1,6 @@
 package Communication.RequestAndResponse;
 
-import Element.DTGOpreration;
+import Element.DTGOperation;
 import com.alipay.sofa.jraft.rhea.cmd.store.BaseRequest;
 
 /**
@@ -14,13 +14,13 @@ import com.alipay.sofa.jraft.rhea.cmd.store.BaseRequest;
 public abstract class DTGBaseRequest extends BaseRequest {
     private static final long serialVersionUID = -2869864483811882624L;
 
-    private DTGOpreration op;
+    private DTGOperation op;
 
-    public DTGOpreration getDTGOpreration() {
+    public DTGOperation getDTGOpreration() {
         return op;
     }
 
-    public void setDTGOpreration(DTGOpreration op) {
+    public void setDTGOpreration(DTGOperation op) {
         this.op = op;
     }
 

@@ -20,6 +20,7 @@ import Communication.DTGMetadataRpcClient;
 import DBExceptions.IdDistributeException;
 import DBExceptions.TypeDoesnotExistException;
 import Element.EntityEntry;
+import PlacementDriver.PD.DTGMetadataStore;
 import com.alipay.remoting.rpc.RpcClient;
 import com.alipay.sofa.jraft.CliService;
 import com.alipay.sofa.jraft.RaftServiceFactory;
@@ -85,6 +86,7 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
     private LinkedList<Long> nodeIdList;
     private LinkedList<Long> relationIdList;
 
+
     protected DTGRegionRouteTable          RelationRegionRouteTable;
     protected DTGRegionRouteTable          NodeRegionRouteTable;
     protected DTGRegionRouteTable          TemProRegionRouteTable;
@@ -112,9 +114,9 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
             return true;
         }
         this.minIdBatchSize = opts.getMinIdBatchSize();
-        RelationRegionRouteTable = new DTGRegionRouteTable(RELATIONTYPE);
-        NodeRegionRouteTable = new DTGRegionRouteTable(NODETYPE);
-        TemProRegionRouteTable = new DTGRegionRouteTable(TEMPORALPROPERTYTYPE);
+        RelationRegionRouteTable = new DTGRegionRouteTable(RELATIONTYPE, this);
+        NodeRegionRouteTable = new DTGRegionRouteTable(NODETYPE, this);
+        TemProRegionRouteTable = new DTGRegionRouteTable(TEMPORALPROPERTYTYPE, this);
         initCli(opts.getCliOptions());
         this.pdRpcService = new DTGPlacementDriverRpcService(this);
         RpcOptions rpcOpts = opts.getPdRpcOptions();
@@ -149,8 +151,8 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
             }
             RouteTable.getInstance().updateConfiguration(this.pdGroupId, initialPdServers);
             this.metadataRpcClient = new DTGMetadataRpcClient(pdRpcService, 3);
-            refreshRouteTable();
-            int a = 0;
+            //refreshRouteTable();
+            //int a = 0;
             LOG.info("[DTGPlacementDriverClient] start successfully, options: {}.", opts);
         }
         if(opts.isLocalClient()){
@@ -202,18 +204,18 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
     }
 
     @Override
-    public DTGRegion findRegionById(final byte[] id, final boolean forceRefresh, final byte type) {
+    public DTGRegion findRegionById(final long id, final boolean forceRefresh, final byte type) {
         if (forceRefresh) {
-            refreshRouteTable();
+            refreshRouteTable(true);
         }
         DTGRegionRouteTable regionRouteTable = returnRegionRouteTable(type);
         return regionRouteTable.findRegionByKey(id);
     }
 
     @Override
-    public Map<DTGRegion, List<byte[]>> findRegionsByIds(final List<byte[]> ids, final boolean forceRefresh, final byte type) {
+    public Map<DTGRegion, List<Long>> findRegionsByIds(final long[] ids, final boolean forceRefresh, final byte type) {
         if (forceRefresh) {
-            refreshRouteTable();
+            refreshRouteTable(true);
         }
         DTGRegionRouteTable regionRouteTable = returnRegionRouteTable(type);
         return regionRouteTable.findRegionsByKeys(ids);
@@ -222,7 +224,7 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
     @Override
     public Map[] findRegionsByEntityEntries(final List<EntityEntry> entityEntries, final boolean forceRefresh, final byte type) {
         if (forceRefresh) {
-            refreshRouteTable();
+            refreshRouteTable(true);
         }
         DTGRegionRouteTable regionRouteTable = returnRegionRouteTable(type);
         return regionRouteTable.findRegionsByEntityEntries(entityEntries);
@@ -231,25 +233,25 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
     @Override
     public Map[] findRegionsByEntityEntries(final List<EntityEntry> entityEntries, final boolean forceRefresh, final byte type, final Map[] map) {
         if (forceRefresh) {
-            refreshRouteTable();
+            refreshRouteTable(true);
         }
         DTGRegionRouteTable regionRouteTable = returnRegionRouteTable(type);
         return regionRouteTable.findRegionsByEntityEntries(entityEntries, map);
     }
 
     @Override
-    public List<DTGRegion> findRegionsByIdRange(final byte[] startId, final byte[] endId, final boolean forceRefresh, final byte type) {
+    public List<DTGRegion> findRegionsByIdRange(final long startId, final long endId, final boolean forceRefresh, final byte type) {
         if (forceRefresh) {
-            refreshRouteTable();
+            refreshRouteTable(true);
         }
         DTGRegionRouteTable regionRouteTable = returnRegionRouteTable(type);
         return regionRouteTable.findRegionsByKeyRange(startId, endId);
     }
 
     @Override
-    public byte[] findStartIdOfNextRegion(final byte[] Id, final boolean forceRefresh, final byte type) {
+    public long findStartIdOfNextRegion(final long Id, final boolean forceRefresh, final byte type) {
         if (forceRefresh) {
-            refreshRouteTable();
+            refreshRouteTable(true);
         }
         DTGRegionRouteTable regionRouteTable = returnRegionRouteTable(type);
         return regionRouteTable.findStartKeyOfNextRegion(Id);
@@ -271,7 +273,7 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
         if (!remoteStore.isEmpty()) {
             final List<DTGRegion> regions = remoteStore.getRegions();
             for (final DTGRegion region : regions) {
-                addOrUpdateRegion(region);
+                addOrUpdateRegion(region, true);
             }
             return remoteStore;
         }
@@ -496,7 +498,7 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
     }
 
     @Override
-    public void refreshRouteTable() {
+    public void refreshRouteTable(boolean needLock) {System.out.println("start refresh..");
         final DTGCluster cluster = this.metadataRpcClient.getClusterInfo(this.clusterId);
         if (cluster == null) {
             LOG.warn("Cluster info is empty: {}.", this.clusterId);
@@ -514,9 +516,19 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
                 continue;
             }
             for (final DTGRegion region : regions) {
-                addOrUpdateRegion(region);
+                String serverList = "";
+                for(Peer peer : region.getPeers()){
+                    serverList = serverList + peer.getEndpoint().toString() + ",";
+                }
+                final Configuration conf = new Configuration();
+                conf.parse(serverList);
+                // update raft route table
+                RouteTable.getInstance().updateConfiguration(JRaftHelper.getJRaftGroupId(this.getClusterName(), region.getId()), conf);
+                addOrUpdateRegion(region, needLock);
             }
         }
+        returnRegionRouteTable(NODETYPE).updataTop(cluster.getNodeIdTopRestrict());
+        returnRegionRouteTable(RELATIONTYPE).updataTop(cluster.getRelationIdTopRestrict());System.out.println("refresh done!");
     }
 
     private DTGRegionRouteTable returnRegionRouteTable(final byte type){
@@ -548,32 +560,32 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
                 + Region.MAX_ID_WITH_MANUAL_CONF);
 
         final String initialServerList = opts.getInitialServerList();
-        final DTGRegion region = new DTGRegion(opts.getInitNodeId(), opts.getInitRelationId());
+        final DTGRegion region = new DTGRegion(opts.getInitNodeId(), opts.getInitRelationId(), opts.getInitTempProId());
         final Configuration conf = new Configuration();
         // region
         region.setId(regionId);
         if(opts.getRelationIdRangeList() != null){
-            region.setRelationIdRegionList(opts.getRelationIdRangeList());
+            region.setRelationIdRangeList(opts.getRelationIdRangeList());
         }
         if(opts.getNodeIdRangeList() != null){
-            region.setNodeIdRegionList(opts.getNodeIdRangeList());
+            region.setNodeIdRangeList(opts.getNodeIdRangeList());
         }
         if(opts.getTemporalPropertyTimeRangeList() != null){
-            region.setTemporalPropertyTimeRegionList(opts.getTemporalPropertyTimeRangeList());
+            region.setTemporalPropertyTimeRangeList(opts.getTemporalPropertyTimeRangeList());
         }
         region.setRegionEpoch(new RegionEpoch(-1, -1));
         // peers
         Requires.requireTrue(Strings.isNotBlank(initialServerList), "opts.initialServerList is blank");
         conf.parse(initialServerList);
         region.setPeers(JRaftHelper.toPeerList(conf.listPeers()));
-        addOrUpdateRegion(region);
+        addOrUpdateRegion(region, true);
         return region;
     }
 
-    public void addOrUpdateRegion(final DTGRegion region){
-        NodeRegionRouteTable.addOrUpdateRegion(region);
-        RelationRegionRouteTable.addOrUpdateRegion(region);
-        TemProRegionRouteTable.addOrUpdateRegion(region);
+    public void addOrUpdateRegion(final DTGRegion region, boolean needLock){
+        NodeRegionRouteTable.addOrUpdateRegion(region, needLock);
+        RelationRegionRouteTable.addOrUpdateRegion(region, needLock);
+        TemProRegionRouteTable.addOrUpdateRegion(region, needLock);
     }
 
     protected void initCli(CliOptions cliOpts) {
@@ -594,18 +606,18 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
         final long regionId = Requires.requireNonNull(opts.getRegionId(), "opts.regionId");
         LOG.info("init region, region id = " + regionId);
         final String initialServerList = opts.getInitialServerList();
-        final DTGRegion region = new DTGRegion(opts.getInitNodeId(), opts.getInitRelationId());
+        final DTGRegion region = new DTGRegion(opts.getInitNodeId(), opts.getInitRelationId(), opts.getInitTempProId());
         final Configuration conf = new Configuration();
         // region
         region.setId(regionId);
         if(opts.getRelationIdRangeList() != null){
-            region.setRelationIdRegionList(opts.getRelationIdRangeList());
+            region.setRelationIdRangeList(opts.getRelationIdRangeList());
         }
         if(opts.getNodeIdRangeList() != null){
-            region.setNodeIdRegionList(opts.getNodeIdRangeList());
+            region.setNodeIdRangeList(opts.getNodeIdRangeList());
         }
         if(opts.getTemporalPropertyTimeRangeList() != null){
-            region.setTemporalPropertyTimeRegionList(opts.getTemporalPropertyTimeRangeList());
+            region.setTemporalPropertyTimeRangeList(opts.getTemporalPropertyTimeRangeList());
         }
         //region.setNodeIdRegionList(opts.getNodeIdRangeList());
         //region.setRelationIdRegionList(opts.getRelationIdRangeList());
@@ -617,7 +629,7 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
         region.setPeers(JRaftHelper.toPeerList(conf.listPeers()));
         // update raft route table
         RouteTable.getInstance().updateConfiguration(JRaftHelper.getJRaftGroupId(clusterName, regionId), conf);
-        addOrUpdateRegion(region);
+        addOrUpdateRegion(region, true);
     }
 
     @Override
@@ -643,6 +655,11 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
             });
         }
         return id;
+    }
+
+    @Override
+    public DTGMetadataRpcClient getDTGMetadataRpcClient() {
+        return this.metadataRpcClient;
     }
 
     @Override

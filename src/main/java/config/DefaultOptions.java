@@ -6,11 +6,13 @@ import com.alipay.sofa.jraft.rhea.options.configured.MultiRegionRouteTableOption
 import com.alipay.sofa.jraft.rhea.options.configured.RocksDBOptionsConfigured;
 import com.alipay.sofa.jraft.rhea.options.configured.RpcOptionsConfigured;
 import com.alipay.sofa.jraft.rhea.storage.StorageType;
+import com.alipay.sofa.jraft.rhea.util.Lists;
 import com.alipay.sofa.jraft.util.Endpoint;
 import options.*;
 import com.alipay.sofa.jraft.rhea.pd.options.PlacementDriverServerOptions;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,7 +30,7 @@ public class DefaultOptions {
     private static final String RAFT_DATA_PATH              = "raft_data" + File.separator;
     private static final String ALL_NODE_ADDRESSES          = "127.0.0.1:8184,127.0.0.1:8185,127.0.0.1:8186";
     private static final String CLUSTER_NAME                = "DTG_DEFAULT";
-    private static final String PDGROUPID                   = "METADATA_SAVE--1";
+    private static final String PDGROUPID                   = "METADATA_SAVE";
     private static final String INITIALSERVERLIST           = "127.0.0.1:8184,127.0.0.1:8185,127.0.0.1:8186" ;
     private static final String INITIALPDSERVERLIST         = "127.0.0.1:8181,127.0.0.1:8182,127.0.0.1:8183";
     private static final int    MINIDBATCHSIZE              = 50;
@@ -38,8 +40,9 @@ public class DefaultOptions {
     private static final int    BATCHSIZE                   = 100;
     private static final int    PIPELINECOREPOOLSIZE        = 4;
     private static final int    PIPELINEMAXMUMPOOLSIZE      = 4;
-    public static final int    DEFAULTREGIONNODESIZE        = 2;
-    public static final int    DEFAULTREGIONRELATIONSIZE    = 2;
+    public static final int     DEFAULTREGIONNODESIZE       = 4;
+    public static final int     DEFAULTREGIONRELATIONSIZE   = 4;
+    public static final int     DEFAULTSTARTTIME            = 0;
 
     public static CliOptions defaultCliOptios(){
         CliOptions opts = new CliOptions();
@@ -61,22 +64,19 @@ public class DefaultOptions {
         opts.setPdRpcOptions(defaultRpcOptions());
         final List<RegionRouteTableOptions> regionRouteTableOptionsList = MultiRegionRouteTableOptionsConfigured
                 .newConfigured() //
-                .withInitialServerList(-1L /* default id */, ALL_NODE_ADDRESSES) //
-                .withInitNodeStartId(0L, 0)
-                .withInitRelationStartId(0L, 0)
+                .withInitialServerList(1L /* default id */, ALL_NODE_ADDRESSES) //
+                .withInitNodeStartId(1L, 0)
+                .withInitRelationStartId(1L, 0)
                 .config();
         opts.setRegionRouteTableOptionsList(regionRouteTableOptionsList);
-        opts.setInitialPdServerList(INITIALSERVERLIST);
         opts.setInitialPdServerList(INITIALPDSERVERLIST);
         opts.setMinIdBatchSize(MINIDBATCHSIZE);
-        opts.setPdGroupId(PDGROUPID);
+        opts.setPdGroupId(PDGROUPID + "-" + PDCLUSTERID);
         return opts;
     }
 
     public static DTGStoreOptions defaultDTGStoreOptions(){
         DTGStoreOptions opts = new DTGStoreOptions();
-        opts.setClusterId(CLUSTERID);
-        opts.setClusterName(CLUSTER_NAME);
         opts.setBatchingOptions(defaultBatchingOptions());
         opts.setRpcOptions(defaultRpcOptions());
         opts.setPlacementDriverOptions(defaultDTGPlacementDriverOptions());
@@ -86,8 +86,10 @@ public class DefaultOptions {
 
     public static DTGStoreOptions defaultPDDTGStoreOptions(String ip, int port, String path){
         DTGStoreOptions opts = defaultDTGStoreOptions();
+        opts.setClusterId(PDCLUSTERID);
+        opts.setClusterName(PDGROUPID);
         opts.setInitialServerList(INITIALPDSERVERLIST);
-        opts.setStoreEngineOptions(defaultPDStoreEngineOptions(ip, port, path));
+        //opts.setStoreEngineOptions(defaultPDStoreEngineOptions(ip, port, path));
         opts.getPlacementDriverOptions().setLocalClient(false);
         opts.setRemotePd(true);
         opts.getPlacementDriverOptions().setRemotePd(true);
@@ -96,9 +98,28 @@ public class DefaultOptions {
 
     public static DTGStoreOptions defaultClusterDTGStoreOptions(String ip, int port, String path){
         DTGStoreOptions opts = defaultDTGStoreOptions();
+        opts.setClusterName(CLUSTER_NAME);
+        opts.setClusterId(CLUSTERID);
         opts.setInitialServerList(ALL_NODE_ADDRESSES);
         opts.setStoreEngineOptions(defaultClusterStoreEngineOptions(ip, port, path));
         opts.getPlacementDriverOptions().setLocalClient(false);
+        opts.setRemotePd(false);
+        opts.getPlacementDriverOptions().setRemotePd(false);
+        return opts;
+    }
+
+    public static DTGStoreOptions defaultClientDTGStoreOptions(String ip, int port, String path){
+        DTGStoreOptions opts = new DTGStoreOptions();
+        opts.setClusterId(CLUSTERID);
+        opts.setClusterName(CLUSTER_NAME);
+        opts.setBatchingOptions(defaultBatchingOptions());
+        opts.setRpcOptions(defaultRpcOptions());
+        opts.setPlacementDriverOptions(defaultDTGPlacementDriverOptions());
+        opts.setFailoverRetries(MAXRETRY);
+
+        opts.setInitialServerList(ip + ":" + port);
+        //opts.setStoreEngineOptions(defaultClusterStoreEngineOptions(ip, port, path));
+        opts.getPlacementDriverOptions().setLocalClient(true);
         opts.setRemotePd(false);
         opts.getPlacementDriverOptions().setRemotePd(false);
         return opts;
@@ -131,7 +152,7 @@ public class DefaultOptions {
         RheaKVStoreOptions opts = new RheaKVStoreOptions();
         opts.setClusterId(PDCLUSTERID);
 
-        opts.setClusterName("METADATA_SAVE");
+        opts.setClusterName(PDGROUPID);
         opts.setPlacementDriverOptions(defaultPlacementDriverOptions());
         opts.setInitialServerList(INITIALPDSERVERLIST);
         opts.setStoreEngineOptions(defaultStoreEngineOptions(ip, port, localdbPath));
@@ -142,7 +163,7 @@ public class DefaultOptions {
         PlacementDriverOptions opts = new PlacementDriverOptions();
         final List<RegionRouteTableOptions> regionRouteTableOptionsList = MultiRegionRouteTableOptionsConfigured
                 .newConfigured() //
-                .withInitialServerList(-1L /* default id */, INITIALPDSERVERLIST) //
+                .withInitialServerList(0L /* default id */, INITIALPDSERVERLIST) //
                 .config();
         opts.setRegionRouteTableOptionsList(regionRouteTableOptionsList);
         opts.setFake(true);
@@ -155,6 +176,13 @@ public class DefaultOptions {
         opts.setRocksDBOptions(RocksDBOptionsConfigured.newConfigured().withDbPath(localdbPath + "\\pd" + ip + port).config());
         opts.setRaftDataPath(localdbPath+"\\"+ RAFT_DATA_PATH);
         opts.setServerAddress(new Endpoint(ip , port));
+
+        RegionEngineOptions rOpts = new RegionEngineOptions();
+        rOpts.setRegionId(0L);
+        List<RegionEngineOptions> rOptsList = Lists.newArrayList();
+        rOptsList.add(rOpts);
+        opts.setRegionEngineOptionsList(rOptsList);
+
         return opts;
     }
 
@@ -173,6 +201,13 @@ public class DefaultOptions {
         opts.setLocalDBOption(defaultLocalDBOption(localdbPath + "\\" +DB_PATH));
         opts.setRaftDataPath(localdbPath+"\\"+ RAFT_DATA_PATH);
         opts.setServerAddress(new Endpoint(ip , port));
+
+        RegionEngineOptions rOpts = new RegionEngineOptions();
+        rOpts.setRegionId(1L);
+        List<RegionEngineOptions> rOptsList = Lists.newArrayList();
+        rOptsList.add(rOpts);
+        opts.setRegionEngineOptionsList(rOptsList);
+
         return opts;
     }
 

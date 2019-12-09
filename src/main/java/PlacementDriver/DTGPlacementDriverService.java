@@ -21,6 +21,7 @@ package PlacementDriver;
  * **/
 
 
+import Communication.DTGInstruction;
 import Communication.RequestAndResponse.*;
 import Communication.pd.pipeline.event.DTGRegionPingEvent;
 import Communication.pd.pipeline.event.DTGStorePingEvent;
@@ -32,19 +33,24 @@ import DBExceptions.TypeDoesnotExistException;
 import PlacementDriver.IdManage.IdGenerator;
 import PlacementDriver.PD.DTGMetadataStore;
 import PlacementDriver.PD.DTGMetadataStoreImpl;
+import Region.DTGRegion;
 import com.alipay.sofa.jraft.Lifecycle;
 import com.alipay.sofa.jraft.rhea.*;
 import com.alipay.sofa.jraft.rhea.client.RheaKVStore;
 import com.alipay.sofa.jraft.rhea.cmd.pd.*;
 import com.alipay.sofa.jraft.rhea.errors.Errors;
 import com.alipay.sofa.jraft.rhea.metadata.Instruction;
+import com.alipay.sofa.jraft.rhea.metadata.Peer;
 import com.alipay.sofa.jraft.rhea.options.PlacementDriverServerOptions;
+import com.alipay.sofa.jraft.rhea.util.Lists;
 import com.alipay.sofa.jraft.rhea.util.StackTraceUtil;
 import com.alipay.sofa.jraft.rhea.util.concurrent.CallerRunsPolicyWithReport;
 import com.alipay.sofa.jraft.rhea.util.concurrent.NamedThreadFactory;
+import com.alipay.sofa.jraft.util.Endpoint;
 import com.alipay.sofa.jraft.util.JRaftServiceLoader;
 import com.alipay.sofa.jraft.util.Requires;
 import com.alipay.sofa.jraft.util.ThreadPoolUtil;
+import config.DefaultOptions;
 import options.DTGPlacementDriverServerOptions;
 import options.IdGeneratorOptions;
 import org.slf4j.Logger;
@@ -55,8 +61,10 @@ import storage.DTGStore;
 import com.alipay.sofa.jraft.rhea.cmd.pd.GetRegionInfoByIdRequest;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -78,10 +86,12 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
     private static IdGenerator nodeIdGenerator;
     private static IdGenerator relationIdGenerator;
     private int idBatchSize;
+    private List<DTGInstruction> instructionList;
 
 
     public DTGPlacementDriverService(RheaKVStore rheaKVStore) {
         this.rheaKVStore = rheaKVStore;
+        instructionList = new ArrayList<>();
     }
 
     @Override
@@ -158,7 +168,8 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
 
     public void handleRegionHeartbeatRequest(final DTGRegionHeartbeatRequest request, final RequestProcessClosure<BaseRequest, BaseResponse> closure) {
         final RegionHeartbeatResponse response = new RegionHeartbeatResponse();
-        response.setClusterId(request.getClusterId());
+        final long clusterId = request.getClusterId();
+        response.setClusterId(clusterId);
         if (!this.isLeader) {
             response.setError(Errors.NOT_LEADER);
             closure.sendResponse(response);
@@ -169,6 +180,29 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
             // 2. Second, check if need to send a dispatch instruction
             final DTGRegionPingEvent regionPingEvent = new DTGRegionPingEvent(request, this.metadataStore);
             DTGRegionPingEvent regionPingEvent1 = regionPingEvent;
+            long storeId = request.getStoreId();
+            DTGStore store = this.metadataStore.getStoreInfo(clusterId, storeId);
+            DTGRegion initRegion = store.getRegions().get(0);
+            DTGInstruction instruction;
+            while (instructionList.size() > 0 && (instruction = instructionList.get(0)) != null){
+                DTGInstruction.AddRegion add = instruction.getAddRegion();
+                add.setFullRegionId(initRegion.getId());
+                instruction.setRegion(initRegion);
+                instruction.setStoreId(storeId);
+                regionPingEvent1.addInstruction(instruction);
+                instructionList.remove(0);
+                System.out.println("add instruction");
+            }
+
+//            for(DTGInstruction instruction : instructionList){//System.out.println("add instruction , store id = " + storeId + ", instruction store id = " + instruction.getStoreId());
+//                DTGInstruction.AddRegion add = instruction.getAddRegion();
+//                add.setFullRegionId(initRegion.getId());
+//                instruction.setRegion(initRegion);
+//                instruction.setStoreId(storeId);
+//                regionPingEvent1.addInstruction(instruction);
+//                instructionList.remove(instruction);
+//                System.out.println("add instruction");
+//            }
             final DTGPipelineFuture<List<Instruction>> future = this.pipeline.invoke(regionPingEvent1);
             future.whenComplete((instructions, throwable) -> {
                 if (throwable == null) {
@@ -187,7 +221,7 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
     }
 
     public void handleGetClusterInfoRequest(final GetClusterInfoRequest request, final RequestProcessClosure<BaseRequest, BaseResponse> closure) {
-        final long clusterId = request.getClusterId();System.out.println("get cluster info");
+        final long clusterId = request.getClusterId();System.out.println("get cluster info" + clusterId);
         final GetDTGClusterInfoResponse response = new GetDTGClusterInfoResponse();
         response.setClusterId(clusterId);
         if (!this.isLeader) {
@@ -197,7 +231,8 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
         }
         try {
             final DTGCluster cluster = this.metadataStore.getClusterInfo(clusterId);
-            response.setCluster(cluster);
+            //response.setCluster(cluster);
+            response.setValue(cluster);
         } catch (final Throwable t) {
             LOG.error("Failed to handle: {}, {}.", request, StackTraceUtil.stackTrace(t));
             response.setError(Errors.forException(t));
@@ -226,8 +261,8 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
     }
 
     public void handleSetStoreInfoRequest(final SetDTGStoreInfoRequest request, final RequestProcessClosure<BaseRequest, BaseResponse> closure) {
-        System.out.println("getSetStoreInfoRequest!");
-        final long clusterId = request.getClusterId();
+        //System.out.println("getSetStoreInfoRequest!");
+        final long clusterId = request.getClusterId();//System.out.println("cluster id : " + clusterId);
         final SetDTGStoreInfoResponse response = new SetDTGStoreInfoResponse();
         response.setClusterId(clusterId);
         LOG.info("Handling {}.", request);
@@ -294,8 +329,63 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
         closure.sendResponse(response);
     }
 
-    public void handleGetRegionInfoRequest(final GetRegionInfoByIdRequest request, final RequestProcessClosure<BaseRequest, BaseResponse> closure) {
+    public void handleCreateRegionRequest(final CreateRegionRequest request, final RequestProcessClosure<BaseRequest, BaseResponse> closure) {
+        System.out.println("add region request...");
+        final CreateRegionResponse response = new CreateRegionResponse();
+        final long clusterId = request.getClusterId();
+        response.setClusterId(request.getClusterId());
+        final byte type = request.getIdType();
+        final long maxId = request.getMaxIdNeed();
+        LOG.info("Handling {}.", request);
+        if (!this.isLeader) {
+            response.setError(Errors.NOT_LEADER);
+            closure.sendResponse(response);
+            return;
+        }
+        final CompletableFuture<Long> future = CompletableFuture.supplyAsync(()->{
+            long nowMaxId = 0;
+            do{
+                DTGStore lazyStore =  findLazyWorkStore(clusterId);
+                //DTGStore store = getNotNullStore(clusterId);
+                DTGRegion region = lazyStore.getRegions().get(0);
+                List<Peer> peers = region.getPeers();
 
+                DTGInstruction instruction = new DTGInstruction();
+                DTGInstruction.AddRegion add = new DTGInstruction.AddRegion();
+                //add.setFullRegionId(region.getId());
+                add.setNewRegionId(metadataStore.createRegionId(clusterId));
+                add.setStartNodeId(metadataStore.updateRegionNodeStartId(clusterId));
+                add.setStartRelationId(metadataStore.updateRegionRelationStartId(clusterId));
+                add.setStartTempProId(DefaultOptions.DEFAULTSTARTTIME);
+                //final DTGInstruction.TransferLeader transferLeader = new DTGInstruction.TransferLeader();
+                //final List<Endpoint> endpoints = Lists.transform(region.getPeers(), Peer::getEndpoint);
+                //final Map<Long, Endpoint> storeIds = metadataStore.unsafeGetStoreIdsByEndpoints(clusterId, endpoints);
+//                transferLeader.setMoveToStoreId(lazyStore.getId());
+//                transferLeader.setMoveToEndpoint(storeIds.get(lazyStore.getId()));
+                System.out.println("store id = " + lazyStore.getId() );
+                //instruction.setRegion(region);
+                instruction.setAddRegion(add);
+                //instruction.setTransferLeader(transferLeader);
+                //instruction.setStoreId(lazyStore.getId());
+                instructionList.add(instruction);
+                if(type == NODETYPE){
+                    nowMaxId = metadataStore.getNewRegionNodeStartId(clusterId) - DefaultOptions.DEFAULTREGIONRELATIONSIZE;
+                }else if(type == RELATIONTYPE){
+                    nowMaxId = metadataStore.updateRegionRelationStartId(clusterId) - DefaultOptions.DEFAULTREGIONNODESIZE;
+                }
+            }while (nowMaxId < maxId);
+            long newRegionId = this.metadataStore.createRegionId(clusterId);
+            return newRegionId;
+        });
+        future.whenComplete((v, e) -> {
+            if(e != null){
+                LOG.error("Failed to handle: {}, {}.", request, StackTraceUtil.stackTrace(e));
+                response.setError(Errors.forException(e));
+                return;
+            }
+            response.setValue(v);
+        });
+        closure.sendResponse(response);
     }
 
     public void handleGetIdsRequest(final GetIdsRequest request, final RequestProcessClosure<BaseRequest, BaseResponse> closure){
@@ -425,6 +515,57 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
             default:
                 throw new TypeDoesnotExistException(type, "idGenerator");
         }
+    }
+
+    private DTGStore findLazyWorkStore(long clusterId){
+        DTGStore lazyStore = null;
+        DTGCluster cluster = this.metadataStore.getClusterInfo(clusterId);
+
+        if(cluster == null){
+            return lazyStore;
+        }
+
+        List<DTGStore> stores = cluster.getStores();
+
+        int lazyNum = 9999;
+
+        if(stores == null && stores.size() == 0){
+            return lazyStore;
+        }
+
+        for(DTGStore store : stores){
+            if(store.getRegions().size() < lazyNum){
+                lazyStore = store;
+                lazyNum = store.getRegions().size();
+            }
+        }//System.out.println("lazy store is not null");
+        return lazyStore;
+    }
+
+    private DTGStore getNotNullStore(long clusterId){
+        DTGCluster cluster = this.metadataStore.getClusterInfo(clusterId);
+
+        if(cluster == null){
+            return null;
+        }
+
+        List<DTGStore> stores = cluster.getStores();
+
+
+        if(stores == null && stores.size() == 0){
+            return null;
+        }
+
+        for(DTGStore store : stores){
+            System.out.println("store : " + store.getId() + ", region size = " + store.getRegions().size());
+        }
+
+        for(DTGStore store : stores){
+            if(store.getRegions().size() > 0){
+                return store;
+            }
+        }
+        return null;
     }
 
 }

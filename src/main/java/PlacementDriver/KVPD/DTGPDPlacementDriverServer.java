@@ -16,6 +16,7 @@
  */
 package PlacementDriver.KVPD;
 
+import Communication.RequestAndResponse.CreateRegionRequest;
 import Communication.RequestAndResponse.DTGRegionHeartbeatRequest;
 import Communication.RequestAndResponse.SetDTGStoreInfoRequest;
 import PlacementDriver.DTGPlacementDriverProcessor;
@@ -219,6 +220,9 @@ public class DTGPDPlacementDriverServer implements Lifecycle<DTGPlacementDriverS
                 this.placementDriverService, this.pdExecutor));
         rpcServer.registerUserProcessor(new DTGPlacementDriverProcessor<>(GetIdsRequest.class,
                 this.placementDriverService, this.pdExecutor));
+        rpcServer.registerUserProcessor(new DTGPlacementDriverProcessor<>(CreateRegionRequest.class,
+                this.placementDriverService, this.pdExecutor));
+
     }
 
 //    private void addPlacementDriverProcessor(final RpcServer rpcServer) {

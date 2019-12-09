@@ -16,10 +16,8 @@
  */
 package storage;
 
-import Element.DTGOpreration;
+import Element.DTGOperation;
 import Element.EntityEntry;
-import com.alipay.sofa.jraft.rhea.storage.KVOperation;
-import com.alipay.sofa.jraft.rhea.storage.KVStoreClosure;
 import raft.EntityStoreClosure;
 
 import java.util.List;
@@ -29,23 +27,23 @@ import java.util.List;
  */
 public class EntityState {
 
-    private final DTGOpreration op;
+    private final DTGOperation op;
     private final EntityStoreClosure done;
 
-    public static EntityState of(final DTGOpreration op, final EntityStoreClosure done) {
+    public static EntityState of(final DTGOperation op, final EntityStoreClosure done) {
         return new EntityState(op, done);
     }
 
-    public EntityState(DTGOpreration op, EntityStoreClosure done) {
+    public EntityState(DTGOperation op, EntityStoreClosure done) {
         this.op = op;
         this.done = done;
     }
 
-    public boolean isSameOp(final DTGOpreration o) {
+    public boolean isSameOp(final DTGOperation o) {
         return this.op.getType() == o.getType();
     }
 
-    public DTGOpreration getOp() {
+    public DTGOperation getOp() {
         return op;
     }
 

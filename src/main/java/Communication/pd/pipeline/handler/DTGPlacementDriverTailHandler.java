@@ -23,7 +23,6 @@ import Communication.util.pipeline.DTGHandler;
 import Communication.util.pipeline.DTGHandlerContext;
 import Communication.util.pipeline.DTGInboundHandlerAdapter;
 import Communication.util.pipeline.event.DTGInboundMessageEvent;
-import Region.DTGRegion;
 import com.alipay.sofa.jraft.rhea.util.Lists;
 
 

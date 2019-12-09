@@ -16,6 +16,7 @@
  */
 package Communication.pd.pipeline.handler;
 
+import Communication.DTGInstruction;
 import Communication.RequestAndResponse.DTGRegionHeartbeatRequest;
 import Communication.pd.DTGClusterStatsManager;
 import Communication.pd.pipeline.event.DTGRegionPingEvent;
@@ -28,15 +29,16 @@ import com.alipay.sofa.jraft.rhea.util.Lists;
 import com.alipay.sofa.jraft.rhea.util.Pair;
 import com.alipay.sofa.jraft.util.Endpoint;
 import com.alipay.sofa.jraft.util.SPI;
+import config.DefaultOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import Region.DTGRegion;
 import Region.DTGRegionStats;
+import storage.DTGCluster;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Trying to balance the number of leaders in each store.
@@ -65,17 +67,19 @@ public class DTGRegionLeaderBalanceHandler extends DTGInboundHandlerAdapter<DTGR
             clusterStatsManager.addOrUpdateLeader(storeId, region.getId());
         }
 
+        long maxNodeId = metadataStore.getNewRegionNodeStartId(clusterId);
+        long maxRelationId = metadataStore.getNewRegionRelationStartId(clusterId);
         // check if the modelWorker
-        final Pair<Set<Long>, Integer> modelWorkers = clusterStatsManager.findModelWorkerStores(1);
-        final Set<Long> modelWorkerStoreIds = modelWorkers.getKey();
-        final int modelWorkerLeaders = modelWorkers.getValue();
-        if (!modelWorkerStoreIds.contains(storeId)) {
-            return;
-        }
+//        final Pair<Set<Long>, Integer> modelWorkers = clusterStatsManager.findModelWorkerStores(1);
+//        final Set<Long> modelWorkerStoreIds = modelWorkers.getKey();
+//        final int modelWorkerLeaders = modelWorkers.getValue();
+//        if (!modelWorkerStoreIds.contains(storeId)) {
+//            return;
+//        }
+//
+//        LOG.info("[Cluster: {}] model worker stores is: {}, it has {} leaders.", clusterId, modelWorkerStoreIds, modelWorkerLeaders);
 
-        LOG.info("[Cluster: {}] model worker stores is: {}, it has {} leaders.", clusterId, modelWorkerStoreIds, modelWorkerLeaders);
-
-        System.out.println("need send instruction!!!!!!!!!!!!!!!!!!!!!!!!!");
+        //System.out.println("need send instruction!!!!!!!!!!!!!!!!!!!!!!!!!");
 
         for(final Pair<DTGRegion, DTGRegionStats> pair : regionStatsList){
             final DTGRegion region = pair.getKey();
@@ -85,14 +89,20 @@ public class DTGRegionLeaderBalanceHandler extends DTGInboundHandlerAdapter<DTGR
             }
             final List<Endpoint> endpoints = Lists.transform(peers, Peer::getEndpoint);
             final Map<Long, Endpoint> storeIds = metadataStore.unsafeGetStoreIdsByEndpoints(clusterId, endpoints);
-
-            if(region.isRelationFull()||region.isNodeFull()){
-                final Instruction instruction = new Instruction();
-            }
-            // find lazyWorkers
-            final List<Pair<Long, Integer>> lazyWorkers = clusterStatsManager.findLazyWorkerStores(storeIds.keySet());
-            if (lazyWorkers.isEmpty()) {
-                return;
+            if(region.getNodecount() == 0 && region.getRelationcount() == 0)continue;
+            if(region.getMaxNodeId() >= maxNodeId - DefaultOptions.DEFAULTREGIONNODESIZE ||region.getMaxRelationId() >= maxRelationId - DefaultOptions.DEFAULTREGIONRELATIONSIZE){
+                System.out.println("region " + region.getId() + " is full! add new region!");
+                final DTGInstruction instruction = new DTGInstruction();
+                DTGInstruction.AddRegion add = new DTGInstruction.AddRegion();
+                add.setFullRegionId(region.getId());
+                add.setNewRegionId(metadataStore.createRegionId(clusterId));
+                add.setStartNodeId(metadataStore.updateRegionNodeStartId(clusterId));
+                add.setStartRelationId(metadataStore.updateRegionRelationStartId(clusterId));
+                add.setStartTempProId(DefaultOptions.DEFAULTSTARTTIME);
+                instruction.setAddRegion(add);
+                instruction.setRegion(region);
+                event.addInstruction(instruction);
+                //System.out.println("add instruction success");
             }
         }
 

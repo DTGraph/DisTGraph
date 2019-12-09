@@ -27,10 +27,10 @@ public class EntityEntry implements Serializable, Comparable<EntityEntry> {
 
     private static final long serialVersionUID = 1304171229405186819L;
 
-    public static final byte  ADD  = 0x04;
-    public static final byte  SET  = 0x05;
+    public static final byte  ADD     = 0x04;
+    public static final byte  SET     = 0x05;
     public static final byte  REMOVE  = 0x06;
-    public static final byte  GET  = 0x07;
+    public static final byte  GET     = 0x07;
 
     private int               transactionNum;
 

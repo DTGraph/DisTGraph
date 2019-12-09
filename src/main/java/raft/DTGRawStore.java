@@ -1,10 +1,7 @@
 package raft;
 
-import Element.DTGOpreration;
-import Element.EntityEntry;
+import Element.DTGOperation;
 import scala.collection.Iterator;
-
-import java.util.List;
 
 /**
  * @author :jinkai
@@ -18,9 +15,9 @@ public interface DTGRawStore  {
 
     Iterator localIterator();
 
-    void ApplyEntityEntries(final DTGOpreration op, final EntityStoreClosure closure);
+    void ApplyEntityEntries(final DTGOperation op, final EntityStoreClosure closure);
 
-    void readOnlyEntityEntries(final DTGOpreration op, final EntityStoreClosure closure);
+    void readOnlyEntityEntries(final DTGOperation op, final EntityStoreClosure closure);
 
     void merge();
 

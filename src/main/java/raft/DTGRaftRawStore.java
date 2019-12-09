@@ -1,7 +1,6 @@
 package raft;
 
-import Element.DTGOpreration;
-import Element.EntityEntry;
+import Element.DTGOperation;
 import com.alipay.sofa.jraft.Node;
 import com.alipay.sofa.jraft.Status;
 import com.alipay.sofa.jraft.entity.Task;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import scala.collection.Iterator;
 
 import java.nio.ByteBuffer;
-import java.util.List;
 
 /**
  * @author :jinkai
@@ -41,7 +39,7 @@ public class DTGRaftRawStore implements DTGRawStore {
     }
 
     @Override
-    public void ApplyEntityEntries(DTGOpreration op, EntityStoreClosure closure) {
+    public void ApplyEntityEntries(DTGOperation op, EntityStoreClosure closure) {
         if(!isLeader()){
             closure.setError(Errors.NOT_LEADER);
             closure.run(new Status(RaftError.EPERM, "Not leader"));
@@ -54,7 +52,7 @@ public class DTGRaftRawStore implements DTGRawStore {
     }
 
     @Override
-    public void readOnlyEntityEntries(DTGOpreration op, EntityStoreClosure closure) {
+    public void readOnlyEntityEntries(DTGOperation op, EntityStoreClosure closure) {
 
     }
 

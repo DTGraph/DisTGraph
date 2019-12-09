@@ -1,8 +1,5 @@
 package Communication.RequestAndResponse;
 
-import Element.DTGOpreration;
-import com.alipay.sofa.jraft.rhea.cmd.store.BaseRequest;
-
 /**
  * @author :jinkai
  * @date :Created in 2019/10/23 18:30

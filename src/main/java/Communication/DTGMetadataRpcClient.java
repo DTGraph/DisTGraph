@@ -16,6 +16,7 @@
  */
 package Communication;
 
+import Communication.RequestAndResponse.CreateRegionRequest;
 import Communication.RequestAndResponse.SetDTGStoreInfoRequest;
 import com.alipay.sofa.jraft.rhea.client.FutureHelper;
 import com.alipay.sofa.jraft.rhea.client.failover.FailoverClosure;
@@ -80,7 +81,8 @@ public class DTGMetadataRpcClient {
     public DTGCluster getClusterInfo(final long clusterId) {
         final CompletableFuture<DTGCluster> future = new CompletableFuture<>();
         internalGetClusterInfo(clusterId, future, this.failoverRetries, null);
-        return FutureHelper.get(future);
+        DTGCluster cluster = FutureHelper.get(future);
+        return cluster;
     }
 
     private void internalGetClusterInfo(final long clusterId, final CompletableFuture<DTGCluster> future,
@@ -178,6 +180,22 @@ public class DTGMetadataRpcClient {
         final CreateRegionIdRequest request = new CreateRegionIdRequest();
         request.setClusterId(clusterId);
         request.setEndpoint(endpoint);
+        this.pdRpcService.callPdServerWithRpc(request, closure, lastCause);
+    }
+
+    public void createRegion(final long clusterId, final byte type, final long maxId){
+        final CompletableFuture future = new CompletableFuture();
+        internalCreateRegion(clusterId, type, maxId, future, this.failoverRetries, null);
+    }
+
+    private void internalCreateRegion(final long clusterId, final byte type, final long maxId, final CompletableFuture future, final int retriesLeft, final Errors lastCause){
+        final RetryRunner retryRunner = retryCause -> internalCreateRegion(clusterId, type, maxId, future,
+                retriesLeft - 1, retryCause);
+        final FailoverClosure<Long> closure = new FailoverClosureImpl<>(future, retriesLeft, retryRunner);
+        final CreateRegionRequest request = new CreateRegionRequest();
+        request.setClusterId(clusterId);
+        request.setIdType(type);
+        request.setMaxIdNeed(maxId);
         this.pdRpcService.callPdServerWithRpc(request, closure, lastCause);
     }
 }

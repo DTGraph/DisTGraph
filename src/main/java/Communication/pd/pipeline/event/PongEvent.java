@@ -17,17 +17,17 @@
 package Communication.pd.pipeline.event;
 
 
+import Communication.DTGInstruction;
 import Communication.util.pipeline.event.DTGOutboundMessageEvent;
-import com.alipay.sofa.jraft.rhea.metadata.Instruction;
 
 import java.util.List;
 
 /**
  * @author jiachun.fjc
  */
-public class PongEvent extends DTGOutboundMessageEvent<List<Instruction>> {
+public class PongEvent extends DTGOutboundMessageEvent<List<DTGInstruction>> {
 
-    public PongEvent(long invokeId, List<Instruction> message) {
+    public PongEvent(long invokeId, List<DTGInstruction> message) {
         super(invokeId, message);
     }
 }

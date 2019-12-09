@@ -35,9 +35,21 @@ public class DTGCluster implements Copiable<DTGCluster>, Serializable {
     private long              clusterId;
     private List<DTGStore>    stores;
 
+    private long              nodeIdTopRestrict;
+    private long              relationIdTopRestrict;
+
     public DTGCluster(long clusterId, List<DTGStore> stores) {
         this.clusterId = clusterId;
         this.stores = stores;
+        this.nodeIdTopRestrict = 0;
+        this.relationIdTopRestrict = 0;
+    }
+
+    public DTGCluster(long clusterId, List<DTGStore> stores, long nodeIdTopRestrict, long relationIdTopRestrict) {
+        this.clusterId = clusterId;
+        this.stores = stores;
+        this.nodeIdTopRestrict = nodeIdTopRestrict;
+        this.relationIdTopRestrict = relationIdTopRestrict;
     }
 
     public long getClusterId() {
@@ -56,6 +68,22 @@ public class DTGCluster implements Copiable<DTGCluster>, Serializable {
         this.stores = stores;
     }
 
+    public long getNodeIdTopRestrict() {
+        return nodeIdTopRestrict;
+    }
+
+    public void setNodeIdTopRestrict(long nodeIdTopRestrict) {
+        this.nodeIdTopRestrict = nodeIdTopRestrict;
+    }
+
+    public void setRelationIdTopRestrict(long relationIdTopRestrict) {
+        this.relationIdTopRestrict = relationIdTopRestrict;
+    }
+
+    public long getRelationIdTopRestrict() {
+        return relationIdTopRestrict;
+    }
+
     @Override
     public DTGCluster copy() {
         List<DTGStore> stores = null;
@@ -65,7 +93,7 @@ public class DTGCluster implements Copiable<DTGCluster>, Serializable {
                 stores.add(store.copy());
             }
         }
-        return new DTGCluster(this.clusterId, stores);
+        return new DTGCluster(this.clusterId, stores, this.nodeIdTopRestrict, this.relationIdTopRestrict);
     }
 
     @Override

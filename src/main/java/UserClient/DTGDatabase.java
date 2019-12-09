@@ -63,7 +63,7 @@ public class DTGDatabase {
     public synchronized boolean init(String ip, int port, String path){
         LOG.info("build DTGDatabaseClient ...");
         this.store= new DTGSaveStore();
-        DTGStoreOptions opts = defaultClusterDTGStoreOptions(ip, port, path);
+        DTGStoreOptions opts = defaultClientDTGStoreOptions(ip, port, path);
         opts.getPlacementDriverOptions().setLocalClient(true);
         opts.getPlacementDriverOptions().setRemotePd(false);
         store.init(opts);

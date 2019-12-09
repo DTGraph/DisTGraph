@@ -107,6 +107,14 @@ public interface DTGMetadataStore {
 
     Map<Long /* storeId */, Endpoint> unsafeGetStoreIdsByEndpoints(final long clusterId, final List<Endpoint> endpoints);
 
+    long getNewRegionNodeStartId(final long clusterId);
+
+    long getNewRegionRelationStartId(final long clusterId);
+
+    long updateRegionNodeStartId(final long clusterId);
+
+    long updateRegionRelationStartId(final long clusterId);
+
     /**
      * Clear the cache.
      */

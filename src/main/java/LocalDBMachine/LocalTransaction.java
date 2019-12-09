@@ -3,7 +3,7 @@ package LocalDBMachine;
 import DBExceptions.EntityEntryException;
 import DBExceptions.RegionStoreException;
 import DBExceptions.TypeDoesnotExistException;
-import Element.DTGOpreration;
+import Element.DTGOperation;
 import Element.EntityEntry;
 import LocalDBMachine.LocalTx.TransactionThreadLock;
 import Region.DTGRegion;
@@ -12,9 +12,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
-import tool.RangeTool;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +34,7 @@ public class LocalTransaction extends Thread {
     private Transaction transaction;
     private String txId;
     private Boolean couldCommit;
-    private DTGOpreration op;
+    private DTGOperation op;
     private Map<Integer, Object> resultMap;
     private TransactionThreadLock lock;
     private DTGRegion region;
@@ -45,7 +43,7 @@ public class LocalTransaction extends Thread {
     private int[] actionType;// 0:skip, 1:add node, 2:remove node, 3:add relation, 4:remove relation
     private long[] actionId;
 
-    public LocalTransaction(GraphDatabaseService db, DTGOpreration op, Map<Integer, Object> res, TransactionThreadLock lock, DTGRegion region){
+    public LocalTransaction(GraphDatabaseService db, DTGOperation op, Map<Integer, Object> res, TransactionThreadLock lock, DTGRegion region){
         this.db = db;
         this.txId = op.getTxId();
         couldCommit = false;
@@ -69,17 +67,17 @@ public class LocalTransaction extends Thread {
             }
             synchronized (lock){
                 if(couldCommit == false){
-                    System.out.println("aaaaaaaa" + lock.getTxId());
+                    //System.out.println("aaaaaaaa" + lock.getTxId());
                     lock.wait();
                     couldCommit = true;
-                    System.out.println("Start commit in thread");
+                    //System.out.println("Start commit in thread");
                     if(lock.isShouldCommit()){
                         commit();
                     }
                     else {
                         rollback();
                     }
-                    System.out.println("end commit in thread");
+                    //System.out.println("end commit in thread");
                 }
             }
             synchronized (lock.getCommitLock()){
@@ -202,7 +200,7 @@ public class LocalTransaction extends Thread {
     }
 
     public void commit() throws TypeDoesnotExistException {
-        System.out.println("commit");
+        //System.out.println("commit");
         for(int i = 0; i < op.getEntityEntries().size(); i++){
             switch (actionType[i]){
                 case 0:break;
@@ -232,7 +230,7 @@ public class LocalTransaction extends Thread {
     }
 
     public void rollback(){
-        System.out.println("rollback");
+        //System.out.println("rollback");
         this.region.removeNode(nodeTransactionAdd);
         this.region.removeRelation(relationTransactionAdd);
         transaction.failure();
@@ -241,7 +239,7 @@ public class LocalTransaction extends Thread {
 
     public void getTransaction() throws EntityEntryException, RegionStoreException, TypeDoesnotExistException{
         Map<Integer, Object> tempMap = new HashMap<>();
-        List<EntityEntry> Entries = op.getEntityEntries();
+        List<EntityEntry> Entries = op.getEntityEntries();//System.out.println("Entries size = " + Entries.size());
         int i = 0;
         for(EntityEntry entityEntry : Entries){
             switch (entityEntry.getType()){
@@ -251,7 +249,7 @@ public class LocalTransaction extends Thread {
                             if(entityEntry.getKey() == null){
                                 if(entityEntry.getId() < 0)throw new EntityEntryException(entityEntry);
                                 Node node = addNode(entityEntry.getId(), i);
-                                tempMap.put(entityEntry.getTransactionNum(), node);
+                                tempMap.put(entityEntry.getTransactionNum(), node);//System.out.println("new node id = " + entityEntry.getId());
                                 //resultMap.put(entityEntry.getTransactionNum(), node);
                                 break;
                             }
@@ -431,6 +429,6 @@ public class LocalTransaction extends Thread {
             }
             i++;
         }
-        System.out.println("success transaction operation");
+        //System.out.println("success transaction operation");
     }
 }

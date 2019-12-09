@@ -16,7 +16,7 @@
  */
 package LocalDBMachine;
 
-import Element.DTGOpreration;
+import Element.DTGOperation;
 import Element.OperationName;
 import com.alipay.sofa.jraft.Closure;
 import com.alipay.sofa.jraft.Iterator;
@@ -30,12 +30,10 @@ import com.alipay.sofa.jraft.rhea.errors.StoreCodecException;
 import com.alipay.sofa.jraft.rhea.metrics.KVMetrics;
 import com.alipay.sofa.jraft.rhea.serialization.Serializer;
 import com.alipay.sofa.jraft.rhea.serialization.Serializers;
-import com.alipay.sofa.jraft.rhea.storage.*;
 import com.alipay.sofa.jraft.rhea.util.StackTraceUtil;
 import com.alipay.sofa.jraft.rhea.util.ThrowUtil;
 import com.alipay.sofa.jraft.storage.snapshot.SnapshotReader;
 import com.alipay.sofa.jraft.storage.snapshot.SnapshotWriter;
-import com.alipay.sofa.jraft.util.BytesUtil;
 import com.codahale.metrics.Histogram;
 import com.codahale.metrics.Meter;
 import org.slf4j.Logger;
@@ -45,9 +43,7 @@ import raft.EntityStoreClosure;
 import storage.DTGStoreEngine;
 
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import Region.DTGRegion;
@@ -94,7 +90,7 @@ public class DTGStateMachine extends StateMachineAdapter {
         int applied = 0;
         try{
             while (it.hasNext()){
-                DTGOpreration op;
+                DTGOperation op;
                 EntityEntryClosureAdapter done = (EntityEntryClosureAdapter)it.done();
                 if (done != null) {
                     op = done.getOperation();
@@ -102,9 +98,9 @@ public class DTGStateMachine extends StateMachineAdapter {
                     final ByteBuffer buf = it.getData();
                     try {
                         if (buf.hasArray()) {
-                            op = this.serializer.readObject(buf.array(), DTGOpreration.class);
+                            op = this.serializer.readObject(buf.array(), DTGOperation.class);
                         } else {
-                            op = this.serializer.readObject(buf, DTGOpreration.class);
+                            op = this.serializer.readObject(buf, DTGOperation.class);
                         }
                     } catch (final Throwable t) {
                         throw new StoreCodecException("Decode operation error", t);
@@ -121,7 +117,7 @@ public class DTGStateMachine extends StateMachineAdapter {
                         break;
                     }
                     case OperationName.ADDREGION:{
-
+                        doAddRegion(op, done);
                     }
                     case OperationName.MERGE:{
                         break;
@@ -146,16 +142,16 @@ public class DTGStateMachine extends StateMachineAdapter {
         }
     }
 
-    private void doAddRegion(final DTGOpreration opreration, final EntityEntryClosureAdapter closure){
-        try {
-            this.storeEngine.doAddRegion(opreration.getRegionId(),opreration.getNewRegionId()
-                    , opreration.getStartNodeId(), opreration.getStartRelationId());
+    private void doAddRegion(final DTGOperation operation, final EntityEntryClosureAdapter closure){
+        try {System.out.println("add region");
+            this.storeEngine.doAddRegion(operation.getRegionId(),operation.getNewRegionId()
+                    , operation.getStartNodeId(), operation.getStartRelationId(), operation.getStartTempProId());
             if(closure != null){
                 closure.setData(Boolean.TRUE);
                 closure.run(Status.OK());
             }
         }catch (final Throwable t) {
-            LOG.error("Fail to split, fullregionId={}, newRegionId={}.", opreration.getRegionId(), opreration.getNewRegionId());
+            LOG.error("Fail to split, fullregionId={}, newRegionId={}.", operation.getRegionId(), operation.getNewRegionId());
             setCriticalError(closure, t);
         }
 

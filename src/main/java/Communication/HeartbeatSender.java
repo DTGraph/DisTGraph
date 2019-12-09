@@ -63,19 +63,19 @@ import java.util.concurrent.TimeUnit;
  */
 public class HeartbeatSender implements Lifecycle<HeartbeatOptions> {
 
-    private static final Logger         LOG = LoggerFactory.getLogger(HeartbeatSender.class);
+    private static final Logger            LOG = LoggerFactory.getLogger(HeartbeatSender.class);
 
     private final DTGStoreEngine           storeEngine;
     private final DTGPlacementDriverClient pdClient;
-    private final RpcClient             rpcClient;
+    private final RpcClient                rpcClient;
 
-    private StatsCollector statsCollector;
-    private DTGInstructionProcessor instructionProcessor;
-    private int                         heartbeatRpcTimeoutMillis;
-    private ThreadPoolExecutor          heartbeatRpcCallbackExecutor;
-    private HashedWheelTimer            heartbeatTimer;
+    private StatsCollector                 statsCollector;
+    private DTGInstructionProcessor        instructionProcessor;
+    private int                            heartbeatRpcTimeoutMillis;
+    private ThreadPoolExecutor             heartbeatRpcCallbackExecutor;
+    private HashedWheelTimer               heartbeatTimer;
 
-    private boolean                     started;
+    private boolean                        started;
 
     public HeartbeatSender(DTGStoreEngine storeEngine) {
         this.storeEngine = storeEngine;
@@ -138,7 +138,7 @@ public class HeartbeatSender implements Lifecycle<HeartbeatOptions> {
     }
 
     private void sendStoreHeartbeat(final long nextDelay, final boolean forceRefreshLeader, final long lastTime) {
-        final long now = System.currentTimeMillis();System.out.println("send store heartbeat");
+        final long now = System.currentTimeMillis();//System.out.println("send store heartbeat");
         final StoreHeartbeatRequest request = new StoreHeartbeatRequest();
         request.setClusterId(this.storeEngine.getClusterId());
         final TimeInterval timeInterval = new TimeInterval(lastTime, now);
@@ -202,7 +202,7 @@ public class HeartbeatSender implements Lifecycle<HeartbeatOptions> {
             }
         };
         final Endpoint endpoint = this.pdClient.getPdLeader(forceRefreshLeader, this.heartbeatRpcTimeoutMillis);
-        callAsyncWithRpc(endpoint, request, closure);System.out.println("send region heartbeat");
+        callAsyncWithRpc(endpoint, request, closure);//System.out.println("send region heartbeat");
     }
 
     private <V> void callAsyncWithRpc(final Endpoint endpoint, final BaseRequest request,

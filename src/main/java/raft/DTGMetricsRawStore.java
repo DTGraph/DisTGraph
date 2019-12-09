@@ -1,17 +1,13 @@
 package raft;
 
-import Element.DTGOpreration;
-import Element.EntityEntry;
+import Element.DTGOperation;
 import Element.OperationName;
 import com.alipay.sofa.jraft.rhea.metrics.KVMetrics;
-import com.alipay.sofa.jraft.rhea.storage.MetricsKVClosureAdapter;
 import scala.collection.Iterator;
 
-import java.util.List;
 import com.codahale.metrics.Timer;
 
 import static com.alipay.sofa.jraft.rhea.metrics.KVMetricNames.RPC_REQUEST_HANDLE_TIMER;
-import static com.alipay.sofa.jraft.rhea.metrics.KVMetricNames.TRANSACTIONOP;
 
 /**
  * @author :jinkai
@@ -43,13 +39,13 @@ public class DTGMetricsRawStore implements DTGRawStore {
     }
 
     @Override
-    public void ApplyEntityEntries(DTGOpreration op, EntityStoreClosure closure) {
+    public void ApplyEntityEntries(DTGOperation op, EntityStoreClosure closure) {
         final EntityStoreClosure c = metricsAdapter(closure, OperationName.TRANSACTIONOP, op.getSize());
         this.rawStore.ApplyEntityEntries(op, c);
     }
 
     @Override
-    public void readOnlyEntityEntries(DTGOpreration op, EntityStoreClosure closure) {
+    public void readOnlyEntityEntries(DTGOperation op, EntityStoreClosure closure) {
         final EntityStoreClosure c = metricsAdapter(closure, OperationName.READONLY, 0);
         this.rawStore.readOnlyEntityEntries(op, c);
     }

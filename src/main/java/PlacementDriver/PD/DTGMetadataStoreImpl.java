@@ -29,11 +29,13 @@ import com.alipay.sofa.jraft.rhea.util.*;
 import com.alipay.sofa.jraft.util.Bits;
 import com.alipay.sofa.jraft.util.BytesUtil;
 import com.alipay.sofa.jraft.util.Endpoint;
+import config.DefaultOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import storage.DTGCluster;
 import storage.DTGStore;
 import Region.DTGRegion;
+import tool.ObjectAndByte;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -75,7 +77,10 @@ public class DTGMetadataStoreImpl implements DTGMetadataStore {
             final DTGStore store = this.serializer.readObject(storeBytes, DTGStore.class);
             stores.add(store);
         }
-        return new DTGCluster(clusterId, stores);
+        long maxNodeId = getNewRegionNodeStartId(clusterId);
+        long maxRelationId = getNewRegionRelationStartId(clusterId);
+        DTGCluster cluster = new DTGCluster(clusterId, stores, maxNodeId, maxRelationId);
+        return cluster;
     }
 
     @Override
@@ -131,9 +136,30 @@ public class DTGMetadataStoreImpl implements DTGMetadataStore {
 
     @Override
     public CompletableFuture<DTGStore> updateStoreInfo(final long clusterId, final DTGStore store) {
+        System.out.println("updateStoreInfo");
         final long storeId = store.getId();
         final String storeInfoKey = MetadataKeyHelper.getStoreInfoKey(clusterId, storeId);
         final byte[] bytes = this.serializer.writeObject(store);
+        final List<DTGRegion> regions = store.getRegions();
+        CompletableFuture.runAsync(()->{
+            long[] nextId = new long[2];
+            for(DTGRegion region : regions){
+                long[] nextRegionId = region.getNextRegionObjectStartId();
+                if(nextRegionId[0] > nextId[0]) nextId[0] = nextRegionId[0];
+                if(nextRegionId[1] > nextId[1]) nextId[1] = nextRegionId[1];
+                //System.out.println("node next id : " + nextId[0] + ", relation next id : " + nextId[1]);
+            }
+            //System.out.println("save!");
+            byte[] saveNextNodeId = this.rheaKVStore.bGet(clusterId + "NewRegionNodeStartId");
+            byte[] saveNextRelationId = this.rheaKVStore.bGet(clusterId + "NewRegionRelationStartId");
+            if(saveNextNodeId == null||nextId[0] > (long)ObjectAndByte.toObject(saveNextNodeId)){
+                this.rheaKVStore.bPut(clusterId + "NewRegionNodeStartId", ObjectAndByte.toByteArray(nextId[0]));
+            }
+            if(saveNextRelationId == null||nextId[1] > (long)ObjectAndByte.toObject(saveNextRelationId)){
+                this.rheaKVStore.bPut(clusterId + "NewRegionRelationStartId", ObjectAndByte.toByteArray(nextId[1]));
+            }
+        });
+
         final CompletableFuture<DTGStore> future = new CompletableFuture<>();
         this.rheaKVStore.getAndPut(storeInfoKey, bytes).whenComplete((prevBytes, getPutThrowable) -> {
             if (getPutThrowable == null) {
@@ -267,6 +293,47 @@ public class DTGMetadataStoreImpl implements DTGMetadataStore {
         }
         return ids;
     }
+
+    @Override
+    public synchronized long getNewRegionNodeStartId(final long clusterId) {
+        long newRegionNodeStartId;
+        final byte[] id = this.rheaKVStore.bGet(clusterId + "NewRegionNodeStartId");
+        if(id == null){
+            newRegionNodeStartId = 0;
+        }else {
+            newRegionNodeStartId = (long)ObjectAndByte.toObject(id);
+        }
+        return newRegionNodeStartId;
+    }
+
+    @Override
+    public long getNewRegionRelationStartId(final long clusterId) {
+        long NewRegionRelationStartId;
+        final byte[] id = this.rheaKVStore.bGet(clusterId + "NewRegionRelationStartId");
+        if(id == null){
+            NewRegionRelationStartId = 0;
+        }else {
+            NewRegionRelationStartId = (long)ObjectAndByte.toObject(id);
+        }
+        return NewRegionRelationStartId;
+    }
+
+    @Override
+    public synchronized long updateRegionNodeStartId(final long clusterId) {
+        long oldRegionNodeStartId = getNewRegionNodeStartId(clusterId);
+        long newRegionNodeStartId = oldRegionNodeStartId + DefaultOptions.DEFAULTREGIONNODESIZE;//System.out.println("update node max id" + newRegionNodeStartId);
+        this.rheaKVStore.bPut(clusterId + "NewRegionNodeStartId", ObjectAndByte.toByteArray(newRegionNodeStartId));
+        return oldRegionNodeStartId;
+    }
+
+    @Override
+    public synchronized long updateRegionRelationStartId(final long clusterId) {
+        long oldRegionRelationStartId = getNewRegionRelationStartId(clusterId);
+        long NewRegionRelationStartId = oldRegionRelationStartId  + DefaultOptions.DEFAULTREGIONRELATIONSIZE;//System.out.println("update relation max id" + NewRegionRelationStartId);
+        this.rheaKVStore.bPut(clusterId + "NewRegionRelationStartId", ObjectAndByte.toByteArray(NewRegionRelationStartId));
+        return oldRegionRelationStartId;
+    }
+
 
     @Override
     public void invalidCache() {
