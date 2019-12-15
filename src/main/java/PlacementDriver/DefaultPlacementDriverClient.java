@@ -50,6 +50,7 @@ import com.alipay.sofa.jraft.rpc.impl.AbstractBoltClientService;
 import com.alipay.sofa.jraft.util.Endpoint;
 import com.alipay.sofa.jraft.util.Requires;
 import com.sun.org.apache.regexp.internal.RE;
+import config.DefaultOptions;
 import options.DTGPlacementDriverOptions;
 import options.DTGStoreEngineOptions;
 import org.slf4j.Logger;
@@ -131,6 +132,7 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
         }
         final List<RegionRouteTableOptions> regionRouteTableOptionsList = opts.getRegionRouteTableOptionsList();
         if (regionRouteTableOptionsList != null) {
+            regionRouteTableOptionsList.add(0, DefaultOptions.DefaultRegionRouteTableOptions());
             final String initialServerList = opts.getInitialServerList();
             for (final RegionRouteTableOptions regionRouteTableOpts : regionRouteTableOptionsList) {
                 if (Strings.isBlank(regionRouteTableOpts.getInitialServerList())) {
@@ -582,7 +584,7 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
         return region;
     }
 
-    public void addOrUpdateRegion(final DTGRegion region, boolean needLock){
+    public void addOrUpdateRegion(final DTGRegion region, boolean needLock){//System.out.println("addOrUpdateRegion : " + region.getId());
         NodeRegionRouteTable.addOrUpdateRegion(region, needLock);
         RelationRegionRouteTable.addOrUpdateRegion(region, needLock);
         TemProRegionRouteTable.addOrUpdateRegion(region, needLock);

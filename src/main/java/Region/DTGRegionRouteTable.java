@@ -16,8 +16,6 @@
  */
 package Region;
 
-import Communication.DTGInstruction;
-import Communication.DTGMetadataRpcClient;
 import DBExceptions.IdNotExistException;
 import DBExceptions.TypeDoesnotExistException;
 import Element.EntityEntry;

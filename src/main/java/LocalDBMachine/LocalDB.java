@@ -163,7 +163,7 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
 
     public void commitTx(String id) throws InterruptedException {
         TransactionThreadLock lock = waitCommitMap.get(id);
-        System.out.println(id);
+        //System.out.println(id);
         synchronized (lock){
             lock.commit();
             lock.notify();

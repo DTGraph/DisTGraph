@@ -187,7 +187,7 @@ public class DTGRegionEngine implements Lifecycle<RegionEngineOptions> {
 
     public boolean transferLeadershipTo(final Endpoint endpoint) {
         final PeerId peerId = new PeerId(endpoint, 0);
-        final Status status = this.node.transferLeadershipTo(peerId);
+        final Status status = this.node.transferLeadershipTo(peerId);System.out.println("transfer leader to :" + endpoint.toString());
         final boolean isOk = status.isOk();
         if (isOk) {
             LOG.info("Transfer-leadership succeeded: [{} --> {}].", this.storeEngine.getSelfEndpoint(), endpoint);

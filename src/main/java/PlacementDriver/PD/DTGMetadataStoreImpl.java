@@ -56,6 +56,9 @@ public class DTGMetadataStoreImpl implements DTGMetadataStore {
     private final Serializer                          serializer           = Serializers.getDefault();
     private final RheaKVStore                         rheaKVStore;
 
+    private boolean needUpdateDefaultRegionLeader = false;
+    private boolean needAddRegion = false;
+
     public DTGMetadataStoreImpl(RheaKVStore rheaKVStore) {
         this.rheaKVStore = rheaKVStore;
     }
@@ -136,7 +139,7 @@ public class DTGMetadataStoreImpl implements DTGMetadataStore {
 
     @Override
     public CompletableFuture<DTGStore> updateStoreInfo(final long clusterId, final DTGStore store) {
-        System.out.println("updateStoreInfo");
+        //System.out.println("updateStoreInfo");
         final long storeId = store.getId();
         final String storeInfoKey = MetadataKeyHelper.getStoreInfoKey(clusterId, storeId);
         final byte[] bytes = this.serializer.writeObject(store);
@@ -334,10 +337,95 @@ public class DTGMetadataStoreImpl implements DTGMetadataStore {
         return oldRegionRelationStartId;
     }
 
+    @Override
+    public List<Peer> getLazyPeers(long clusterId) {
+        return null;
+    }
+
+    @Override
+    public DTGStore[] findLazyWorkStores(long clusterId) {
+        int copyNum = Constants.REGION_COPY_NUMBER;
+        DTGStore[] lazyStores = new DTGStore[copyNum];
+        DTGCluster cluster = getClusterInfo(clusterId);
+
+        if (cluster == null) {
+            return lazyStores;
+        }
+
+        List<DTGStore> stores = cluster.getStores();
+
+        int lazyNum = -1;
+
+        if (stores == null && stores.size() < copyNum) {
+            return lazyStores;
+        }
+
+        for (int i = 0; i < copyNum; i++) {
+            DTGStore store = stores.get(i);System.out.println("store id = " + store.getId() + "region number = " + store.getRegions().size());
+            int j = 0;
+            if(store.getRegions().size() == 3){
+                int a = 1;
+            }
+            for (j = copyNum - 1; j >= 0; j--) {
+                if (lazyStores[j] != null && lazyStores[j].getRegions().size() > store.getRegions().size()) {
+                    lazyStores[j + 1] = lazyStores[j];
+                    continue;
+                }
+                if (lazyStores[j] != null && lazyStores[j].getRegions().size() <= store.getRegions().size()) {
+                    break;
+                }
+            }
+            lazyStores[j + 1] = store;
+        }
+        lazyNum = lazyStores[copyNum - 1].getRegions().size();
+
+        for (int i = copyNum; i < stores.size(); i++) {
+            DTGStore store = stores.get(i);System.out.println("store id = " + store.getId() + "region number = " + store.getRegions().size());
+            if (lazyNum > store.getRegions().size()) {
+                int j = 0;
+                for (j = copyNum - 1; j >= 0; j--) {
+                    if (lazyStores[j].getRegions().size() > store.getRegions().size()) {
+                        if (j == copyNum - 1) continue;
+                        lazyStores[j + 1] = lazyStores[j];
+                        continue;
+                    } else {
+                        break;
+                    }
+                }
+                if (j < copyNum - 1) {
+                    System.out.println("i + 1" + (j + 1));
+                    lazyStores[j + 1] = store;
+                }
+                lazyNum = lazyStores[copyNum - 1].getRegions().size();
+            }
+        }
+        return lazyStores;
+    }
+
 
     @Override
     public void invalidCache() {
         this.clusterStoreIdsCache.clear();
+    }
+
+    @Override
+    public synchronized void updateNeedUpdateDefaultRegionLeader(boolean update) {
+        this.needUpdateDefaultRegionLeader = update;
+    }
+
+    @Override
+    public boolean getNeedUpdateDefaultRegionLeader() {
+        return this.needUpdateDefaultRegionLeader;
+    }
+
+    @Override
+    public boolean getNeedAddRegion() {
+        return this.needAddRegion;
+    }
+
+    @Override
+    public void setNeedAddRegion(final boolean needOrNot) {
+        this.needAddRegion = needOrNot;
     }
 
     private Set<Long> getClusterIndex(final long clusterId) {

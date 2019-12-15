@@ -1,7 +1,5 @@
 package Element;
 
-import Communication.DTGInstruction;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -20,11 +18,13 @@ public class DTGOperation implements Serializable {
     private int size;
     private String txId;
 
-    private long regionId;
-    private long newRegionId;
-    private long startNodeId;
-    private long startRelationId;
-    private long startTempProId;
+    private byte[] OpData;
+
+//    private long regionId;
+//    private long newRegionId;
+//    private long startNodeId;
+//    private long startRelationId;
+//    private long startTempProId;
 
     public DTGOperation(List<EntityEntry> entityEntries, byte type){
         this.type = type;
@@ -59,43 +59,51 @@ public class DTGOperation implements Serializable {
         return txId;
     }
 
-    public void setStartRelationId(long startRelationId) {
-        this.startRelationId = startRelationId;
+    public byte[] getOpData() {
+        return OpData;
     }
 
-    public void setStartNodeId(long startNodeId) {
-        this.startNodeId = startNodeId;
+    public void setOpData(byte[] opData) {
+        OpData = opData;
     }
 
-    public void setRegionId(long regionId) {
-        this.regionId = regionId;
-    }
-
-    public long getStartRelationId() {
-        return startRelationId;
-    }
-
-    public long getStartNodeId() {
-        return startNodeId;
-    }
-
-    public long getRegionId() {
-        return regionId;
-    }
-
-    public void setNewRegionId(long newRegionId) {
-        this.newRegionId = newRegionId;
-    }
-
-    public long getNewRegionId() {
-        return newRegionId;
-    }
-
-    public void setStartTempProId(long startTempProId) {
-        this.startTempProId = startTempProId;
-    }
-
-    public long getStartTempProId() {
-        return startTempProId;
-    }
+    //    public void setStartRelationId(long startRelationId) {
+//        this.startRelationId = startRelationId;
+//    }
+//
+//    public void setStartNodeId(long startNodeId) {
+//        this.startNodeId = startNodeId;
+//    }
+//
+//    public void setRegionId(long regionId) {
+//        this.regionId = regionId;
+//    }
+//
+//    public long getStartRelationId() {
+//        return startRelationId;
+//    }
+//
+//    public long getStartNodeId() {
+//        return startNodeId;
+//    }
+//
+//    public long getRegionId() {
+//        return regionId;
+//    }
+//
+//    public void setNewRegionId(long newRegionId) {
+//        this.newRegionId = newRegionId;
+//    }
+//
+//    public long getNewRegionId() {
+//        return newRegionId;
+//    }
+//
+//    public void setStartTempProId(long startTempProId) {
+//        this.startTempProId = startTempProId;
+//    }
+//
+//    public long getStartTempProId() {
+//        return startTempProId;
+//    }
 }

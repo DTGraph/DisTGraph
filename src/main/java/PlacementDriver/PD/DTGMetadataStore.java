@@ -115,8 +115,20 @@ public interface DTGMetadataStore {
 
     long updateRegionRelationStartId(final long clusterId);
 
+    List<Peer> getLazyPeers(final long clusterId);
+
+    DTGStore[] findLazyWorkStores(final long clusterId);
+
     /**
      * Clear the cache.
      */
     void invalidCache();
+
+    void updateNeedUpdateDefaultRegionLeader(boolean update);
+
+    boolean getNeedUpdateDefaultRegionLeader();
+
+    boolean getNeedAddRegion();
+
+    void setNeedAddRegion(boolean needOrNot);
 }

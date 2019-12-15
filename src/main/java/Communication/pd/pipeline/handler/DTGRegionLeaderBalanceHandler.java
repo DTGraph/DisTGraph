@@ -16,7 +16,8 @@
  */
 package Communication.pd.pipeline.handler;
 
-import Communication.DTGInstruction;
+import Communication.instructions.AddRegionInfo;
+import Communication.instructions.DTGInstruction;
 import Communication.RequestAndResponse.DTGRegionHeartbeatRequest;
 import Communication.pd.DTGClusterStatsManager;
 import Communication.pd.pipeline.event.DTGRegionPingEvent;
@@ -25,6 +26,7 @@ import Communication.util.pipeline.DTGHandlerContext;
 import Communication.util.pipeline.DTGInboundHandlerAdapter;
 import PlacementDriver.PD.DTGMetadataStore;
 import com.alipay.sofa.jraft.rhea.metadata.*;
+import com.alipay.sofa.jraft.rhea.util.Constants;
 import com.alipay.sofa.jraft.rhea.util.Lists;
 import com.alipay.sofa.jraft.rhea.util.Pair;
 import com.alipay.sofa.jraft.util.Endpoint;
@@ -34,8 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import Region.DTGRegion;
 import Region.DTGRegionStats;
-import storage.DTGCluster;
+import storage.DTGStore;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -80,29 +83,45 @@ public class DTGRegionLeaderBalanceHandler extends DTGInboundHandlerAdapter<DTGR
 //        LOG.info("[Cluster: {}] model worker stores is: {}, it has {} leaders.", clusterId, modelWorkerStoreIds, modelWorkerLeaders);
 
         //System.out.println("need send instruction!!!!!!!!!!!!!!!!!!!!!!!!!");
+        DTGRegion defaultRegion = null;
 
         for(final Pair<DTGRegion, DTGRegionStats> pair : regionStatsList){
             final DTGRegion region = pair.getKey();
-            final List<Peer> peers = region.getPeers();
-            if (peers == null) {
-                continue;
+
+            if(region.getId() == Constants.DEFAULT_REGION_ID){
+                defaultRegion = region;
+                if(metadataStore.getNeedAddRegion()){
+                    addRegion(event, clusterId, defaultRegion);
+                    metadataStore.setNeedAddRegion(false);
+                    metadataStore.updateNeedUpdateDefaultRegionLeader(true);
+                }
             }
-            final List<Endpoint> endpoints = Lists.transform(peers, Peer::getEndpoint);
-            final Map<Long, Endpoint> storeIds = metadataStore.unsafeGetStoreIdsByEndpoints(clusterId, endpoints);
+
             if(region.getNodecount() == 0 && region.getRelationcount() == 0)continue;
             if(region.getMaxNodeId() >= maxNodeId - DefaultOptions.DEFAULTREGIONNODESIZE ||region.getMaxRelationId() >= maxRelationId - DefaultOptions.DEFAULTREGIONRELATIONSIZE){
                 System.out.println("region " + region.getId() + " is full! add new region!");
-                final DTGInstruction instruction = new DTGInstruction();
-                DTGInstruction.AddRegion add = new DTGInstruction.AddRegion();
-                add.setFullRegionId(region.getId());
-                add.setNewRegionId(metadataStore.createRegionId(clusterId));
-                add.setStartNodeId(metadataStore.updateRegionNodeStartId(clusterId));
-                add.setStartRelationId(metadataStore.updateRegionRelationStartId(clusterId));
-                add.setStartTempProId(DefaultOptions.DEFAULTSTARTTIME);
-                instruction.setAddRegion(add);
-                instruction.setRegion(region);
-                event.addInstruction(instruction);
-                //System.out.println("add instruction success");
+
+                if(defaultRegion == null){
+                    for(final Pair<DTGRegion, DTGRegionStats> pa : regionStatsList) {
+                        final DTGRegion re = pa.getKey();System.out.println("region id " + region.getId());
+                        if (re.getId() == Constants.DEFAULT_REGION_ID) {
+                            defaultRegion = re;
+                            break;
+                        }
+                    }
+                }
+
+                if(defaultRegion == null){
+                    metadataStore.setNeedAddRegion(true);
+                    continue;
+                }
+                else {
+                    addRegion(event, clusterId, defaultRegion);
+                    metadataStore.setNeedAddRegion(false);
+                    metadataStore.updateNeedUpdateDefaultRegionLeader(true);
+                }
+
+
             }
         }
 
@@ -193,5 +212,38 @@ public class DTGRegionLeaderBalanceHandler extends DTGInboundHandlerAdapter<DTGR
             return Long.compare(-s1.getAvailable(), -s2.getAvailable());
         });
         return min.getKey();
+    }
+
+    private void addRegion(DTGRegionPingEvent event, long clusterId, DTGRegion defaultRegion){
+        final DTGMetadataStore metadataStore = (DTGMetadataStore) event.getMetadataStore();
+        DTGStore[] lazyStores = metadataStore.findLazyWorkStores(clusterId);
+        DTGStore lazyStore = lazyStores[0];
+        final DTGInstruction.TransferLeader transferLeader = new DTGInstruction.TransferLeader();
+        //this.lazyStoreId = lazyStore.getId();
+        transferLeader.setMoveToStoreId(lazyStore.getId());
+        transferLeader.setMoveToEndpoint(lazyStore.getEndpoint());
+
+        long newRgionId = metadataStore.createRegionId(clusterId);
+
+        List<Peer> peers = new ArrayList<>();
+        for(DTGStore store : lazyStores){
+            Peer peer = new Peer(newRgionId, store.getId(), store.getEndpoint());
+            peers.add(peer);//System.out.println("add peer :" + peer.toString());
+        }
+
+        final DTGInstruction instruction = new DTGInstruction();
+        AddRegionInfo add = new AddRegionInfo();
+        add.setFullRegionId( defaultRegion.getId());
+        add.setNewRegionId(newRgionId);
+        add.setStartNodeId(metadataStore.updateRegionNodeStartId(clusterId));
+        add.setStartRelationId(metadataStore.updateRegionRelationStartId(clusterId));
+        add.setStartTempProId(DefaultOptions.DEFAULTSTARTTIME);
+        add.setPeers(peers);
+        instruction.setAddRegion(add);
+        instruction.setRegion(defaultRegion);
+        instruction.setTransferLeader(transferLeader);
+        event.addInstruction(instruction);
+        metadataStore.updateNeedUpdateDefaultRegionLeader(true);
+        System.out.println("add instruction success : " + newRgionId);
     }
 }

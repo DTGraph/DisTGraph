@@ -16,7 +16,8 @@
  */
 package PlacementDriver.PD;
 
-import Communication.DTGInstruction;
+import Communication.instructions.AddRegionInfo;
+import Communication.instructions.DTGInstruction;
 import com.alipay.sofa.jraft.Status;
 import com.alipay.sofa.jraft.rhea.util.StackTraceUtil;
 import com.alipay.sofa.jraft.util.Endpoint;
@@ -104,7 +105,8 @@ public class DTGInstructionProcessor {
 
     private boolean processAddRegion(final DTGInstruction instruction){
         try{System.out.println("prepare add region...");
-            final DTGInstruction.AddRegion newRegionInfo = instruction.getAddRegion();
+            final AddRegionInfo newRegionInfo = instruction.getAddRegion();
+            if(newRegionInfo == null)return false;
             final Long newRegionId = newRegionInfo.getNewRegionId();
             if (newRegionId == null) {
                 LOG.error("RangeSplit#newRegionId must not be null, {}.", instruction);
@@ -116,8 +118,9 @@ public class DTGInstructionProcessor {
                 return false;
             }
             final CompletableFuture<Status> future = new CompletableFuture<>();
-            this.storeEngine.addRegion(newRegionInfo.getFullRegionId(), newRegionInfo.getNewRegionId(),
-                    newRegionInfo.getStartNodeId(), newRegionInfo.getStartRelationId(), newRegionInfo.getStartTempProId(), new BaseStoreClosure() {
+//            this.storeEngine.addRegion(newRegionInfo.getFullRegionId(), newRegionInfo.getNewRegionId(), newRegionInfo.getPeers(),
+//                    newRegionInfo.getStartNodeId(), newRegionInfo.getStartRelationId(), newRegionInfo.getStartTempProId(), new BaseStoreClosure() {
+            this.storeEngine.addRegion(newRegionInfo, new BaseStoreClosure() {
                         @Override
                         public void run(Status status) {
                             future.complete(status);

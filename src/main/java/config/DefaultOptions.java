@@ -6,10 +6,12 @@ import com.alipay.sofa.jraft.rhea.options.configured.MultiRegionRouteTableOption
 import com.alipay.sofa.jraft.rhea.options.configured.RocksDBOptionsConfigured;
 import com.alipay.sofa.jraft.rhea.options.configured.RpcOptionsConfigured;
 import com.alipay.sofa.jraft.rhea.storage.StorageType;
+import com.alipay.sofa.jraft.rhea.util.Constants;
 import com.alipay.sofa.jraft.rhea.util.Lists;
 import com.alipay.sofa.jraft.util.Endpoint;
 import options.*;
 import com.alipay.sofa.jraft.rhea.pd.options.PlacementDriverServerOptions;
+import org.neo4j.unsafe.impl.batchimport.Configuration;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,22 +26,22 @@ import java.util.List;
  */
 
 public class DefaultOptions {
-    private static final int    TIMEOUTMS                   =  2000;
-    private static final int    MAXRETRY                    =  5;
-    private static final String DB_PATH                     = "DTG_DB" + File.separator;
-    private static final String RAFT_DATA_PATH              = "raft_data" + File.separator;
-    private static final String ALL_NODE_ADDRESSES          = "127.0.0.1:8184,127.0.0.1:8185,127.0.0.1:8186";
-    private static final String CLUSTER_NAME                = "DTG_DEFAULT";
-    private static final String PDGROUPID                   = "METADATA_SAVE";
-    private static final String INITIALSERVERLIST           = "127.0.0.1:8184,127.0.0.1:8185,127.0.0.1:8186" ;
-    private static final String INITIALPDSERVERLIST         = "127.0.0.1:8181,127.0.0.1:8182,127.0.0.1:8183";
-    private static final int    MINIDBATCHSIZE              = 50;
-    private static final int    CLUSTERID                   = 1;
-    private static final int    PDCLUSTERID                 = 0;
-    private static final int    GRABSIZE                    = 50000;
-    private static final int    BATCHSIZE                   = 100;
-    private static final int    PIPELINECOREPOOLSIZE        = 4;
-    private static final int    PIPELINEMAXMUMPOOLSIZE      = 4;
+    public static final int    TIMEOUTMS                   =  2000;
+    public static final int    MAXRETRY                    =  5;
+    public static final String DB_PATH                     = "DTG_DB" + File.separator;
+    public static final String RAFT_DATA_PATH              = "raft_data" + File.separator;
+    public static final String ALL_NODE_ADDRESSES          = "127.0.0.1:8184,127.0.0.1:8185,127.0.0.1:8186,127.0.0.1:8187";
+    public static final String CLUSTER_NAME                = "DTG_DEFAULT";
+    public static final String PDGROUPID                   = "METADATA_SAVE";
+    public static final String INITIALSERVERLIST           = "127.0.0.1:8184,127.0.0.1:8185,127.0.0.1:8186,127.0.0.1:8187" ;
+    public static final String INITIALPDSERVERLIST         = "127.0.0.1:8181,127.0.0.1:8182,127.0.0.1:8183";
+    public static final int    MINIDBATCHSIZE              = 50;
+    public static final int    CLUSTERID                   = 1;
+    public static final int    PDCLUSTERID                 = 0;
+    public static final int    GRABSIZE                    = 50000;
+    public static final int    BATCHSIZE                   = 100;
+    public static final int    PIPELINECOREPOOLSIZE        = 4;
+    public static final int    PIPELINEMAXMUMPOOLSIZE      = 4;
     public static final int     DEFAULTREGIONNODESIZE       = 4;
     public static final int     DEFAULTREGIONRELATIONSIZE   = 4;
     public static final int     DEFAULTSTARTTIME            = 0;
@@ -64,11 +66,23 @@ public class DefaultOptions {
         opts.setPdRpcOptions(defaultRpcOptions());
         final List<RegionRouteTableOptions> regionRouteTableOptionsList = MultiRegionRouteTableOptionsConfigured
                 .newConfigured() //
-                .withInitialServerList(1L /* default id */, ALL_NODE_ADDRESSES) //
+                .withInitialServerList(1L /* default id */, INITIALSERVERLIST) //
                 .withInitNodeStartId(1L, 0)
                 .withInitRelationStartId(1L, 0)
                 .config();
         opts.setRegionRouteTableOptionsList(regionRouteTableOptionsList);
+        opts.setInitialPdServerList(INITIALPDSERVERLIST);
+        opts.setMinIdBatchSize(MINIDBATCHSIZE);
+        opts.setPdGroupId(PDGROUPID + "-" + PDCLUSTERID);
+        return opts;
+    }
+
+    public static DTGPlacementDriverOptions defaultDTGPlacementDriverOptionsWithoutRegion(){
+        DTGPlacementDriverOptions opts = new DTGPlacementDriverOptions();
+        final List<RegionRouteTableOptions> regionRouteTableOptionsList = new ArrayList<>();
+        opts.setRegionRouteTableOptionsList(regionRouteTableOptionsList);
+        opts.setCliOptions(defaultCliOptios());
+        opts.setPdRpcOptions(defaultRpcOptions());
         opts.setInitialPdServerList(INITIALPDSERVERLIST);
         opts.setMinIdBatchSize(MINIDBATCHSIZE);
         opts.setPdGroupId(PDGROUPID + "-" + PDCLUSTERID);
@@ -100,7 +114,7 @@ public class DefaultOptions {
         DTGStoreOptions opts = defaultDTGStoreOptions();
         opts.setClusterName(CLUSTER_NAME);
         opts.setClusterId(CLUSTERID);
-        opts.setInitialServerList(ALL_NODE_ADDRESSES);
+        opts.setInitialServerList(INITIALSERVERLIST);
         opts.setStoreEngineOptions(defaultClusterStoreEngineOptions(ip, port, path));
         opts.getPlacementDriverOptions().setLocalClient(false);
         opts.setRemotePd(false);
@@ -222,6 +236,15 @@ public class DefaultOptions {
         opts.setRheaKVStoreOptions(defaultRheaKVStoreOptions(ip, port, path));
         opts.setPipelineCorePoolSize(PIPELINECOREPOOLSIZE);
         opts.setPipelineMaximumPoolSize(PIPELINEMAXMUMPOOLSIZE);
+        return opts;
+    }
+
+    public static RegionRouteTableOptions DefaultRegionRouteTableOptions(){
+        RegionRouteTableOptions opts = new RegionRouteTableOptions();
+        opts.setRegionId(Constants.DEFAULT_REGION_ID);
+        opts.setInitialServerList(INITIALPDSERVERLIST);
+        opts.setInitNodeId( -2);
+        opts.setInitRelationId(-2);
         return opts;
     }
 

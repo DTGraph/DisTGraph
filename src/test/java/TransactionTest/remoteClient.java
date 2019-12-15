@@ -51,6 +51,38 @@ public class remoteClient {
             tx.start(null);
             tx.commit();
         }
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        try (DTGTransaction tx = db.CreateTransaction()){
+            db.addNode();
+            db.addNode();
+            db.addNode();
+            db.addNode();
+            tx.start(null);
+            tx.commit();
+        }
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        try (DTGTransaction tx = db.CreateTransaction()){
+            db.addNode();
+            db.addNode();
+            db.addNode();
+            db.addNode();
+            tx.start(null);
+            tx.commit();
+        }
+
+
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             db.shutdown();
         }));

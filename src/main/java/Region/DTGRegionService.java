@@ -72,20 +72,20 @@ public class DTGRegionService implements RegionService {
         response.setRegionId(getRegionId());
         response.setRegionEpoch(getRegionEpoch());
         Map<Integer, Object> resultMap = new HashMap<>();
-        try {System.out.println("run op... ：1  " +region.getId());
-            KVParameterRequires.requireSameEpoch(request, getRegionEpoch());System.out.println("run op... ：2  " + region.getId());
+        try {//System.out.println("run op... ：1  " +region.getId());
+            KVParameterRequires.requireSameEpoch(request, getRegionEpoch());//System.out.println("run op... ：2  " + region.getId());
             final DTGOperation op = KVParameterRequires
                     .requireNonNull(request.getDTGOpreration(), "put.DRGOperation");
             //System.out.println("run op... ：" + op.getTxId());
             final CompletableFuture<LocalTransaction> future = CompletableFuture.supplyAsync(() -> {
                 try {
                     TransactionThreadLock txLock = new TransactionThreadLock(op.getTxId());
-                    LocalTransaction tx = new LocalTransaction(localdb.getDb(), op, resultMap, txLock, region);System.out.println("run op... ：3  " + region.getId());
-                    tx.start();System.out.println("run op... ：4  " + region.getId());
+                    LocalTransaction tx = new LocalTransaction(localdb.getDb(), op, resultMap, txLock, region);//System.out.println("run op... ：3  " + region.getId());
+                    tx.start();//System.out.println("run op... ：4  " + region.getId());
                     synchronized (resultMap){
-                        resultMap.wait(FutureHelper.DEFAULT_TIMEOUT_MILLIS);System.out.println("run op... ：5  " + region.getId());
+                        resultMap.wait(FutureHelper.DEFAULT_TIMEOUT_MILLIS);//System.out.println("run op... ：5  " + region.getId());
                     }
-                    this.localdb.addToCommitMap(txLock, op.getTxId());System.out.println("run op... ：6  " + region.getId());
+                    this.localdb.addToCommitMap(txLock, op.getTxId());//System.out.println("run op... ：6  " + region.getId());
                     return tx;
                     //return new ExecuteTransactionOp().getTransaction(this.localdb.getDb(), op, resultMap);
 //                    return localdb.getTransaction(op, resultMap);
@@ -113,7 +113,7 @@ public class DTGRegionService implements RegionService {
                         System.out.println("error!" + region.getId());
                         setFailure(request, response, status, getError());
                     }
-                    System.out.println("response request" + region.getId());
+                    //System.out.println("response request" + region.getId());
                     closure.sendResponse(response);
                 }
             });
@@ -121,7 +121,7 @@ public class DTGRegionService implements RegionService {
             System.out.println("error!" + region.getId());
             LOG.error("Failed to handle: {}, {}.", request, StackTraceUtil.stackTrace(t));
             response.setValue(ObjectAndByte.toByteArray(resultMap));
-            response.setError(Errors.forException(t));System.out.println("error response request" + region.getId());
+            response.setError(Errors.forException(t));//System.out.println("error response request" + region.getId());
             closure.sendResponse(response);
         }
         //System.out.println("finish transaction request");

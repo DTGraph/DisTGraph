@@ -16,6 +16,7 @@
  */
 package LocalDBMachine;
 
+import Communication.instructions.AddRegionInfo;
 import Element.DTGOperation;
 import Element.OperationName;
 import com.alipay.sofa.jraft.Closure;
@@ -47,6 +48,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import Region.DTGRegion;
+import tool.ObjectAndByte;
 
 
 import static com.alipay.sofa.jraft.rhea.metrics.KVMetricNames.STATE_MACHINE_APPLY_QPS;
@@ -143,15 +145,15 @@ public class DTGStateMachine extends StateMachineAdapter {
     }
 
     private void doAddRegion(final DTGOperation operation, final EntityEntryClosureAdapter closure){
-        try {System.out.println("add region");
-            this.storeEngine.doAddRegion(operation.getRegionId(),operation.getNewRegionId()
-                    , operation.getStartNodeId(), operation.getStartRelationId(), operation.getStartTempProId());
+        AddRegionInfo addRegionInfo = (AddRegionInfo) ObjectAndByte.toObject(operation.getOpData());
+        try {//System.out.println("add region");
+            this.storeEngine.doAddRegion(addRegionInfo);
             if(closure != null){
                 closure.setData(Boolean.TRUE);
                 closure.run(Status.OK());
             }
         }catch (final Throwable t) {
-            LOG.error("Fail to split, fullregionId={}, newRegionId={}.", operation.getRegionId(), operation.getNewRegionId());
+            LOG.error("Fail to add, fullregionId={}, newRegionId={}.", addRegionInfo.getFullRegionId(), addRegionInfo.getNewRegionId());
             setCriticalError(closure, t);
         }
 

@@ -68,11 +68,11 @@
       <recent name="Communication.RequestAndResponse" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="TransactionTest" />
       <recent name="Communication" />
       <recent name="tool" />
       <recent name="com.alipay.sofa.jraft.rhea.pd.errors" />
       <recent name="LocalDBMachine" />
-      <recent name="TransactionTest" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\distribute\5\DisTGraph\src\main\resources\META-INF\services" />
@@ -94,7 +94,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.remoteClient">
+  <component name="RunManager" selected="Application.ClusterServer4">
     <configuration name="ClusterServer1" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="TransactionTest.ClusterServer1" />
       <module name="Dis-TGraph" />
@@ -134,6 +134,19 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="ClusterServer4" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="TransactionTest.ClusterServer4" />
+      <module name="Dis-TGraph" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="TransactionTest.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="pdServerAll" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="TransactionTest.pdServerAll" />
       <module name="Dis-TGraph" />
@@ -147,22 +160,9 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="remoteClient" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="TransactionTest.remoteClient" />
-      <module name="Dis-TGraph" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="TransactionTest.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.remoteClient" />
+        <item itemvalue="Application.ClusterServer4" />
         <item itemvalue="Application.ClusterServer3" />
         <item itemvalue="Application.ClusterServer2" />
         <item itemvalue="Application.ClusterServer1" />
@@ -184,7 +184,9 @@
       <workItem from="1572080980634" duration="43789000" />
       <workItem from="1573537029823" duration="2934000" />
       <workItem from="1573965927104" duration="328233000" />
-      <workItem from="1575596840303" duration="70643000" />
+      <workItem from="1575596840303" duration="113454000" />
+      <workItem from="1576139786882" duration="13536000" />
+      <workItem from="1576203422800" duration="22239000" />
     </task>
     <servers />
   </component>
@@ -224,7 +226,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/Region/DTGRegionRouteTable.java</url>
-          <line>165</line>
+          <line>163</line>
           <option name="timeStamp" value="32" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -284,7 +286,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/Communication/pd/pipeline/handler/DTGRegionLeaderBalanceHandler.java</url>
-          <line>73</line>
+          <line>76</line>
           <option name="timeStamp" value="113" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -294,7 +296,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/PlacementDriver/DTGPlacementDriverService.java</url>
-          <line>312</line>
+          <line>375</line>
           <option name="timeStamp" value="116" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -304,8 +306,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/Region/DTGRegionRouteTable.java</url>
-          <line>84</line>
+          <line>82</line>
           <option name="timeStamp" value="132" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/PlacementDriver/PD/DTGMetadataStoreImpl.java</url>
+          <line>366</line>
+          <option name="timeStamp" value="136" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

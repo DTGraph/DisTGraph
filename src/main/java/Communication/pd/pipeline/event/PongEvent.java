@@ -17,7 +17,7 @@
 package Communication.pd.pipeline.event;
 
 
-import Communication.DTGInstruction;
+import Communication.instructions.DTGInstruction;
 import Communication.util.pipeline.event.DTGOutboundMessageEvent;
 
 import java.util.List;

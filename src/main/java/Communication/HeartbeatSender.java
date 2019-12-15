@@ -17,6 +17,7 @@
 package Communication;
 
 import Communication.RequestAndResponse.DTGRegionHeartbeatRequest;
+import Communication.instructions.DTGInstruction;
 import PlacementDriver.DTGPlacementDriverClient;
 import PlacementDriver.DefaultPlacementDriverClient;
 import PlacementDriver.PD.DTGInstructionProcessor;

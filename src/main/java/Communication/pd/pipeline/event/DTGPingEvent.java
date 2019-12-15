@@ -16,7 +16,7 @@
  */
 package Communication.pd.pipeline.event;
 
-import Communication.DTGInstruction;
+import Communication.instructions.DTGInstruction;
 import Communication.util.pipeline.event.DTGInboundMessageEvent;
 import PlacementDriver.PD.DTGMetadataStore;
 import java.util.Collection;

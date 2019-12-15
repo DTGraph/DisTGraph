@@ -17,6 +17,7 @@
 package storage;
 
 import Communication.HeartbeatSender;
+import Communication.instructions.AddRegionInfo;
 import Element.DTGOperation;
 import Element.EntityEntry;
 import Element.OperationName;
@@ -44,6 +45,7 @@ import com.alipay.sofa.jraft.rpc.RaftRpcServerFactory;
 import com.alipay.sofa.jraft.util.*;
 import com.codahale.metrics.ScheduledReporter;
 import com.codahale.metrics.Slf4jReporter;
+import config.DefaultOptions;
 import options.DTGStoreEngineOptions;
 import options.LocalDBOption;
 import org.apache.commons.io.FileUtils;
@@ -52,6 +54,7 @@ import org.slf4j.LoggerFactory;
 import Region.*;
 import raft.EntityEntryClosureAdapter;
 import raft.EntityStoreClosure;
+import tool.ObjectAndByte;
 
 import java.io.File;
 import java.nio.ByteBuffer;
@@ -138,20 +141,33 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
             opts.setServerAddress(serverAddress);
         }
         final long metricsReportPeriod = opts.getMetricsReportPeriod();
+
         // init region options
         List<RegionEngineOptions> rOptsList = opts.getRegionEngineOptionsList();
+
+//        final RegionEngineOptions initOpts = new RegionEngineOptions();
+//        initOpts.setRegionId(Constants.DEFAULT_REGION_ID);
+//        initOpts.setInitialServerList(DefaultOptions.ALL_NODE_ADDRESSES);
+//        initOpts.setInitNodeId(-2);
+//        initOpts.setInitRelationId(-2);
+//        initOpts.setInitTempProId(-2);
+//        rOptsList.add(0,initOpts);
+        RegionEngineOptions rOpt = new RegionEngineOptions();
+        rOpt.setRegionId(Constants.DEFAULT_REGION_ID);
+        rOptsList.add(0, rOpt);
+
         if (rOptsList == null || rOptsList.isEmpty()) {
             // -1 region
-            final RegionEngineOptions rOpts = new RegionEngineOptions();
-            rOpts.setRegionId(Constants.DEFAULT_REGION_ID);
-            rOptsList = Lists.newArrayList();
-            rOptsList.add(rOpts);
+//            final RegionEngineOptions rOpts = new RegionEngineOptions();
+//            rOpts.setRegionId(Constants.DEFAULT_REGION_ID);
+//            rOptsList = Lists.newArrayList();
+//            rOptsList.add(rOpts);
             opts.setRegionEngineOptionsList(rOptsList);
         }
         final String clusterName = this.pdClient.getClusterName();
         for (final RegionEngineOptions rOpts : rOptsList) {
             rOpts.setRaftGroupId(JRaftHelper.getJRaftGroupId(clusterName, rOpts.getRegionId()));
-            System.out.println("group id is : " + JRaftHelper.getJRaftGroupId(clusterName, rOpts.getRegionId()));
+            //System.out.println("group id is : " + JRaftHelper.getJRaftGroupId(clusterName, rOpts.getRegionId()));
             rOpts.setServerAddress(serverAddress);
             rOpts.setInitialServerList(opts.getInitialServerList());
             if (rOpts.getNodeOptions() == null) {
@@ -672,7 +688,11 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
 //        return true;
 //    }
 
-    public void addRegion(final long fullRegionid, final long newRegionId, final long nodeIdStart, final long relationIdStart, final long tempProStart, final EntityStoreClosure closure){
+//    public void addRegion(final long fullRegionid, final long newRegionId, List<Peer> peers, final long nodeIdStart, final long relationIdStart, final long tempProStart, final EntityStoreClosure closure){
+    public void addRegion(final AddRegionInfo addRegionInfo, final EntityStoreClosure closure){
+        System.out.println("DTGStoreEngine\\addRegion\\   receive add region");
+        long newRegionId = addRegionInfo.getNewRegionId();
+        long fullRegionid = addRegionInfo.getFullRegionId();
         if (this.regionEngineTable.containsKey(newRegionId)) {
             closure.setError(Errors.CONFLICT_REGION_ID);
             closure.run(new Status(-1, "Conflict region id %d", newRegionId));
@@ -692,22 +712,40 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
             return;
         }
         final DTGOperation op = new DTGOperation(new ArrayList<EntityEntry>(), OperationName.ADDREGION);
-        op.setRegionId(fullRegionid);
-        op.setStartNodeId(nodeIdStart);
-        op.setStartRelationId(relationIdStart);
-        op.setNewRegionId(newRegionId);
-        op.setStartTempProId(tempProStart);
+        op.setOpData(ObjectAndByte.toByteArray(addRegionInfo));
+//        op.setRegionId(fullRegionid);
+//        op.setStartNodeId(nodeIdStart);
+//        op.setStartRelationId(relationIdStart);
+//        op.setNewRegionId(newRegionId);
+//        op.setStartTempProId(tempProStart);
         final Task task = new Task();
         task.setData(ByteBuffer.wrap(Serializers.getDefault().writeObject(op)));
         task.setDone(new EntityEntryClosureAdapter(closure, op));
         parentEngine.getNode().apply(task);
     }
 
-    public void doAddRegion(final long fullRegionid, final long newRegionId, final long nodeIdStart, final long relationIdStart, final long tempProStart){
-        Requires.requireNonNull(fullRegionid, "regionId");
-        Requires.requireNonNull(newRegionId, "newRegionId");//System.out.println("add new region : " + nodeIdStart + ", " + relationIdStart);
-        final DTGRegionEngine parent = getRegionEngine(fullRegionid);
-        final DTGRegion region = parent.getRegion().copyNull(newRegionId, nodeIdStart, relationIdStart,tempProStart);
+//    public void doAddRegion(final long fullRegionid, final long newRegionId, final long nodeIdStart, final long relationIdStart, final long tempProStart){
+    public void doAddRegion(AddRegionInfo addRegionInfo){
+        Requires.requireNonNull(addRegionInfo.getFullRegionId(), "regionId");
+        Requires.requireNonNull(addRegionInfo.getNewRegionId(), "newRegionId");
+        //System.out.println("add new region : " + nodeIdStart + ", " + relationIdStart);
+        List<Peer> peers = addRegionInfo.getPeers();
+        //System.out.println("add new region : " + addRegionInfo.getNewRegionId());
+        for(Peer peer : peers){
+            //System.out.println("self endpoint :" + this.endpoint.toString());
+            //System.out.println("peer endpoint :" + peer.getEndpoint().toString());
+            if(this.endpoint.toString().equals(peer.getEndpoint().toString())){
+                internalAddRegion(addRegionInfo);
+                break;
+            }
+        }
+    }
+
+    private void internalAddRegion(AddRegionInfo addRegionInfo){
+        long newRegionId = addRegionInfo.getNewRegionId();
+        final DTGRegionEngine parent = getRegionEngine(addRegionInfo.getFullRegionId());
+        final DTGRegion region = parent.getRegion().copyNull(newRegionId,
+                addRegionInfo.getStartNodeId(), addRegionInfo.getStartRelationId(),addRegionInfo.getStartTempProId());
         final RegionEngineOptions rOpts = parent.copyNullRegionOpts();
         region.setRegionEpoch(new RegionEpoch(-1, -1));
         rOpts.setRegionId(newRegionId);
@@ -754,7 +792,6 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
         this.pdClient.getDTGMetadataRpcClient().updateStoreInfo(clusterId, store);
 
         System.out.println("add region success, id = " + region.getId());
-
     }
 
     protected boolean initAllRegionEngine(final DTGStoreEngineOptions opts, final DTGStore store) {
@@ -773,16 +810,21 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
         }
         final Endpoint serverAddress = opts.getServerAddress();
         final List<RegionEngineOptions> rOptsList = opts.getRegionEngineOptionsList();
+//        RegionEngineOptions rOpt = new RegionEngineOptions();
+//        rOpt.setRegionId(Constants.DEFAULT_REGION_ID);
+//        rOptsList.add(0, rOpt);
         final List<DTGRegion> regionList = store.getRegions();
+        //System.out.println("rOptsList size = " + rOptsList.size() + "   , regionList size = " + regionList.size());
         Requires.requireTrue(rOptsList.size() == regionList.size());
 
         for (int i = 0; i < rOptsList.size(); i++) {
             final RegionEngineOptions rOpts = rOptsList.get(i);
-            final DTGRegion region = regionList.get(i);
+            final DTGRegion region = regionList.get(i);//System.out.println("OPTS REGION ID : " + region.getId());
             if (Strings.isBlank(rOpts.getRaftDataPath())) {
                 final String childPath = "raft_data_region_" + region.getId() + "_" + serverAddress.getPort();
                 rOpts.setRaftDataPath(Paths.get(baseRaftDataPath, childPath).toString());
             }
+
             Requires.requireNonNull(region.getRegionEpoch(), "regionEpoch");
             final DTGRegionEngine engine = new DTGRegionEngine(region, this);
             if (engine.init(rOpts)) {
@@ -793,6 +835,7 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
                 LOG.error("Fail to init [RegionEngine: {}].", region);
                 return false;
             }
+
         }
         return true;
     }
@@ -805,8 +848,6 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
                                            + "] has already been registered, can not register again!");
         }
     }
-
-
 
     @Override
     public String toString() {

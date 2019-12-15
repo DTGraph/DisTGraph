@@ -21,7 +21,8 @@ package PlacementDriver;
  * **/
 
 
-import Communication.DTGInstruction;
+import Communication.instructions.AddRegionInfo;
+import Communication.instructions.DTGInstruction;
 import Communication.RequestAndResponse.*;
 import Communication.pd.pipeline.event.DTGRegionPingEvent;
 import Communication.pd.pipeline.event.DTGStorePingEvent;
@@ -34,6 +35,7 @@ import PlacementDriver.IdManage.IdGenerator;
 import PlacementDriver.PD.DTGMetadataStore;
 import PlacementDriver.PD.DTGMetadataStoreImpl;
 import Region.DTGRegion;
+import Region.DTGRegionStats;
 import com.alipay.sofa.jraft.Lifecycle;
 import com.alipay.sofa.jraft.rhea.*;
 import com.alipay.sofa.jraft.rhea.client.RheaKVStore;
@@ -42,7 +44,8 @@ import com.alipay.sofa.jraft.rhea.errors.Errors;
 import com.alipay.sofa.jraft.rhea.metadata.Instruction;
 import com.alipay.sofa.jraft.rhea.metadata.Peer;
 import com.alipay.sofa.jraft.rhea.options.PlacementDriverServerOptions;
-import com.alipay.sofa.jraft.rhea.util.Lists;
+import com.alipay.sofa.jraft.rhea.util.Constants;
+import com.alipay.sofa.jraft.rhea.util.Pair;
 import com.alipay.sofa.jraft.rhea.util.StackTraceUtil;
 import com.alipay.sofa.jraft.rhea.util.concurrent.CallerRunsPolicyWithReport;
 import com.alipay.sofa.jraft.rhea.util.concurrent.NamedThreadFactory;
@@ -58,13 +61,10 @@ import org.slf4j.LoggerFactory;
 import storage.DTGCluster;
 import storage.DTGStore;
 
-import com.alipay.sofa.jraft.rhea.cmd.pd.GetRegionInfoByIdRequest;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -87,6 +87,8 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
     private static IdGenerator relationIdGenerator;
     private int idBatchSize;
     private List<DTGInstruction> instructionList;
+    private DTGStore lazyStore;
+    private int lazyStoreLeaderRegionNum = 99999;
 
 
     public DTGPlacementDriverService(RheaKVStore rheaKVStore) {
@@ -181,18 +183,79 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
             final DTGRegionPingEvent regionPingEvent = new DTGRegionPingEvent(request, this.metadataStore);
             DTGRegionPingEvent regionPingEvent1 = regionPingEvent;
             long storeId = request.getStoreId();
-            DTGStore store = this.metadataStore.getStoreInfo(clusterId, storeId);
-            DTGRegion initRegion = store.getRegions().get(0);
-            DTGInstruction instruction;
-            while (instructionList.size() > 0 && (instruction = instructionList.get(0)) != null){
-                DTGInstruction.AddRegion add = instruction.getAddRegion();
-                add.setFullRegionId(initRegion.getId());
-                instruction.setRegion(initRegion);
-                instruction.setStoreId(storeId);
-                regionPingEvent1.addInstruction(instruction);
-                instructionList.remove(0);
-                System.out.println("add instruction");
+
+            //DTGStore store = this.metadataStore.getStoreInfo(clusterId, storeId);
+            List<Pair<DTGRegion, DTGRegionStats>> pairList = request.getRegionStatsList();
+
+            if(lazyStore == null || pairList.size() < lazyStoreLeaderRegionNum){
+                lazyStore = this.metadataStore.getStoreInfo(clusterId, storeId);
+                lazyStoreLeaderRegionNum = pairList.size();
             }
+
+            if(lazyStore.getId() == storeId){
+                lazyStoreLeaderRegionNum = pairList.size();
+            }
+
+
+
+            for(Pair pair : pairList){
+                DTGRegion region = (DTGRegion) pair.getKey();
+                if(region.getId() == Constants.DEFAULT_REGION_ID){
+                    DTGInstruction instruction;
+                    if(instructionList.size() == 0 && this.metadataStore.getNeedUpdateDefaultRegionLeader()){
+                        DTGStore[] lazyStores = this.metadataStore.findLazyWorkStores(clusterId);
+                        DTGStore lazyStore = lazyStores[0];
+                        final DTGInstruction.TransferLeader transferLeader = new DTGInstruction.TransferLeader();
+                        //this.lazyStoreId = lazyStore.getId();
+                        transferLeader.setMoveToStoreId(lazyStore.getId());
+                        transferLeader.setMoveToEndpoint(lazyStore.getEndpoint());
+                        instruction = new DTGInstruction();
+                        instruction.setRegion(region);
+                        instruction.setTransferLeader(transferLeader);
+                        regionPingEvent1.addInstruction(instruction);
+                        this.metadataStore.updateNeedUpdateDefaultRegionLeader(false);
+                        //this.lazyStoreEndPoint = lazyStore.getEndpoint();
+                        System.out.println("transferLeader!");
+                        //if(lazyStore.getEndpoint() == null){System.out.println("null endpoint");}
+                    }
+                    while (instructionList.size() > 0 && (instruction = instructionList.get(0)) != null){
+                        AddRegionInfo add = instruction.getAddRegion();
+                        Peer lazyPeer = new Peer(add.getNewRegionId(), storeId, lazyStore.getEndpoint());
+                        List<Peer> peers = add.getPeers();
+                        int i = 0;
+                        for(i = 0; i < Constants.REGION_COPY_NUMBER && lazyPeer.getEndpoint() != null ; i++){
+                            Peer peer = peers.get(i);
+                            if(peer.getEndpoint().toString().equals(lazyPeer.getEndpoint().toString())){//System.out.println("same peer!!!!!!!!!!!!!");
+                                break;
+                            }
+                        }
+                        if(i == Constants.REGION_COPY_NUMBER && lazyPeer.getEndpoint() != null){
+                            peers.set(Constants.REGION_COPY_NUMBER - 1, lazyPeer);
+                        }
+                        //System.out.println("new region id = " + add.getNewRegionId() + ", peer size : " + add.getPeers().size());
+                        add.setFullRegionId(region.getId());
+                        instruction.setRegion(region);
+                        instruction.setStoreId(storeId);
+                        regionPingEvent1.addInstruction(instruction);
+                        instructionList.remove(0);
+                        System.out.println("add instruction, add new region id = " + add.getNewRegionId());
+                        this.metadataStore.updateNeedUpdateDefaultRegionLeader(true);
+                    }
+                }
+            }
+
+
+//            DTGRegion initRegion = store.getRegions().get(0);
+//            DTGInstruction instruction;
+//            while (instructionList.size() > 0 && (instruction = instructionList.get(0)) != null){
+//                DTGInstruction.AddRegion add = instruction.getAddRegion();
+//                add.setFullRegionId(initRegion.getId());
+//                instruction.setRegion(initRegion);
+//                instruction.setStoreId(storeId);
+//                regionPingEvent1.addInstruction(instruction);
+//                instructionList.remove(0);
+//                System.out.println("add instruction");
+//            }
 
 //            for(DTGInstruction instruction : instructionList){//System.out.println("add instruction , store id = " + storeId + ", instruction store id = " + instruction.getStoreId());
 //                DTGInstruction.AddRegion add = instruction.getAddRegion();
@@ -345,28 +408,28 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
         final CompletableFuture<Long> future = CompletableFuture.supplyAsync(()->{
             long nowMaxId = 0;
             do{
-                DTGStore lazyStore =  findLazyWorkStore(clusterId);
-                //DTGStore store = getNotNullStore(clusterId);
-                DTGRegion region = lazyStore.getRegions().get(0);
-                List<Peer> peers = region.getPeers();
+                DTGStore[] lazyStores =  this.metadataStore.findLazyWorkStores(clusterId);
+
+                List<DTGRegion> regions = lazyStores[0].getRegions();
+
+
+                long newRgionId = metadataStore.createRegionId(clusterId);
+                List<Peer> peers = new ArrayList<>();
+                for(DTGStore store : lazyStores){
+                    Peer peer = new Peer(newRgionId, store.getId(), store.getEndpoint());
+                    peers.add(peer);//System.out.println("add peer :" + peer.toString());
+                }
 
                 DTGInstruction instruction = new DTGInstruction();
-                DTGInstruction.AddRegion add = new DTGInstruction.AddRegion();
+                AddRegionInfo add = new AddRegionInfo();
                 //add.setFullRegionId(region.getId());
-                add.setNewRegionId(metadataStore.createRegionId(clusterId));
+                add.setNewRegionId(newRgionId);
                 add.setStartNodeId(metadataStore.updateRegionNodeStartId(clusterId));
                 add.setStartRelationId(metadataStore.updateRegionRelationStartId(clusterId));
                 add.setStartTempProId(DefaultOptions.DEFAULTSTARTTIME);
-                //final DTGInstruction.TransferLeader transferLeader = new DTGInstruction.TransferLeader();
-                //final List<Endpoint> endpoints = Lists.transform(region.getPeers(), Peer::getEndpoint);
-                //final Map<Long, Endpoint> storeIds = metadataStore.unsafeGetStoreIdsByEndpoints(clusterId, endpoints);
-//                transferLeader.setMoveToStoreId(lazyStore.getId());
-//                transferLeader.setMoveToEndpoint(storeIds.get(lazyStore.getId()));
-                System.out.println("store id = " + lazyStore.getId() );
-                //instruction.setRegion(region);
+                add.setPeers(peers);
+                //System.out.println("store id = " + lazyStores[0].getId() );
                 instruction.setAddRegion(add);
-                //instruction.setTransferLeader(transferLeader);
-                //instruction.setStoreId(lazyStore.getId());
                 instructionList.add(instruction);
                 if(type == NODETYPE){
                     nowMaxId = metadataStore.getNewRegionNodeStartId(clusterId) - DefaultOptions.DEFAULTREGIONRELATIONSIZE;
@@ -515,31 +578,6 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
             default:
                 throw new TypeDoesnotExistException(type, "idGenerator");
         }
-    }
-
-    private DTGStore findLazyWorkStore(long clusterId){
-        DTGStore lazyStore = null;
-        DTGCluster cluster = this.metadataStore.getClusterInfo(clusterId);
-
-        if(cluster == null){
-            return lazyStore;
-        }
-
-        List<DTGStore> stores = cluster.getStores();
-
-        int lazyNum = 9999;
-
-        if(stores == null && stores.size() == 0){
-            return lazyStore;
-        }
-
-        for(DTGStore store : stores){
-            if(store.getRegions().size() < lazyNum){
-                lazyStore = store;
-                lazyNum = store.getRegions().size();
-            }
-        }//System.out.println("lazy store is not null");
-        return lazyStore;
     }
 
     private DTGStore getNotNullStore(long clusterId){
