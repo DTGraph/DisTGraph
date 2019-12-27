@@ -10,6 +10,7 @@ import com.alipay.sofa.jraft.rhea.storage.StorageType;
 import com.alipay.sofa.jraft.util.Endpoint;
 import com.alipay.sofa.jraft.util.Utils;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -21,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  * @version:
  */
 
-public class DTGStoreEngineOptions {
+public class DTGStoreEngineOptions implements Serializable {
 
     private StorageType storageType = StorageType.RocksDB;
     private RocksDBOptions rocksDBOptions;

@@ -37,7 +37,7 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../sofa-jraft" />
   </component>
   <component name="ProjectCodeStyleSettingsMigration">
     <option name="version" value="1" />
@@ -68,11 +68,11 @@
       <recent name="Communication.RequestAndResponse" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="PlacementDriver.IdManage" />
       <recent name="TransactionTest" />
       <recent name="Communication" />
       <recent name="tool" />
       <recent name="com.alipay.sofa.jraft.rhea.pd.errors" />
-      <recent name="LocalDBMachine" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\distribute\5\DisTGraph\src\main\resources\META-INF\services" />
@@ -97,19 +97,6 @@
   <component name="RunManager" selected="Application.ClusterServer4">
     <configuration name="ClusterServer1" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="TransactionTest.ClusterServer1" />
-      <module name="Dis-TGraph" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="TransactionTest.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ClusterServer2" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="TransactionTest.ClusterServer2" />
       <module name="Dis-TGraph" />
       <extension name="coverage">
         <pattern>
@@ -160,13 +147,26 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="remoteClient" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="TransactionTest.remoteClient" />
+      <module name="Dis-TGraph" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="TransactionTest.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.ClusterServer4" />
         <item itemvalue="Application.ClusterServer3" />
-        <item itemvalue="Application.ClusterServer2" />
         <item itemvalue="Application.ClusterServer1" />
         <item itemvalue="Application.pdServerAll" />
+        <item itemvalue="Application.remoteClient" />
       </list>
     </recent_temporary>
   </component>
@@ -186,7 +186,8 @@
       <workItem from="1573965927104" duration="328233000" />
       <workItem from="1575596840303" duration="113454000" />
       <workItem from="1576139786882" duration="13536000" />
-      <workItem from="1576203422800" duration="22239000" />
+      <workItem from="1576203422800" duration="93761000" />
+      <workItem from="1577371566903" duration="1795000" />
     </task>
     <servers />
   </component>
@@ -296,7 +297,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/PlacementDriver/DTGPlacementDriverService.java</url>
-          <line>375</line>
+          <line>377</line>
           <option name="timeStamp" value="116" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -313,6 +314,16 @@
           <url>file://$PROJECT_DIR$/src/main/java/PlacementDriver/PD/DTGMetadataStoreImpl.java</url>
           <line>366</line>
           <option name="timeStamp" value="136" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/PlacementDriver/IdManage/IdGenerator.java</url>
+          <line>165</line>
+          <option name="timeStamp" value="140" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/PlacementDriver/GroupPd.java</url>
+          <line>85</line>
+          <option name="timeStamp" value="141" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

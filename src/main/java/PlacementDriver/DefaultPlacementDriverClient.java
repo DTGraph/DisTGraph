@@ -50,6 +50,7 @@ import com.alipay.sofa.jraft.rpc.impl.AbstractBoltClientService;
 import com.alipay.sofa.jraft.util.Endpoint;
 import com.alipay.sofa.jraft.util.Requires;
 import com.sun.org.apache.regexp.internal.RE;
+import config.DTGConstants;
 import config.DefaultOptions;
 import options.DTGPlacementDriverOptions;
 import options.DTGStoreEngineOptions;
@@ -291,6 +292,20 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
         localStore.setRegions(regionList);
         this.metadataRpcClient.updateStoreInfo(this.clusterId, localStore);
         return localStore;
+    }
+
+    @Override
+    public long getStoreId(DTGStoreEngineOptions opts) {
+        if(this.isRemotePd){
+            return pdGetStoreMetadata(opts).getId();
+        }
+        final Endpoint selfEndpoint = opts.getServerAddress();
+        // remote conf is the preferred
+        final DTGStore remoteStore = this.metadataRpcClient.getStoreInfo(this.clusterId, selfEndpoint);
+        if(remoteStore != null){
+            return remoteStore.getId();
+        }
+        return DTGConstants.NULL_STORE;
     }
 
     public DTGStore pdGetStoreMetadata(final DTGStoreEngineOptions opts){

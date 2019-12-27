@@ -64,13 +64,13 @@ public class DefaultOptions {
         DTGPlacementDriverOptions opts = new DTGPlacementDriverOptions();
         opts.setCliOptions(defaultCliOptios());
         opts.setPdRpcOptions(defaultRpcOptions());
-        final List<RegionRouteTableOptions> regionRouteTableOptionsList = MultiRegionRouteTableOptionsConfigured
-                .newConfigured() //
-                .withInitialServerList(1L /* default id */, INITIALSERVERLIST) //
-                .withInitNodeStartId(1L, 0)
-                .withInitRelationStartId(1L, 0)
-                .config();
-        opts.setRegionRouteTableOptionsList(regionRouteTableOptionsList);
+//        final List<RegionRouteTableOptions> regionRouteTableOptionsList = MultiRegionRouteTableOptionsConfigured
+//                .newConfigured() //
+//                .withInitialServerList(1L /* default id */, INITIALSERVERLIST) //
+//                .withInitNodeStartId(1L, 0)
+//                .withInitRelationStartId(1L, 0)
+//                .config();
+//        opts.setRegionRouteTableOptionsList(regionRouteTableOptionsList);
         opts.setInitialPdServerList(INITIALPDSERVERLIST);
         opts.setMinIdBatchSize(MINIDBATCHSIZE);
         opts.setPdGroupId(PDGROUPID + "-" + PDCLUSTERID);
@@ -79,8 +79,8 @@ public class DefaultOptions {
 
     public static DTGPlacementDriverOptions defaultDTGPlacementDriverOptionsWithoutRegion(){
         DTGPlacementDriverOptions opts = new DTGPlacementDriverOptions();
-        final List<RegionRouteTableOptions> regionRouteTableOptionsList = new ArrayList<>();
-        opts.setRegionRouteTableOptionsList(regionRouteTableOptionsList);
+//        final List<RegionRouteTableOptions> regionRouteTableOptionsList = new ArrayList<>();
+//        opts.setRegionRouteTableOptionsList(regionRouteTableOptionsList);
         opts.setCliOptions(defaultCliOptios());
         opts.setPdRpcOptions(defaultRpcOptions());
         opts.setInitialPdServerList(INITIALPDSERVERLIST);
@@ -165,7 +165,6 @@ public class DefaultOptions {
     public static RheaKVStoreOptions defaultRheaKVStoreOptions(String ip, int port, String localdbPath){
         RheaKVStoreOptions opts = new RheaKVStoreOptions();
         opts.setClusterId(PDCLUSTERID);
-
         opts.setClusterName(PDGROUPID);
         opts.setPlacementDriverOptions(defaultPlacementDriverOptions());
         opts.setInitialServerList(INITIALPDSERVERLIST);

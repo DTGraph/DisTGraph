@@ -154,16 +154,16 @@ public class DTGPDPlacementDriverServer implements Lifecycle<DTGPlacementDriverS
     }
 
     @Override
-    public synchronized void shutdown() {
+    public synchronized void shutdown() {System.out.println("5");
         if (!this.started) {
             return;
-        }
+        }System.out.println("4");
         if (this.rheaKVStore != null) {
             this.rheaKVStore.shutdown();
-        }
-        if (this.placementDriverService != null) {
+        }System.out.println("2");
+        if (this.placementDriverService != null) {System.out.println("3");
             this.placementDriverService.shutdown();
-        }
+        }System.out.println("1");
         ExecutorServiceHelper.shutdownAndAwaitTermination(this.pdExecutor);
         this.started = false;
         LOG.info("[PlacementDriverServer] shutdown successfully.");

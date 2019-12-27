@@ -188,6 +188,7 @@ public class IdGenerator {
             markAsCleanlyClosed( buffer );
 
             closeChannel();
+            System.out.println("close id generator...");
         }
         catch ( IOException e )
         {
@@ -214,7 +215,7 @@ public class IdGenerator {
         buffer.limit( 1 );
         buffer.flip();
         fileChannel.position( 0 );
-        fileChannel.write( buffer );
+        fileChannel.write( buffer );//System.out.println("markAsCleanlyClosed");
     }
 
     private void defragReusableIdsInFile( ByteBuffer writeBuffer ) throws IOException

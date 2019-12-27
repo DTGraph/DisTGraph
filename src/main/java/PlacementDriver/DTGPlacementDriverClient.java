@@ -97,6 +97,8 @@ public interface DTGPlacementDriverClient extends Lifecycle<DTGPlacementDriverOp
      */
     DTGStore getStoreMetadata(final DTGStoreEngineOptions opts);
 
+    long getStoreId(final DTGStoreEngineOptions opts);
+
     /**
      * Get the specified region leader communication address.
      */

@@ -54,5 +54,8 @@ public class ClusterServer4 {
         DTGSaveStore store = new DTGSaveStore();
         store.init(opts);
         System.out.println("server start OK");
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {System.out.println("START SHUTDOWN");
+            store.shutdown();
+        }));
     }
 }

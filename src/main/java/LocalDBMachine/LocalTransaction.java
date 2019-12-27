@@ -249,7 +249,7 @@ public class LocalTransaction extends Thread {
                             if(entityEntry.getKey() == null){
                                 if(entityEntry.getId() < 0)throw new EntityEntryException(entityEntry);
                                 Node node = addNode(entityEntry.getId(), i);
-                                tempMap.put(entityEntry.getTransactionNum(), node);//System.out.println("new node id = " + entityEntry.getId());
+                                tempMap.put(entityEntry.getTransactionNum(), node);System.out.println("new node id = " + entityEntry.getId());
                                 //resultMap.put(entityEntry.getTransactionNum(), node);
                                 break;
                             }

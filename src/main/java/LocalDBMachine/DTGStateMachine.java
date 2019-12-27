@@ -43,6 +43,7 @@ import raft.EntityEntryClosureAdapter;
 import raft.EntityStoreClosure;
 import storage.DTGStoreEngine;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -59,7 +60,7 @@ import static com.alipay.sofa.jraft.rhea.metrics.KVMetricNames.STATE_MACHINE_BAT
  *
  * @author jiachun.fjc
  */
-public class DTGStateMachine extends StateMachineAdapter {
+public class DTGStateMachine extends StateMachineAdapter implements Serializable {
 
     private static final Logger       LOG        = LoggerFactory.getLogger(DTGStateMachine.class);
 

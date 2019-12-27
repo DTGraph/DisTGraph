@@ -48,11 +48,11 @@ public class GroupPd {
             this.tempDbPath = file.getAbsolutePath();
             System.out.println("make dir: " + this.tempDbPath);
         }
-        file = new File(rootPath + "pd_raft");
+        file = new File(rootPath + "\\pd_raft");
         if (file.exists()) {
             FileUtils.forceDelete(file);
         }
-        file = new File(rootPath + "pd_raft");
+        file = new File(rootPath + "\\pd_raft");
         if (file.mkdir()) {
             this.tempRaftPath = file.getAbsolutePath();
             System.out.println("make dir: " + this.tempRaftPath);
@@ -61,7 +61,7 @@ public class GroupPd {
         int i = 0;
         for(String add : address){
             String[] socket = add.split(":");
-            final DTGPlacementDriverServerOptions opts = defaultDTGPlacementDriverServerOptions(socket[0], Integer.parseInt(socket[1]), rootPath+"\\" + socket);
+            final DTGPlacementDriverServerOptions opts = defaultDTGPlacementDriverServerOptions(socket[0], Integer.parseInt(socket[1]), rootPath+"\\pd_" + socket[0] + "_" + socket[1]);
             opts.getDtgPlacementDriverOptions().setRemotePd(true);
 
 //            final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
@@ -84,6 +84,7 @@ public class GroupPd {
         System.out.println("PlacementDriverServer shutdown ...");
         for (final DTGPDPlacementDriverServer server : this.pdServerList) {
             server.shutdown();
+            //System.out.println("shutdown111");
         }
         if (this.tempDbPath != null) {
             System.out.println("removing dir: " + this.tempDbPath);

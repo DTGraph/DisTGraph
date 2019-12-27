@@ -31,11 +31,12 @@ public class pdServerAll {
 //    }
 
     public static void main(String[] args) throws IOException {
-        final GroupPd server = new GroupPd("D:\\garbage","127.0.0.1:8181,127.0.0.1:8182,127.0.0.1:8183");
+        GroupPd server = new GroupPd("D:\\garbage","127.0.0.1:8181,127.0.0.1:8182,127.0.0.1:8183");
         server.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
+                //System.out.println("shutdown ...");
                 server.shutdown();
             } catch (IOException e) {
                 e.printStackTrace();

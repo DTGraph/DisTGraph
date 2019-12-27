@@ -16,7 +16,7 @@ public class ClusterServer3 {
     public static void main(String[] args){
         ClusterServer server = new ClusterServer("127.0.0.1", 8186, "D:\\garbage\\8086");
         server.start();
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {System.out.println("START SHUTDOWN");
                 server.shutdown();
         }));
     }

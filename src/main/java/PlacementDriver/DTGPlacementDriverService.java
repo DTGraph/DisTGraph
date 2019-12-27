@@ -83,8 +83,8 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
     private boolean started;
     private DTGHandlerInvoker pipelineInvoker;
     private final RheaKVStore rheaKVStore;
-    private static IdGenerator nodeIdGenerator;
-    private static IdGenerator relationIdGenerator;
+    private IdGenerator nodeIdGenerator;
+    private IdGenerator relationIdGenerator;
     private int idBatchSize;
     private List<DTGInstruction> instructionList;
     private DTGStore lazyStore;
@@ -125,6 +125,8 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
             if (this.pipelineInvoker != null) {
                 this.pipelineInvoker.shutdown();
             }
+            nodeIdGenerator.close();
+            relationIdGenerator.close();
             invalidLocalCache();
         } finally {
             this.started = false;
@@ -186,7 +188,7 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
 
             //DTGStore store = this.metadataStore.getStoreInfo(clusterId, storeId);
             List<Pair<DTGRegion, DTGRegionStats>> pairList = request.getRegionStatsList();
-
+            System.out.println( "store id = "+ storeId + "pair list size = " + pairList.size());
             if(lazyStore == null || pairList.size() < lazyStoreLeaderRegionNum){
                 lazyStore = this.metadataStore.getStoreInfo(clusterId, storeId);
                 lazyStoreLeaderRegionNum = pairList.size();

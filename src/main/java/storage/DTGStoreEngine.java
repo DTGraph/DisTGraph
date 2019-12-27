@@ -18,6 +18,7 @@ package storage;
 
 import Communication.HeartbeatSender;
 import Communication.instructions.AddRegionInfo;
+import DBExceptions.RegionStoreException;
 import Element.DTGOperation;
 import Element.EntityEntry;
 import Element.OperationName;
@@ -34,6 +35,7 @@ import com.alipay.sofa.jraft.rhea.*;
 import com.alipay.sofa.jraft.rhea.errors.Errors;
 import com.alipay.sofa.jraft.rhea.errors.RheaRuntimeException;
 import com.alipay.sofa.jraft.rhea.metadata.Peer;
+import com.alipay.sofa.jraft.rhea.metadata.Region;
 import com.alipay.sofa.jraft.rhea.metadata.RegionEpoch;
 import com.alipay.sofa.jraft.rhea.metrics.KVMetrics;
 import com.alipay.sofa.jraft.rhea.options.*;
@@ -45,6 +47,7 @@ import com.alipay.sofa.jraft.rpc.RaftRpcServerFactory;
 import com.alipay.sofa.jraft.util.*;
 import com.codahale.metrics.ScheduledReporter;
 import com.codahale.metrics.Slf4jReporter;
+import config.DTGConstants;
 import config.DefaultOptions;
 import options.DTGStoreEngineOptions;
 import options.LocalDBOption;
@@ -57,7 +60,11 @@ import raft.EntityStoreClosure;
 import tool.ObjectAndByte;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,6 +127,8 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
 
     protected boolean                                    started;
 
+    private   String                                     filePath;
+
     public DTGStoreEngine(DTGPlacementDriverClient pdClient) {
         this.pdClient = pdClient;
         this.clusterId = pdClient.getClusterId();
@@ -131,7 +140,10 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
             LOG.info("[StoreEngine] already started.");
             return true;
         }
+
+        this.filePath = opts.getRaftDataPath();
         this.storeOpts = Requires.requireNonNull(opts, "opts");
+
         Endpoint serverAddress = Requires.requireNonNull(opts.getServerAddress(), "opts.serverAddress");
         this.endpoint = serverAddress;
         final int port = serverAddress.getPort();
@@ -155,6 +167,17 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
         RegionEngineOptions rOpt = new RegionEngineOptions();
         rOpt.setRegionId(Constants.DEFAULT_REGION_ID);
         rOptsList.add(0, rOpt);
+        storeId = this.pdClient.getStoreId(opts);
+        List<Long> regionsId = readConfig();
+        if(regionsId != null){
+            rOptsList = new ArrayList<>();
+            for(long id : regionsId){
+                RegionEngineOptions rOp = new RegionEngineOptions();
+                rOp.setRegionId(id);
+                rOptsList.add(rOp);
+            }
+            opts.setRegionEngineOptionsList(rOptsList);
+        }
 
         if (rOptsList == null || rOptsList.isEmpty()) {
             // -1 region
@@ -258,6 +281,7 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
         if (this.rpcServer != null) {
             this.rpcServer.stop();
         }
+        saveConfig();
         if (!this.regionEngineTable.isEmpty()) {
             for (final DTGRegionEngine engine : this.regionEngineTable.values()) {
                 engine.shutdown();
@@ -762,6 +786,7 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
             LOG.error("Fail to init [RegionEngine: {}].", region);
             throw Errors.REGION_ENGINE_FAIL.exception();
         }
+        this.storeOpts.getRegionEngineOptionsList().add(rOpts);
         // update parent conf
         final DTGRegion pRegion = parent.getRegion();
         final RegionEpoch pEpoch = pRegion.getRegionEpoch();
@@ -814,7 +839,7 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
 //        rOpt.setRegionId(Constants.DEFAULT_REGION_ID);
 //        rOptsList.add(0, rOpt);
         final List<DTGRegion> regionList = store.getRegions();
-        //System.out.println("rOptsList size = " + rOptsList.size() + "   , regionList size = " + regionList.size());
+        System.out.println("rOptsList size = " + rOptsList.size() + "   , regionList size = " + regionList.size());
         Requires.requireTrue(rOptsList.size() == regionList.size());
 
         for (int i = 0; i < rOptsList.size(); i++) {
@@ -846,6 +871,218 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
         if (preService != null) {
             throw new RheaRuntimeException("RegionKVService[region=" + regionService.getRegionId()
                                            + "] has already been registered, can not register again!");
+        }
+    }
+
+    private void saveConfig(){
+        List<DTGRegion> regions = this.store.getRegions();
+        try {
+            FileChannel fileChannel = (new RandomAccessFile(filePath + "\\RegionInfo", "rw")).getChannel();
+            fileChannel.truncate(0);
+            ByteBuffer buffer = ByteBuffer.allocate(DTGConstants.STORE_REGION_HEADER_SIZE);
+            buffer.put(DTGConstants.STICKY_GENERATOR).putLong(store.getId()).putInt(regions.size()).flip();
+            fileChannel.write(buffer);
+            fileChannel.force(false);
+//            for(DTGRegion region : regions){
+//                byte[] regionByte = ObjectAndByte.toByteArray(region);
+//                buffer.clear();
+//                buffer = ByteBuffer.allocate(regionByte.length + 4);
+//                buffer.putInt(regionByte.length).put(regionByte).flip();
+//                fileChannel.write(buffer);
+//                fileChannel.force(false);
+//            }
+            buffer.clear();
+            buffer = ByteBuffer.allocate(8*regions.size());
+            for(DTGRegion region : regions){
+                buffer.putLong(region.getId());
+            }
+            buffer.flip();
+            fileChannel.write(buffer);
+            fileChannel.force(false);
+
+            buffer.clear();
+            buffer.put( DTGConstants.CLEAN_GENERATOR );
+            buffer.limit( 1 );
+            buffer.flip();
+            fileChannel.position( 0 );
+            fileChannel.write( buffer );
+            fileChannel.force( false );
+            fileChannel.close();
+            fileChannel = null;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+//    private List<DTGRegion> readConfig(){
+//        List<DTGRegion> regions = new ArrayList<DTGRegion>();
+//        try {
+//            FileChannel fileChannel = (new RandomAccessFile(filePath + "\\RegionInfo", "rw")).getChannel();
+//            ByteBuffer buffer = ByteBuffer.allocate(DTGConstants.STORE_REGION_HEADER_SIZE);
+//            int read = fileChannel.read(buffer);
+//            if(read != DTGConstants.STORE_REGION_HEADER_SIZE){
+//                throw new RegionStoreException("read region error, unable read header");
+//            }
+//            buffer.flip();
+//            byte storageStatus = buffer.get();
+//            if ( storageStatus != DTGConstants.CLEAN_GENERATOR ){
+//                throw new RegionStoreException("Sticky file[ " +
+//                        filePath + "\\RegionInfo] delete this id file and build a new one");
+//            }
+//            if(buffer.getLong() != storeId){
+//                throw new RegionStoreException("file [ " +
+//                        filePath + "\\RegionInfo] doesn't belong to this store");
+//            }
+//            int regionNum = buffer.getInt();
+//            int readPosition = DTGConstants.STORE_REGION_HEADER_SIZE;
+//            for(int i = 0; i < regionNum; i++){
+//                fileChannel.position(readPosition);
+//                buffer.clear();
+//                buffer = ByteBuffer.allocate(4);
+//                int bytesRead = fileChannel.read(buffer);
+//                assert bytesRead ==4;
+//                buffer.flip();
+//                int regionByteSize = buffer.getInt();
+//                buffer.clear();
+//                buffer =ByteBuffer.allocate(regionByteSize);
+//                readPosition = readPosition  + 4;
+//                fileChannel.position(readPosition);
+//                bytesRead = fileChannel.read(buffer);
+//                assert bytesRead == regionByteSize;
+//                byte[] regionByte = new byte[regionByteSize];
+//                buffer.get(regionByte);
+//                regions.add((DTGRegion)ObjectAndByte.toObject(regionByte));
+//                readPosition = readPosition + regionByteSize;
+//            }
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (RegionStoreException e) {
+//            e.printStackTrace();
+//        }
+//        return regions;
+//    }
+
+    private List<Long> readConfig(){
+        if(storeId == DTGConstants.NULL_STORE){
+            return null;
+        }
+        File file = new File(filePath + "\\RegionInfo");
+        if(!file.exists()){
+            return null;
+        }
+        List<Long> regionsId = new ArrayList<Long>();
+        try {
+            FileChannel fileChannel = (new RandomAccessFile(filePath + "\\RegionInfo", "rw")).getChannel();
+            ByteBuffer buffer = ByteBuffer.allocate(DTGConstants.STORE_REGION_HEADER_SIZE);
+            int read = fileChannel.read(buffer);
+            if(read != DTGConstants.STORE_REGION_HEADER_SIZE){
+                throw new RegionStoreException("read region error, unable read header");
+            }
+            buffer.flip();
+            byte storageStatus = buffer.get();
+            if ( storageStatus != DTGConstants.CLEAN_GENERATOR ){
+                throw new RegionStoreException("Sticky file[ " +
+                        filePath + "\\RegionInfo] delete this id file and build a new one");
+            }
+            if(buffer.getLong() != storeId){
+                throw new RegionStoreException("file [ " +
+                        filePath + "\\RegionInfo] doesn't belong to this store");
+            }
+            int regionNum = buffer.getInt();
+            fileChannel.position(DTGConstants.STORE_REGION_HEADER_SIZE);
+            buffer.clear();
+            buffer = ByteBuffer.allocate(8*regionNum);
+            int bytesRead = fileChannel.read(buffer);
+            assert bytesRead == 8 * regionNum;
+            buffer.flip();
+            for(int i = 0; i < regionNum; i++){
+                long regionId = buffer.getLong();
+                regionsId.add(regionId);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (RegionStoreException e) {
+            e.printStackTrace();
+        }
+        return regionsId;
+    }
+
+
+    private void saveStoreOpts(){
+        try {
+                FileChannel fileChannel = (new RandomAccessFile(filePath + "\\StoreInfo", "rw")).getChannel();
+            fileChannel.truncate(0);
+            ByteBuffer buffer = ByteBuffer.allocate(DTGConstants.STORE_OPTS_HEADER_SIZE);
+            byte[] optsByte = ObjectAndByte.toByteArray(this.storeOpts.getRegionEngineOptionsList());
+            buffer.put(DTGConstants.STICKY_GENERATOR).putLong(store.getId()).putInt(optsByte.length).flip();
+            fileChannel.write(buffer);
+            fileChannel.force(false);
+
+            buffer.clear();
+            buffer = ByteBuffer.allocate(optsByte.length);
+            buffer.put(optsByte).flip();
+            fileChannel.write(buffer);
+            fileChannel.force(false);
+
+            buffer.clear();
+            buffer.put( DTGConstants.CLEAN_GENERATOR );
+            buffer.limit( 1 );
+            buffer.flip();
+            fileChannel.position( 0 );
+            fileChannel.write( buffer );
+            fileChannel.force( false );
+            fileChannel.close();
+            fileChannel = null;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void readStoreOpts(){
+        try {
+            File file = new File(filePath + "\\StoreInfo");
+            if(!file.exists()){
+                return;
+            }
+            FileChannel fileChannel = (new RandomAccessFile(filePath + "\\StoreInfo", "rw")).getChannel();
+            ByteBuffer buffer = ByteBuffer.allocate(DTGConstants.STORE_OPTS_HEADER_SIZE);
+            int read = fileChannel.read(buffer);
+            if(read != DTGConstants.STORE_OPTS_HEADER_SIZE){
+                throw new RegionStoreException("read region error, unable read header");
+            }
+            buffer.flip();
+            byte storageStatus = buffer.get();
+            if ( storageStatus != DTGConstants.CLEAN_GENERATOR ){
+                throw new RegionStoreException("Sticky file[ " +
+                        filePath + "\\RegionInfo] delete this id file and build a new one");
+            }
+            if(buffer.getLong() != storeId){
+                throw new RegionStoreException("file [ " +
+                        filePath + "\\RegionInfo] doesn't belong to this store");
+            }
+            int optsByteSize = buffer.getInt();
+            buffer.clear();
+            buffer =ByteBuffer.allocate(optsByteSize);
+            fileChannel.position(DTGConstants.STORE_OPTS_HEADER_SIZE);
+            int bytesRead = fileChannel.read(buffer);
+            assert bytesRead == optsByteSize;
+            byte[] optsByte = new byte[optsByteSize];
+            buffer.get(optsByte);
+            this.storeOpts.setRegionEngineOptionsList((List<RegionEngineOptions>)ObjectAndByte.toObject(optsByte));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (RegionStoreException e) {
+            e.printStackTrace();
         }
     }
 

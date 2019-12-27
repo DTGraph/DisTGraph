@@ -81,7 +81,7 @@ public class DTGRegionService implements RegionService {
                 try {
                     TransactionThreadLock txLock = new TransactionThreadLock(op.getTxId());
                     LocalTransaction tx = new LocalTransaction(localdb.getDb(), op, resultMap, txLock, region);//System.out.println("run op... ：3  " + region.getId());
-                    tx.start();//System.out.println("run op... ：4  " + region.getId());
+                    tx.start();
                     synchronized (resultMap){
                         resultMap.wait(FutureHelper.DEFAULT_TIMEOUT_MILLIS);//System.out.println("run op... ：5  " + region.getId());
                     }
