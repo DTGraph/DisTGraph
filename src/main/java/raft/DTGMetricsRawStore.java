@@ -39,6 +39,11 @@ public class DTGMetricsRawStore implements DTGRawStore {
     }
 
     @Override
+    public void saveLog(LogStoreClosure closure) {
+
+    }
+
+    @Override
     public void ApplyEntityEntries(DTGOperation op, EntityStoreClosure closure) {
         final EntityStoreClosure c = metricsAdapter(closure, OperationName.TRANSACTIONOP, op.getSize());
         this.rawStore.ApplyEntityEntries(op, c);

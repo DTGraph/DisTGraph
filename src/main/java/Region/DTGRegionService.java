@@ -1,9 +1,6 @@
 package Region;
 
-import Communication.RequestAndResponse.CommitRequest;
-import Communication.RequestAndResponse.CommitResponse;
-import Communication.RequestAndResponse.TransactionRequest;
-import Communication.RequestAndResponse.TransactionResponse;
+import Communication.RequestAndResponse.*;
 import Element.DTGOperation;
 import Element.EntityEntry;
 import LocalDBMachine.LocalDB;
@@ -22,9 +19,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import raft.BaseStoreClosure;
 import raft.DTGRawStore;
+import raft.LogStoreClosure;
 import tool.ObjectAndByte;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -69,6 +68,57 @@ public class DTGRegionService implements RegionService {
     public void handleTransactionRequest(final TransactionRequest request, final RequestProcessClosure<BaseRequest, BaseResponse<?>> closure) {
         System.out.println("get transaction request  " + region.getId());
         final TransactionResponse response = new TransactionResponse();
+        try {
+            KVParameterRequires.requireSameEpoch(request, getRegionEpoch());
+            List<EntityEntry> entityEntries = request.getEntries();
+            String txId = request.getTxId();
+
+            this.rawStore.saveLog(new LogStoreClosure() {
+                @Override
+                public void run(Status status) {
+                    if (status.isOk()) {
+                        //System.out.println("success commit..:" + op.getTxId());
+                        response.setValue((Boolean) getData());
+                    } else {
+                        //System.out.println("failed commit..:" + op.getTxId());
+                        response.setValue(false);
+                        setFailure(request, response, status, getError());
+                    }
+                    System.out.println("return commit..");
+                    closure.sendResponse(response);
+                }
+            });
+
+
+            final DTGOperation op = KVParameterRequires
+                    .requireNonNull(request.getDTGOpreration(), "put.DTGOperation");
+            this.rawStore.ApplyEntityEntries(op, new BaseStoreClosure() {
+                @Override
+                public void run(final Status status) {
+                    if (status.isOk()) {
+                        //System.out.println("success commit..:" + op.getTxId());
+                        response.setValue((Boolean) getData());
+                    } else {
+                        //System.out.println("failed commit..:" + op.getTxId());
+                        response.setValue(false);
+                        setFailure(request, response, status, getError());
+                    }
+                    System.out.println("return commit..");
+                    closure.sendResponse(response);
+                }
+            });
+        } catch (final Throwable t) {
+            System.out.println("failed commit..");
+            LOG.error("Failed to handle: {}, {}.", request, StackTraceUtil.stackTrace(t));
+            response.setValue(false);
+            response.setError(Errors.forException(t));
+            closure.sendResponse(response);
+        }
+    }
+
+    @Override
+    public void handleFirstPhase(FirstPhaseRequest request, RequestProcessClosure<BaseRequest, BaseResponse<?>> closure) {
+        final FirstPhaseResponse response = new FirstPhaseResponse();
         response.setRegionId(getRegionId());
         response.setRegionEpoch(getRegionEpoch());
         Map<Integer, Object> resultMap = new HashMap<>();
@@ -128,19 +178,8 @@ public class DTGRegionService implements RegionService {
     }
 
     @Override
-    public void handleMergeRequest(MergeRequest request, RequestProcessClosure<BaseRequest, BaseResponse<?>> closure) {
-
-    }
-
-    @Override
-    public void handleRangeSplitRequest(RangeSplitRequest request, RequestProcessClosure<BaseRequest, BaseResponse<?>> closure) {
-
-    }
-
-    public void handleCommitRequest(final CommitRequest request,
-                                        final RequestProcessClosure<BaseRequest, BaseResponse<?>> closure){
-        //System.out.println("get commit request");
-        final CommitResponse response = new CommitResponse();
+    public void handleSecondPhase(SecondPhaseRequest request, RequestProcessClosure<BaseRequest, BaseResponse<?>> closure) {
+        final SecondPhaseResponse response = new SecondPhaseResponse();
         response.setRegionId(getRegionId());
         response.setRegionEpoch(getRegionEpoch());
         try {
@@ -170,6 +209,22 @@ public class DTGRegionService implements RegionService {
             closure.sendResponse(response);
         }
         //System.out.println("finish commit request");
+    }
+
+    @Override
+    public void handleMergeRequest(MergeRequest request, RequestProcessClosure<BaseRequest, BaseResponse<?>> closure) {
+
+    }
+
+    @Override
+    public void handleRangeSplitRequest(RangeSplitRequest request, RequestProcessClosure<BaseRequest, BaseResponse<?>> closure) {
+
+    }
+
+    public void handleCommitRequest(final CommitRequest request,
+                                        final RequestProcessClosure<BaseRequest, BaseResponse<?>> closure){
+        //System.out.println("get commit request");
+
     }
 
 //    public void handlePutRequest(final PutRequest request,

@@ -2,6 +2,7 @@ package Communication.RequestAndResponse;
 
 import Element.DTGOperation;
 import com.alipay.sofa.jraft.rhea.cmd.store.BaseRequest;
+import config.DTGConstants;
 
 /**
  * @author :jinkai
@@ -28,6 +29,10 @@ public abstract class DTGBaseRequest extends BaseRequest {
         switch (magic()){
             case TRANSACTION_REQUEST: return "transaction request";
             case COMMIT_REQUEST: return "commit transaction";
+            case DTGConstants
+                    .FIRST_PHASE_REQUEST: return "first phase request";
+            case DTGConstants
+                    .SECOND_PHASE_REQUEST: return "second phase request";
             default:return "other";
         }
     }

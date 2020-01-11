@@ -12,6 +12,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import raft.EntityStoreClosure;
 import raft.DTGRawStore;
+import raft.LogStoreClosure;
 import scala.collection.Iterator;
 import options.LocalDBOption;
 
@@ -54,6 +55,11 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
     @Override
     public Iterator localIterator() {
         return null;
+    }
+
+    @Override
+    public void saveLog(LogStoreClosure closure) {
+
     }
 
     @Override

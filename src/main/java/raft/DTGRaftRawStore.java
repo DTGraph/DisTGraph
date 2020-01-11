@@ -39,6 +39,11 @@ public class DTGRaftRawStore implements DTGRawStore {
     }
 
     @Override
+    public void saveLog(LogStoreClosure closure) {
+
+    }
+
+    @Override
     public void ApplyEntityEntries(DTGOperation op, EntityStoreClosure closure) {
         if(!isLeader()){
             closure.setError(Errors.NOT_LEADER);

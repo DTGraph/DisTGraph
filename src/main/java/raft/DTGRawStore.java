@@ -15,6 +15,8 @@ public interface DTGRawStore  {
 
     Iterator localIterator();
 
+    void saveLog(LogStoreClosure closure);
+
     void ApplyEntityEntries(final DTGOperation op, final EntityStoreClosure closure);
 
     void readOnlyEntityEntries(final DTGOperation op, final EntityStoreClosure closure);

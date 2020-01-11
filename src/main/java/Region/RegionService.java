@@ -1,6 +1,8 @@
 package Region;
 
 import Communication.RequestAndResponse.CommitRequest;
+import Communication.RequestAndResponse.FirstPhaseRequest;
+import Communication.RequestAndResponse.SecondPhaseRequest;
 import Communication.RequestAndResponse.TransactionRequest;
 import com.alipay.sofa.jraft.rhea.RequestProcessClosure;
 import com.alipay.sofa.jraft.rhea.cmd.store.*;
@@ -22,6 +24,12 @@ public interface RegionService {
 
     void handleTransactionRequest(final TransactionRequest request,
                                   final RequestProcessClosure<BaseRequest, BaseResponse<?>> closure);
+
+    void handleFirstPhase(final FirstPhaseRequest request,
+                          final RequestProcessClosure<BaseRequest, BaseResponse<?>> closure);
+
+    void handleSecondPhase(final SecondPhaseRequest request,
+                          final RequestProcessClosure<BaseRequest, BaseResponse<?>> closure);
 
     void handleMergeRequest(final MergeRequest request,
                             final RequestProcessClosure<BaseRequest, BaseResponse<?>> closure);
