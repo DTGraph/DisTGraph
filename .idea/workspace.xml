@@ -1,7 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9af12286-a5f3-43fb-b181-f69bc3b9074f" name="Default Changelist" comment="" />
+    <list default="true" id="9af12286-a5f3-43fb-b181-f69bc3b9074f" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/DBExceptions/DTGLockError.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/MQ/TransactionLogEntryAndClosure.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/Region/LockManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/Region/LockProcess.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/UserClient/Transaction/TransactionLog.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/options/DTGMetricsRawStoreOptions.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/options/DTGRegionEngineOptions.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/options/MQStateMachineOptions.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/LockTest/LockManagerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Communication/KVCommandProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Communication/KVCommandProcessor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Communication/RequestAndResponse/TransactionRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Communication/RequestAndResponse/TransactionRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/DBExceptions/TxMQError.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/DBExceptions/TxMQError.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/LocalDBMachine/LocalDB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/LocalDBMachine/LocalDB.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/LocalDBMachine/LocalTransaction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/LocalDBMachine/LocalTransaction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/CommitClosure.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/DTGMQ.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MQ/DTGMQ.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/MQBallotBox.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/MQFSMCaller.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/MQIteratorImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/MQLogManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/MQLogManagerImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/MQRocksDBLogStorage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MQ/MQRocksDBLogStorage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/MQStateMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MQ/MQStateMachine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/Test/TestClosure.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/TransactionLogEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MQ/TransactionLogEntry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/codec/DefaultMQLogEntryCodecFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MQ/codec/DefaultMQLogEntryCodecFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/codec/MQAutoDetectDecoder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MQ/codec/MQAutoDetectDecoder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/codec/MQLogEntryDecoder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MQ/codec/MQLogEntryDecoder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/codec/MQLogEntryEncoder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MQ/codec/MQLogEntryEncoder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/codec/v1/MQV1Decoder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MQ/codec/v1/MQV1Decoder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/codec/v1/MQV1Encoder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MQ/codec/v1/MQV1Encoder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/codec/v2/LogOutter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MQ/codec/v2/LogOutter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/codec/v2/MQV2Decoder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MQ/codec/v2/MQV2Decoder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/codec/v2/MQV2Encoder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MQ/codec/v2/MQV2Encoder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/conf/MQConfiguration.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/conf/MQConfigurationEntry.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MQ/conf/MQConfigurationManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/PlacementDriver/DefaultPlacementDriverClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/PlacementDriver/DefaultPlacementDriverClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Region/DTGRegion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Region/DTGRegion.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Region/DTGRegionEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Region/DTGRegionEngine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Region/DTGRegionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Region/DTGRegionService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/UserClient/DTGDatabase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/UserClient/DTGDatabase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/UserClient/DTGSaveStore.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/UserClient/DTGSaveStore.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/UserClient/Transaction/DTGTransaction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/UserClient/Transaction/DTGTransaction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/config/DTGConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/config/DTGConstants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/config/DefaultOptions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/config/DefaultOptions.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/config/MainType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/config/MainType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/options/DTGStoreEngineOptions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/options/DTGStoreEngineOptions.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/options/MQBallotBoxOptions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/options/MQBallotBoxOptions.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/options/MQFSMCallerOptions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/options/MQFSMCallerOptions.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/options/MQLogManagerOptions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/options/MQLogManagerOptions.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/options/MQLogStorageOptions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/options/MQLogStorageOptions.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/options/MQOptions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/options/MQOptions.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/raft/DTGMetricsRawStore.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/raft/DTGMetricsRawStore.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/raft/LogStoreClosure.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/raft/LogStoreClosure.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/storage/DTGStoreEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/storage/DTGStoreEngine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/storage/StoreEngineHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/storage/StoreEngineHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/MQ/addTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/MQ/addTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/TransactionTest/ClusterServer4.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TransactionTest/ClusterServer4.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/TransactionTest/remoteClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TransactionTest/remoteClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/simple.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/simple.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Communication/KVCommandProcessor.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Communication/KVCommandProcessor.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Communication/RequestAndResponse/TransactionRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Communication/RequestAndResponse/TransactionRequest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Communication/RequestAndResponse/TransactionResponse.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Communication/RequestAndResponse/TransactionResponse.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/LocalDBMachine/LocalDB.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/LocalDBMachine/LocalDB.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/LocalDBMachine/LocalTransaction.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/LocalDBMachine/LocalTransaction.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/PlacementDriver/DefaultPlacementDriverClient.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/PlacementDriver/DefaultPlacementDriverClient.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Region/DTGRegion.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Region/DTGRegion.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Region/DTGRegionEngine.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Region/DTGRegionEngine.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Region/DTGRegionService$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Region/DTGRegionService$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Region/DTGRegionService$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Region/DTGRegionService$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Region/DTGRegionService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Region/DTGRegionService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/UserClient/DTGDatabase.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/UserClient/DTGDatabase.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/UserClient/DTGSaveStore$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/UserClient/DTGSaveStore$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/UserClient/DTGSaveStore$AbstractBatchingHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/UserClient/DTGSaveStore$AbstractBatchingHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/UserClient/DTGSaveStore$EntityEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/UserClient/DTGSaveStore$EntityEvent.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/UserClient/DTGSaveStore.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/UserClient/DTGSaveStore.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/UserClient/Transaction/DTGTransaction.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/UserClient/Transaction/DTGTransaction.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/config/DefaultOptions.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/config/DefaultOptions.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/config/MainType.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/config/MainType.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/options/DTGStoreEngineOptions.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/options/DTGStoreEngineOptions.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/raft/DTGMetricsRawStore.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/raft/DTGMetricsRawStore.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/raft/DTGRaftRawStore.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/raft/DTGRaftRawStore.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/raft/DTGRawStore.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/raft/DTGRawStore.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/storage/DTGStoreEngine$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/storage/DTGStoreEngine$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/storage/DTGStoreEngine.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/storage/DTGStoreEngine.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/storage/StoreEngineHelper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/storage/StoreEngineHelper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/TransactionTest/remoteClient.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/TransactionTest/remoteClient.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/simple.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/simple.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sofa-jraft/jraft-rheakv/rheakv-core/src/main/java/com/alipay/sofa/jraft/rhea/cmd/store/BaseRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/../sofa-jraft/jraft-rheakv/rheakv-core/src/main/java/com/alipay/sofa/jraft/rhea/cmd/store/BaseRequest.java" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,8 +123,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Enum" />
         <option value="Interface" />
+        <option value="Enum" />
+        <option value="package-info" />
         <option value="Class" />
       </list>
     </option>
@@ -49,7 +142,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/java/MQ" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/java/MQ2" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -70,18 +163,18 @@
       <recent name="Communication.RequestAndResponse" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="MQ2" />
       <recent name="MQ" />
       <recent name="options" />
       <recent name="DBExceptions" />
       <recent name="Communication.RequestAndResponse" />
-      <recent name="PlacementDriver.IdManage" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\distribute\5\DisTGraph\src\main\java\MQ2" />
       <recent name="D:\distribute\5\DisTGraph\src\main\java\MQ" />
       <recent name="D:\distribute\5\DisTGraph\src\main\java\MQ\coder" />
       <recent name="D:\distribute\5\DisTGraph\src\main\java\MQ\v2" />
       <recent name="D:\distribute\5\DisTGraph\src\main\resources\META-INF\services" />
-      <recent name="D:\distribute\5\DisTGraph\src\main\resources" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -96,33 +189,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="JUnit.addTest">
-    <configuration name="ClusterServer1" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="TransactionTest.ClusterServer1" />
-      <module name="Dis-TGraph" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="TransactionTest.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ClusterServer3" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="TransactionTest.ClusterServer3" />
-      <module name="Dis-TGraph" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="TransactionTest.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager" selected="JUnit.LockManagerTest.getBeforeTest">
     <configuration name="ClusterServer4" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="TransactionTest.ClusterServer4" />
       <module name="Dis-TGraph" />
@@ -136,43 +203,73 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="addTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="remoteClient" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="TransactionTest.remoteClient" />
       <module name="Dis-TGraph" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="MQ.*" />
+          <option name="PATTERN" value="TransactionTest.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="MQ" />
-      <option name="MAIN_CLASS_NAME" value="MQ.addTest" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LockManagerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Dis-TGraph" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="LockTest.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="LockTest" />
+      <option name="MAIN_CLASS_NAME" value="LockTest.LockManagerTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="simple" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="LockManagerTest.addLockTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="Dis-TGraph" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="MQ.*" />
+          <option name="PATTERN" value="LockTest.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="MQ" />
-      <option name="MAIN_CLASS_NAME" value="MQ.simple" />
-      <option name="TEST_OBJECT" value="class" />
+      <option name="PACKAGE_NAME" value="LockTest" />
+      <option name="MAIN_CLASS_NAME" value="LockTest.LockManagerTest" />
+      <option name="METHOD_NAME" value="addLockTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LockManagerTest.getBeforeTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Dis-TGraph" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="LockTest.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="LockTest" />
+      <option name="MAIN_CLASS_NAME" value="LockTest.LockManagerTest" />
+      <option name="METHOD_NAME" value="getBeforeTest" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.addTest" />
-        <item itemvalue="JUnit.simple" />
+        <item itemvalue="JUnit.LockManagerTest.getBeforeTest" />
+        <item itemvalue="JUnit.LockManagerTest" />
+        <item itemvalue="JUnit.LockManagerTest.addLockTest" />
+        <item itemvalue="Application.remoteClient" />
         <item itemvalue="Application.ClusterServer4" />
-        <item itemvalue="Application.ClusterServer3" />
-        <item itemvalue="Application.ClusterServer1" />
       </list>
     </recent_temporary>
   </component>
@@ -193,7 +290,10 @@
       <workItem from="1575596840303" duration="113454000" />
       <workItem from="1576139786882" duration="13536000" />
       <workItem from="1576203422800" duration="93761000" />
-      <workItem from="1577371566903" duration="297544000" />
+      <workItem from="1577371566903" duration="312622000" />
+      <workItem from="1578750824511" duration="197000" />
+      <workItem from="1578752163295" duration="93418000" />
+      <workItem from="1579051820197" duration="25390000" />
     </task>
     <servers />
   </component>
@@ -307,16 +407,6 @@
           <option name="timeStamp" value="116" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/test/java/TransactionTest/remoteClient.java</url>
-          <line>49</line>
-          <option name="timeStamp" value="131" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/Region/DTGRegionRouteTable.java</url>
-          <line>82</line>
-          <option name="timeStamp" value="132" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/PlacementDriver/PD/DTGMetadataStoreImpl.java</url>
           <line>366</line>
           <option name="timeStamp" value="136" />
@@ -335,6 +425,26 @@
           <url>file://$PROJECT_DIR$/src/main/java/MQ/MQLogManagerImpl.java</url>
           <line>936</line>
           <option name="timeStamp" value="203" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/TransactionTest/remoteClient.java</url>
+          <line>68</line>
+          <option name="timeStamp" value="205" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/raft/DTGRaftRawStore.java</url>
+          <line>52</line>
+          <option name="timeStamp" value="213" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/LocalDBMachine/DTGStateMachine.java</url>
+          <line>96</line>
+          <option name="timeStamp" value="217" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/PlacementDriver/DefaultPlacementDriverClient.java</url>
+          <line>547</line>
+          <option name="timeStamp" value="218" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

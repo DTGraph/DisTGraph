@@ -1,6 +1,7 @@
 package options;
 
 import LocalDBMachine.LocalDB;
+import UserClient.DTGSaveStore;
 import com.alipay.sofa.jraft.option.NodeOptions;
 import com.alipay.sofa.jraft.rhea.options.HeartbeatOptions;
 import com.alipay.sofa.jraft.rhea.options.MemoryDBOptions;
@@ -33,10 +34,12 @@ public class DTGStoreEngineOptions implements Serializable {
     // Most configurations do not need to be configured separately for each raft-group,
     // so a common configuration is provided, and each raft-group can copy from here.
     private NodeOptions commonNodeOptions = new NodeOptions();
-    private List<RegionEngineOptions> regionEngineOptionsList;
+    private List<DTGRegionEngineOptions> regionEngineOptionsList;
     private String initialServerList;
     private HeartbeatOptions heartbeatOptions;
     private boolean useSharedRpcExecutor;
+    private DTGSaveStore saveStore;
+
     // thread poll number of threads
     private int                       readIndexCoreThreads          = Math.max(Utils.cpus() << 2, 16);
     private int                       leaderStateTriggerCoreThreads = 4;
@@ -97,11 +100,11 @@ public class DTGStoreEngineOptions implements Serializable {
         this.commonNodeOptions = commonNodeOptions;
     }
 
-    public List<RegionEngineOptions> getRegionEngineOptionsList() {
+    public List<DTGRegionEngineOptions> getRegionEngineOptionsList() {
         return regionEngineOptionsList;
     }
 
-    public void setRegionEngineOptionsList(List<RegionEngineOptions> regionEngineOptionsList) {
+    public void setRegionEngineOptionsList(List<DTGRegionEngineOptions> regionEngineOptionsList) {
         this.regionEngineOptionsList = regionEngineOptionsList;
     }
 
@@ -199,6 +202,14 @@ public class DTGStoreEngineOptions implements Serializable {
 
     public void setLocalDBOption(LocalDBOption localDBOption) {
         this.localDBOption = localDBOption;
+    }
+
+    public DTGSaveStore getSaveStore() {
+        return saveStore;
+    }
+
+    public void setSaveStore(DTGSaveStore saveStore) {
+        this.saveStore = saveStore;
     }
 
     @Override

@@ -65,6 +65,7 @@ public class DTGRegion implements Copiable<DTGRegion>, Serializable {
     private int nodeUpperBound, relationUpperBound;
     private int nodecount, relationcount;
     private boolean hasNextRegion;
+    private volatile int transactionCount;
 
     private RegionEpoch       regionEpoch;                                    // region term
     private List<Peer>        peers;                                          // all peers in the region
@@ -81,6 +82,7 @@ public class DTGRegion implements Copiable<DTGRegion>, Serializable {
         this.NodeIdRangeList = new ArrayList<>();
         this.RelationIdRangeList = new ArrayList<>();
         this.TemporalPropertyTimeRangeList = new ArrayList<>();
+        this.transactionCount = 0;
     }
 
     public DTGRegion(int nodeUpperBound, int relationUpperBound, long nodeIdStart, long relationIdStart, long tempProStart){
@@ -445,6 +447,18 @@ public class DTGRegion implements Copiable<DTGRegion>, Serializable {
     public long getMaxRelationId(){
         long[] maxRelationId = RelationIdRangeList.get(RelationIdRangeList.size() - 1);
         return  maxRelationId[1] - 1;
+    }
+
+    public int getTransactionCount() {
+        return transactionCount;
+    }
+
+    public synchronized void increaseTransactionCount(){
+        this.transactionCount ++;
+    }
+
+    public synchronized void decreaseTransactionCount(){
+        this.transactionCount --;
     }
 
     @Override

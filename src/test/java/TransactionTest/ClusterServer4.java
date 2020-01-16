@@ -6,6 +6,7 @@ import com.alipay.sofa.jraft.rhea.storage.StorageType;
 import com.alipay.sofa.jraft.rhea.util.Lists;
 import com.alipay.sofa.jraft.util.Endpoint;
 import config.DefaultOptions;
+import options.DTGRegionEngineOptions;
 import options.DTGStoreEngineOptions;
 import options.DTGStoreOptions;
 import storage.ClusterServer;
@@ -46,7 +47,7 @@ public class ClusterServer4 {
         sopts.setLocalDBOption(DefaultOptions.defaultLocalDBOption(path + "\\" +DefaultOptions.DB_PATH));
         sopts.setRaftDataPath(path+"\\"+ DefaultOptions.RAFT_DATA_PATH);
         sopts.setServerAddress(new Endpoint(ip , port));
-        List<RegionEngineOptions> rOptsList = Lists.newArrayList();
+        List<DTGRegionEngineOptions> rOptsList = Lists.newArrayList();
         sopts.setRegionEngineOptionsList(rOptsList);
 
         opts.setStoreEngineOptions(sopts);

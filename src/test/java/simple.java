@@ -29,7 +29,7 @@ public class simple {
 //        int[] aa = ccc.get(1);
 //        System.out.println(aa[0]);
         GraphDatabaseService db= new GraphDatabaseFactory()
-                .newEmbeddedDatabaseBuilder("D:\\garbage\\8086\\DTG_DB" )
+                .newEmbeddedDatabaseBuilder("D:\\garbage\\8084\\DTG_DB" )
                 .loadPropertiesFromFile("")
                 .newGraphDatabase();
         //Node node1, node2;
@@ -49,7 +49,7 @@ public class simple {
             //System.out.println(db.getNodeById(22222).getTemporalProperty("yys", 2));
             //System.out.println(db.getNodeById(1).getProperty("d"));
             //System.out.println(db.getRelationshipById(99).getTemporalProperty("travel_time", 2));
-            db.getNodeById(0);
+            db.getNodeById(5);
             int a =2;
             long id = 22222;
 //            node1 =  db.createNode();

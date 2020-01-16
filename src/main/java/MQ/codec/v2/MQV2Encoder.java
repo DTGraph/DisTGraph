@@ -16,19 +16,10 @@
  */
 package MQ.codec.v2;
 
-import MQ.MQLogId;
 import MQ.TransactionLogEntry;
 import MQ.codec.MQLogEntryEncoder;
-import com.alipay.sofa.jraft.entity.LogId;
-import com.alipay.sofa.jraft.entity.codec.v2.LogOutter.PBLogEntry;
-import com.alipay.sofa.jraft.error.LogEntryCorruptedException;
 import com.alipay.sofa.jraft.util.Requires;
-import com.google.protobuf.ByteString;
-import com.google.protobuf.CodedOutputStream;
-import com.google.protobuf.ZeroByteStringHelper;
 import tool.ObjectAndByte;
-
-import java.io.IOException;
 
 /**
  * V2 log entry encoder based on protobuf, see src/main/resources/log.proto

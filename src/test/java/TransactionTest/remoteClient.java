@@ -48,8 +48,11 @@ public class remoteClient {
             db.addNode();
             db.addNode();
             db.addNode();
-            tx.start(null);
-            tx.commit();
+            db.addNode();
+            db.addNode();
+
+            tx.start();
+            //tx.commit();
         }
 
         try {
@@ -58,29 +61,29 @@ public class remoteClient {
             e.printStackTrace();
         }
 
-        try (DTGTransaction tx = db.CreateTransaction()){
-            db.addNode();
-            db.addNode();
-            db.addNode();
-            db.addNode();
-            tx.start(null);
-            tx.commit();
-        }
-
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        try (DTGTransaction tx = db.CreateTransaction()){
-            db.addNode();
-            db.addNode();
-            db.addNode();
-            db.addNode();
-            tx.start(null);
-            tx.commit();
-        }
+//        try (DTGTransaction tx = db.CreateTransaction()){
+//            db.addNode();
+//            db.addNode();
+//            db.addNode();
+//            db.addNode();
+//            tx.start();
+//            //tx.commit();
+//        }
+//
+//        try {
+//            Thread.sleep(10000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+//        try (DTGTransaction tx = db.CreateTransaction()){
+//            db.addNode();
+//            db.addNode();
+//            db.addNode();
+//            db.addNode();
+//            tx.start();
+//            //tx.commit();
+//        }
 
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

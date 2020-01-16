@@ -6,6 +6,7 @@ import Element.EntityEntry;
 import LocalDBMachine.LocalDB;
 import LocalDBMachine.LocalTransaction;
 import LocalDBMachine.LocalTx.TransactionThreadLock;
+import UserClient.Transaction.TransactionLog;
 import com.alipay.sofa.jraft.Status;
 import com.alipay.sofa.jraft.rhea.RequestProcessClosure;
 import com.alipay.sofa.jraft.rhea.client.FutureHelper;
@@ -66,49 +67,33 @@ public class DTGRegionService implements RegionService {
 
     @Override
     public void handleTransactionRequest(final TransactionRequest request, final RequestProcessClosure<BaseRequest, BaseResponse<?>> closure) {
+        System.out.println(" start :" + System.currentTimeMillis());
         System.out.println("get transaction request  " + region.getId());
         final TransactionResponse response = new TransactionResponse();
         try {
             KVParameterRequires.requireSameEpoch(request, getRegionEpoch());
             List<EntityEntry> entityEntries = request.getEntries();
             String txId = request.getTxId();
-
-            this.rawStore.saveLog(new LogStoreClosure() {
+            LogStoreClosure logClosure = new LogStoreClosure() {
                 @Override
                 public void run(Status status) {
                     if (status.isOk()) {
-                        //System.out.println("success commit..:" + op.getTxId());
-                        response.setValue((Boolean) getData());
+                        System.out.println("success transaction..:" + txId);
+                        response.setValue(true);
                     } else {
                         //System.out.println("failed commit..:" + op.getTxId());
                         response.setValue(false);
                         setFailure(request, response, status, getError());
                     }
-                    System.out.println("return commit..");
+                    System.out.println("return aaa.." + txId);
+                    System.out.println(" end :" + System.currentTimeMillis());
                     closure.sendResponse(response);
                 }
-            });
-
-
-            final DTGOperation op = KVParameterRequires
-                    .requireNonNull(request.getDTGOpreration(), "put.DTGOperation");
-            this.rawStore.ApplyEntityEntries(op, new BaseStoreClosure() {
-                @Override
-                public void run(final Status status) {
-                    if (status.isOk()) {
-                        //System.out.println("success commit..:" + op.getTxId());
-                        response.setValue((Boolean) getData());
-                    } else {
-                        //System.out.println("failed commit..:" + op.getTxId());
-                        response.setValue(false);
-                        setFailure(request, response, status, getError());
-                    }
-                    System.out.println("return commit..");
-                    closure.sendResponse(response);
-                }
-            });
+            };
+            logClosure.setLog(new TransactionLog(txId, entityEntries));
+            this.rawStore.saveLog(logClosure);
         } catch (final Throwable t) {
-            System.out.println("failed commit..");
+            System.out.println("failed transaction..");
             LOG.error("Failed to handle: {}, {}.", request, StackTraceUtil.stackTrace(t));
             response.setValue(false);
             response.setError(Errors.forException(t));
@@ -118,55 +103,64 @@ public class DTGRegionService implements RegionService {
 
     @Override
     public void handleFirstPhase(FirstPhaseRequest request, RequestProcessClosure<BaseRequest, BaseResponse<?>> closure) {
+        this.region.increaseTransactionCount();
         final FirstPhaseResponse response = new FirstPhaseResponse();
         response.setRegionId(getRegionId());
         response.setRegionEpoch(getRegionEpoch());
         Map<Integer, Object> resultMap = new HashMap<>();
+        resultMap.put(-1, true);
         try {//System.out.println("run op... ：1  " +region.getId());
             KVParameterRequires.requireSameEpoch(request, getRegionEpoch());//System.out.println("run op... ：2  " + region.getId());
             final DTGOperation op = KVParameterRequires
                     .requireNonNull(request.getDTGOpreration(), "put.DRGOperation");
             //System.out.println("run op... ：" + op.getTxId());
-            final CompletableFuture<LocalTransaction> future = CompletableFuture.supplyAsync(() -> {
-                try {
-                    TransactionThreadLock txLock = new TransactionThreadLock(op.getTxId());
-                    LocalTransaction tx = new LocalTransaction(localdb.getDb(), op, resultMap, txLock, region);//System.out.println("run op... ：3  " + region.getId());
-                    tx.start();
-                    synchronized (resultMap){
-                        resultMap.wait(FutureHelper.DEFAULT_TIMEOUT_MILLIS);//System.out.println("run op... ：5  " + region.getId());
-                    }
-                    this.localdb.addToCommitMap(txLock, op.getTxId());//System.out.println("run op... ：6  " + region.getId());
-                    return tx;
-                    //return new ExecuteTransactionOp().getTransaction(this.localdb.getDb(), op, resultMap);
-//                    return localdb.getTransaction(op, resultMap);
-                } catch (Throwable throwable) {
-                    System.out.println("error!");System.out.println("tx error response request" + region.getId());
-                    response.setValue(ObjectAndByte.toByteArray(resultMap));
-                    response.setError(Errors.forException(throwable));
-                    closure.sendResponse(response);
-                    return null;
-                }
-            });
-            LocalTransaction tx = FutureHelper.get(future, FutureHelper.DEFAULT_TIMEOUT_MILLIS);
-            Requires.requireNonNull(tx, "remote transaction null");
+//            final CompletableFuture<LocalTransaction> future = CompletableFuture.supplyAsync(() -> {
+//                try {
+//                    TransactionThreadLock txLock = new TransactionThreadLock(op.getTxId());
+//                    LocalTransaction tx = new LocalTransaction(localdb.getDb(), op, resultMap, txLock, region);//System.out.println("run op... ：3  " + region.getId());
+//                    tx.start();
+//                    synchronized (resultMap){
+//                        resultMap.wait(FutureHelper.DEFAULT_TIMEOUT_MILLIS);//System.out.println("run op... ：5  " + region.getId());
+//                    }
+//                    this.localdb.addToCommitMap(txLock, op.getTxId());//System.out.println("run op... ：6  " + region.getId());
+//                    return tx;
+//                    //return new ExecuteTransactionOp().getTransaction(this.localdb.getDb(), op, resultMap);
+////                    return localdb.getTransaction(op, resultMap);
+//                } catch (Throwable throwable) {
+//                    System.out.println("error!");System.out.println("tx error response request" + region.getId());
+//                    response.setValue(ObjectAndByte.toByteArray(resultMap));
+//                    response.setError(Errors.forException(throwable));
+//                    closure.sendResponse(response);
+//                    return null;
+//                }
+//            });
+
+//            LocalTransaction tx = FutureHelper.get(future, FutureHelper.DEFAULT_TIMEOUT_MILLIS);
+//            Requires.requireNonNull(tx, "remote transaction null");
             //System.out.println("get tx and wait commit... ：" + op.getTxId());
 //            this.localdb.addToCommitMap(tx, op.getTxId());
-            this.rawStore.ApplyEntityEntries(op, new BaseStoreClosure() {
 
-                @Override
-                public void run(final Status status) {
-                    if (status.isOk()) {
-                        response.setValue(toByteArray(resultMap));
-                        //System.out.println(resultMap.size());
-                    } else {
-                        response.setValue(ObjectAndByte.toByteArray(resultMap));
-                        System.out.println("error!" + region.getId());
-                        setFailure(request, response, status, getError());
+            CompletableFuture.runAsync(() -> {
+                this.rawStore.ApplyEntityEntries(op, new BaseStoreClosure() {
+                    @Override
+                    public void run(final Status status) {
+                        System.out.println("run closure");
+                        if (status.isOk()) {
+                            response.setValue(toByteArray(resultMap));
+                            System.out.println("finish first phase");
+                            //System.out.println(resultMap.size());
+                        } else {
+                            response.setValue(ObjectAndByte.toByteArray(resultMap));
+                            System.out.println("error!" + region.getId());
+                            setFailure(request, response, status, getError());
+                        }
+                        //System.out.println("response request" + region.getId());
+                        closure.sendResponse(response);
                     }
-                    //System.out.println("response request" + region.getId());
-                    closure.sendResponse(response);
-                }
+                });
             });
+
+
         } catch (final Throwable t) {
             System.out.println("error!" + region.getId());
             LOG.error("Failed to handle: {}, {}.", request, StackTraceUtil.stackTrace(t));
@@ -174,7 +168,6 @@ public class DTGRegionService implements RegionService {
             response.setError(Errors.forException(t));//System.out.println("error response request" + region.getId());
             closure.sendResponse(response);
         }
-        //System.out.println("finish transaction request");
     }
 
     @Override
@@ -191,9 +184,10 @@ public class DTGRegionService implements RegionService {
                 public void run(final Status status) {
                     if (status.isOk()) {
                         //System.out.println("success commit..:" + op.getTxId());
+                        System.out.println("second first phase");
                         response.setValue((Boolean) getData());
                     } else {
-                        //System.out.println("failed commit..:" + op.getTxId());
+                        System.out.println("failed commit..:" + op.getTxId());
                         response.setValue(false);
                         setFailure(request, response, status, getError());
                     }

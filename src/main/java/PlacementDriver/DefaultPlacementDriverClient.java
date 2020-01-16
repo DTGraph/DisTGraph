@@ -53,6 +53,7 @@ import com.sun.org.apache.regexp.internal.RE;
 import config.DTGConstants;
 import config.DefaultOptions;
 import options.DTGPlacementDriverOptions;
+import options.DTGRegionEngineOptions;
 import options.DTGStoreEngineOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -282,11 +283,11 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
         }
         // local conf
         final DTGStore localStore = new DTGStore();
-        final List<RegionEngineOptions> rOptsList = opts.getRegionEngineOptionsList();
+        final List<DTGRegionEngineOptions> rOptsList = opts.getRegionEngineOptionsList();
         final List<DTGRegion> regionList = Lists.newArrayListWithCapacity(rOptsList.size());
         localStore.setId(remoteStore.getId());
         localStore.setEndpoint(selfEndpoint);
-        for (final RegionEngineOptions rOpts : rOptsList) {
+        for (final DTGRegionEngineOptions rOpts : rOptsList) {
             regionList.add(getLocalRegionMetadata(rOpts));
         }
         localStore.setRegions(regionList);
@@ -310,7 +311,7 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
 
     public DTGStore pdGetStoreMetadata(final DTGStoreEngineOptions opts){
         final DTGStore store = new DTGStore();
-        final List<RegionEngineOptions> rOptsList = opts.getRegionEngineOptionsList();
+        final List<DTGRegionEngineOptions> rOptsList = opts.getRegionEngineOptionsList();
         final List<DTGRegion> regionList = Lists.newArrayListWithCapacity(rOptsList.size());
         store.setId(-1);
         store.setEndpoint(opts.getServerAddress());
@@ -544,6 +545,7 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
                 addOrUpdateRegion(region, needLock);
             }
         }
+        int a = 1;
         returnRegionRouteTable(NODETYPE).updataTop(cluster.getNodeIdTopRestrict());
         returnRegionRouteTable(RELATIONTYPE).updataTop(cluster.getRelationIdTopRestrict());System.out.println("refresh done!");
     }

@@ -87,7 +87,7 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
             case OperationName.TRANSACTIONOP:{
                 Map<Integer, Object> resultMap = new HashMap<>();
                 try {
-                    if(!isLeader){
+                    //if(!isLeader){
                         //System.out.println("start get transaction");
                         TransactionThreadLock txLock = new TransactionThreadLock(op.getTxId());
                         LocalTransaction tx = new LocalTransaction(this.db, op, resultMap, txLock, region);
@@ -100,7 +100,7 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
 //                        LocalTransaction tx = new ExecuteTransactionOp().getTransaction(this.db, op, resultMap);
 //                        System.out.println("finish get transaction");
 //                        addToCommitMap(tx, op.getTxId());
-                    }
+                    //}
                     if(closure != null){
                         closure.setData(resultMap);
                         closure.run(Status.OK());
@@ -113,7 +113,7 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
                 }
                 break;
             }
-            case OperationName.COMMITTRANS:{
+            case OperationName.COMMITTRANS:{//System.out.println("start commit");
                 try {
                     //System.out.println("start commit");
                     commitTx(op.getTxId());
@@ -124,7 +124,7 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
                     }
                 }catch (Throwable e){
                     if(closure != null){
-                        System.out.println("commit error");
+                        //System.out.println("commit error");
                         closure.setData(false);
                         closure.setError(Errors.forException(e));
                         closure.run(new Status(-1, "request lock failed, transaction op id: %s", op.getTxId()));
@@ -132,7 +132,7 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
                 }
                 break;
             }
-            case OperationName.ROLLBACK:{
+            case OperationName.ROLLBACK:{//System.out.println("start rollback");
                 try {
                     removeTx(op.getTxId());
                     if(closure != null){
@@ -169,7 +169,7 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
 
     public void commitTx(String id) throws InterruptedException {
         TransactionThreadLock lock = waitCommitMap.get(id);
-        //System.out.println(id);
+        System.out.println(id);
         synchronized (lock){
             lock.commit();
             lock.notify();

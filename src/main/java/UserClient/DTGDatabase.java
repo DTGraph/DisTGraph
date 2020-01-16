@@ -73,6 +73,7 @@ public class DTGDatabase {
     }
 
     public void shutdown(){
+        this.TxIdGenerator.close();
         this.pdClient.shutdown();
         this.store.shutdown();
     }

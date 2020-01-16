@@ -4,6 +4,7 @@ import Element.EntityEntry;
 import com.alipay.sofa.jraft.rhea.cmd.store.BaseRequest;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author :jinkai
@@ -17,7 +18,7 @@ public class TransactionRequest extends BaseRequest {
 
     private static final long serialVersionUID = -7177581092521924953L;
 
-    private LinkedList<EntityEntry> entries;
+    private List<EntityEntry> entries;
 
     private String txId;
 
@@ -29,11 +30,11 @@ public class TransactionRequest extends BaseRequest {
         this.txId = txId;
     }
 
-    public LinkedList<EntityEntry> getEntries() {
+    public List<EntityEntry> getEntries() {
         return entries;
     }
 
-    public void setEntries(LinkedList<EntityEntry> entries) {
+    public void setEntries(List<EntityEntry> entries) {
         this.entries = entries;
     }
 

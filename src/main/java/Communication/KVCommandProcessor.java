@@ -17,6 +17,8 @@
 package Communication;
 
 import Communication.RequestAndResponse.CommitRequest;
+import Communication.RequestAndResponse.FirstPhaseRequest;
+import Communication.RequestAndResponse.SecondPhaseRequest;
 import Communication.RequestAndResponse.TransactionRequest;
 import Region.DTGRegionService;
 import com.alipay.remoting.AsyncContext;
@@ -27,6 +29,7 @@ import com.alipay.sofa.jraft.rhea.cmd.store.*;
 import com.alipay.sofa.jraft.rhea.errors.Errors;
 import com.alipay.sofa.jraft.rhea.errors.RheaRuntimeException;
 import com.alipay.sofa.jraft.util.Requires;
+import config.DTGConstants;
 import storage.DTGStoreEngine;
 
 import java.util.concurrent.Executor;
@@ -61,57 +64,15 @@ public class KVCommandProcessor<T extends BaseRequest> extends AsyncUserProcesso
             return;
         }
         switch (request.magic()) {
-//            case BaseRequest.PUT:
-//                regionService.handlePutRequest((PutRequest) request, closure);
-//                break;
-//            case BaseRequest.BATCH_PUT:
-//                regionService.handleBatchPutRequest((BatchPutRequest) request, closure);
-//                break;
-//            case BaseRequest.PUT_IF_ABSENT:
-//                regionService.handlePutIfAbsentRequest((PutIfAbsentRequest) request, closure);
-//                break;
-//            case BaseRequest.GET_PUT:
-//                regionService.handleGetAndPutRequest((GetAndPutRequest) request, closure);
-//                break;
-//            case BaseRequest.COMPARE_PUT:
-//                regionService.handleCompareAndPutRequest((CompareAndPutRequest) request, closure);
-//                break;
-//            case BaseRequest.DELETE:
-//                regionService.handleDeleteRequest((DeleteRequest) request, closure);
-//                break;
-//            case BaseRequest.DELETE_RANGE:
-//                regionService.handleDeleteRangeRequest((DeleteRangeRequest) request, closure);
-//                break;
-//            case BaseRequest.BATCH_DELETE:
-//                regionService.handleBatchDeleteRequest((BatchDeleteRequest) request, closure);
-//                break;
             case BaseRequest.MERGE:
                 regionService.handleMergeRequest((MergeRequest) request, closure);
                 break;
-//            case BaseRequest.GET:
-//                regionService.handleGetRequest((GetRequest) request, closure);
-//                break;
-//            case BaseRequest.MULTI_GET:
-//                regionService.handleMultiGetRequest((MultiGetRequest) request, closure);
-//                break;
-//            case BaseRequest.SCAN:
-//                regionService.handleScanRequest((ScanRequest) request, closure);
-//                break;
-//            case BaseRequest.GET_SEQUENCE:
-//                regionService.handleGetSequence((GetSequenceRequest) request, closure);
-//                break;
-//            case BaseRequest.RESET_SEQUENCE:
-//                regionService.handleResetSequence((ResetSequenceRequest) request, closure);
-//                break;
-//            case BaseRequest.KEY_LOCK:
-//                regionService.handleKeyLockRequest((KeyLockRequest) request, closure);
-//                break;
-//            case BaseRequest.KEY_UNLOCK:
-//                regionService.handleKeyUnlockRequest((KeyUnlockRequest) request, closure);
-//                break;
-//            case BaseRequest.NODE_EXECUTE:
-//                regionService.handleNodeExecuteRequest((NodeExecuteRequest) request, closure);
-//                break;
+            case DTGConstants.FIRST_PHASE_REQUEST:
+                regionService.handleFirstPhase((FirstPhaseRequest)request, closure);
+                break;
+            case DTGConstants.SECOND_PHASE_REQUEST:
+                regionService.handleSecondPhase((SecondPhaseRequest)request, closure);
+                break;
             case BaseRequest.RANGE_SPLIT:
                 regionService.handleRangeSplitRequest((RangeSplitRequest) request, closure);
                 break;

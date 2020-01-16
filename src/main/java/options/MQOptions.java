@@ -1,8 +1,7 @@
 package options;
 
-import MQ.MQStateMachine;
+import UserClient.DTGSaveStore;
 import com.alipay.sofa.jraft.util.Utils;
-import com.codahale.metrics.MetricRegistry;
 
 /**
  * @author :jinkai
@@ -15,13 +14,10 @@ import com.codahale.metrics.MetricRegistry;
 public class MQOptions {
 
     private String                 RockDBPath;
-    private MQStateMachine         fsm;
+    //private MQStateMachine         fsm;
     private String                 suffix;
     private String                 logUri;
-
-    private boolean                enableMetrics          = false;
-    private int                    timerPoolSize          = Utils.cpus() * 3 > 20 ? 20 : Utils.cpus() * 3;
-    private int                    snapshotIntervalSecs   = 3600;
+    private DTGSaveStore           saveStore;
 
 
 
@@ -33,24 +29,21 @@ public class MQOptions {
         RockDBPath = rockDBPath;
     }
 
-    public MQStateMachine getFsm() {
-        return fsm;
+//    public MQStateMachine getFsm() {
+//        return fsm;
+//    }
+
+//    public void setFsm(MQStateMachine fsm) {
+//        this.fsm = fsm;
+//    }
+
+
+    public DTGSaveStore getSaveStore() {
+        return saveStore;
     }
 
-    public boolean isEnableMetrics() {
-        return enableMetrics;
-    }
-
-    public void setFsm(MQStateMachine fsm) {
-        this.fsm = fsm;
-    }
-
-    public int getTimerPoolSize() {
-        return this.timerPoolSize;
-    }
-
-    public void setTimerPoolSize(final int timerPoolSize) {
-        this.timerPoolSize = timerPoolSize;
+    public void setSaveStore(DTGSaveStore saveStore) {
+        this.saveStore = saveStore;
     }
 
     public String getSuffix() {
@@ -59,14 +52,6 @@ public class MQOptions {
 
     public void setSuffix(String suffix) {
         this.suffix = suffix;
-    }
-
-    public int getSnapshotIntervalSecs() {
-        return this.snapshotIntervalSecs;
-    }
-
-    public void setSnapshotIntervalSecs(final int snapshotIntervalSecs) {
-        this.snapshotIntervalSecs = snapshotIntervalSecs;
     }
 
     public String getLogUri() {

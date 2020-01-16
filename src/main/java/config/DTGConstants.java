@@ -30,4 +30,5 @@ public class DTGConstants {
     //if TX_LOG_SAVE_LEVEL==true, the log save with checksum;
     public static final boolean TX_LOG_SAVE_LEVEL            = false;
     public static final long    NULL_INDEX                   = -99998;
+    public static final int     FAILOVERRETRIES              = 5;
 }

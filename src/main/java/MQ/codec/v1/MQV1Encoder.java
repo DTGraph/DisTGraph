@@ -20,7 +20,6 @@ import MQ.MQLogId;
 import MQ.TransactionLogEntry;
 import MQ.codec.MQLogEntryEncoder;
 import com.alipay.sofa.jraft.entity.EnumOutter.EntryType;
-import com.alipay.sofa.jraft.entity.LogId;
 import com.alipay.sofa.jraft.util.Bits;
 
 import java.nio.ByteBuffer;

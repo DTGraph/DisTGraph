@@ -17,7 +17,7 @@
 package options;
 
 import MQ.codec.MQLogEntryCodecFactory;
-import com.alipay.sofa.jraft.conf.ConfigurationManager;
+
 /**
  * Log storage initialize options
  * @author boyan(boyan@antfin.com)

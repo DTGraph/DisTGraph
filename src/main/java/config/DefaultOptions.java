@@ -215,10 +215,15 @@ public class DefaultOptions {
         opts.setRaftDataPath(localdbPath+"\\"+ RAFT_DATA_PATH);
         opts.setServerAddress(new Endpoint(ip , port));
 
-        RegionEngineOptions rOpts = new RegionEngineOptions();
-        rOpts.setRegionId(1L);
-        List<RegionEngineOptions> rOptsList = Lists.newArrayList();
-        rOptsList.add(rOpts);
+
+        List<DTGRegionEngineOptions> rOptsList = Lists.newArrayList();
+        for(long i = 1; i < 5; i++){
+            DTGRegionEngineOptions rOpts = new DTGRegionEngineOptions();
+            rOpts.setRegionId(i);
+            rOpts.setInitNodeId(i * DEFAULTREGIONNODESIZE);
+            rOpts.setInitRelationId(i * DEFAULTREGIONRELATIONSIZE);
+            rOptsList.add(rOpts);
+        }
         opts.setRegionEngineOptionsList(rOptsList);
 
         return opts;

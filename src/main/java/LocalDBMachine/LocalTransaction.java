@@ -200,7 +200,7 @@ public class LocalTransaction extends Thread {
     }
 
     public void commit() throws TypeDoesnotExistException {
-        //System.out.println("commit");
+        System.out.println("commit");
         for(int i = 0; i < op.getEntityEntries().size(); i++){
             switch (actionType[i]){
                 case 0:break;
@@ -230,7 +230,7 @@ public class LocalTransaction extends Thread {
     }
 
     public void rollback(){
-        //System.out.println("rollback");
+        System.out.println("rollback");
         this.region.removeNode(nodeTransactionAdd);
         this.region.removeRelation(relationTransactionAdd);
         transaction.failure();

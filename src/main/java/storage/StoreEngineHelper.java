@@ -18,6 +18,8 @@ package storage;
 
 import Communication.KVCommandProcessor;
 import Communication.RequestAndResponse.CommitRequest;
+import Communication.RequestAndResponse.FirstPhaseRequest;
+import Communication.RequestAndResponse.SecondPhaseRequest;
 import Communication.RequestAndResponse.TransactionRequest;
 import com.alipay.remoting.rpc.RpcServer;
 import com.alipay.sofa.jraft.rhea.cmd.store.*;
@@ -91,6 +93,8 @@ public final class StoreEngineHelper {
         rpcServer.registerUserProcessor(new KVCommandProcessor<>(NodeExecuteRequest.class, engine));
         rpcServer.registerUserProcessor(new KVCommandProcessor<>(RangeSplitRequest.class, engine));
         rpcServer.registerUserProcessor(new KVCommandProcessor<>(TransactionRequest.class, engine));
+        rpcServer.registerUserProcessor(new KVCommandProcessor<>(FirstPhaseRequest.class, engine));
+        rpcServer.registerUserProcessor(new KVCommandProcessor<>(SecondPhaseRequest.class, engine));
         rpcServer.registerUserProcessor(new KVCommandProcessor<>(CommitRequest.class, engine));
     }
 

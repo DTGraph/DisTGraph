@@ -1,8 +1,5 @@
 package MQ;
 
-import MQ.codec.v1.MQV1Decoder;
-import MQ.codec.v1.MQV1Encoder;
-import MQ.codec.v1.MQV1LogEntryCodecFactory;
 import com.alipay.sofa.jraft.entity.Checksum;
 import com.alipay.sofa.jraft.entity.EnumOutter;
 import com.alipay.sofa.jraft.util.CrcUtil;

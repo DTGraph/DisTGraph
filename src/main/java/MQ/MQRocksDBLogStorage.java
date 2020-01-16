@@ -252,6 +252,7 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
 
     @Override
     public boolean appendEntry(TransactionLogEntry entry) {
+        System.out.println("save log :" + System.currentTimeMillis());
         if (entry.getType() == EnumOutter.EntryType.ENTRY_TYPE_CONFIGURATION) {
             return executeBatch(batch -> addConfBatch(entry, batch));
         } else {
@@ -265,6 +266,7 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
                 final byte[] valueBytes = this.logEntryEncoder.encode(entry);
                 final byte[] newValueBytes = onDataAppend(logIndex, valueBytes);
                 this.db.put(this.defaultHandle, this.writeOptions, getKeyBytes(logIndex), newValueBytes);
+                System.out.println("end save log :" + System.currentTimeMillis());
                 return true;
             } catch (final RocksDBException | IOException e) {
                 LOG.error("Fail to append entry.", e);
@@ -277,6 +279,7 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
 
     @Override
     public int appendEntries(List<TransactionLogEntry> entries) {
+        //System.out.println("save log :" + System.currentTimeMillis());
         if (entries == null || entries.isEmpty()) {
             return 0;
         }
@@ -292,6 +295,7 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
             }
         });
         if (ret) {
+            //System.out.println("end save log :" + System.currentTimeMillis());
             return entriesCount;
         } else {
             return 0;

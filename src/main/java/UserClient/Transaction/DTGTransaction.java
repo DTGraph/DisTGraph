@@ -60,7 +60,14 @@ public class DTGTransaction implements AutoCloseable {
         return this.isClose;
     }
 
-    public void start(final Throwable lastCause){
+    public void start(){
+        System.out.println("START : " + System.currentTimeMillis());
+        this.isClose = false;
+        store.applyTransaction(this.entityEntryList, this.txId, this.failoverRetries);
+        System.out.println("END : " + System.currentTimeMillis());
+    }
+
+    public void startFirstPhase(final Throwable lastCause){
         System.out.println("START : " + System.currentTimeMillis());
         this.isClose = false;
         store.checkMaxId(maxNodeId, maxRelationId);

@@ -35,6 +35,8 @@ import com.alipay.sofa.jraft.util.Requires;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.ScheduledReporter;
 import com.codahale.metrics.Slf4jReporter;
+import options.DTGMetricsRawStoreOptions;
+import options.DTGRegionEngineOptions;
 import org.apache.commons.io.FileUtils;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
@@ -57,7 +59,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author jiachun.fjc
  */
-public class DTGRegionEngine implements Lifecycle<RegionEngineOptions> {
+public class DTGRegionEngine implements Lifecycle<DTGRegionEngineOptions> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DTGRegionEngine.class);
 
@@ -71,7 +73,7 @@ public class DTGRegionEngine implements Lifecycle<RegionEngineOptions> {
     private RaftGroupService       raftGroupService;
     private Node                   node;
     private DTGStateMachine        fsm;
-    private RegionEngineOptions    regionOpts;
+    private DTGRegionEngineOptions regionOpts;
 
     //private GraphDatabaseService db;
 
@@ -85,7 +87,7 @@ public class DTGRegionEngine implements Lifecycle<RegionEngineOptions> {
     }
 
     @Override
-    public synchronized boolean init(final RegionEngineOptions opts) {
+    public synchronized boolean init(final DTGRegionEngineOptions opts) {
         if (this.started) {
             LOG.info("[RegionEngine: {}] already started.", this.region);
             return true;
@@ -143,6 +145,9 @@ public class DTGRegionEngine implements Lifecycle<RegionEngineOptions> {
             this.raftRawStore = new DTGRaftRawStore(this.node, rawStore);
             //this.raftRawKVStore = new RaftRawKVStore(this.node, rawKVStore, readIndexExecutor);
             this.metricsRawStore = new DTGMetricsRawStore(this.region.getId(), this.raftRawStore);
+            if(!initDTGMetricsRawStore(opts)){
+                return false;
+            }
             // metrics config
             if (this.regionMetricsReporter == null && metricsReportPeriod > 0) {
                 final MetricRegistry metricRegistry = this.node.getNodeMetrics().getMetricRegistry();
@@ -163,6 +168,16 @@ public class DTGRegionEngine implements Lifecycle<RegionEngineOptions> {
             LOG.info("[RegionEngine] start successfully: {}.", this);
         }
         return this.started;
+    }
+
+    private boolean initDTGMetricsRawStore(DTGRegionEngineOptions opts){
+        DTGMetricsRawStoreOptions mrsOptions = new DTGMetricsRawStoreOptions();
+        mrsOptions.setUrl(opts.getDbPath()+ region.getId());
+        mrsOptions.setSaveStore(opts.getSaveStore());
+        if(!this.metricsRawStore.init(mrsOptions)){
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -247,7 +262,7 @@ public class DTGRegionEngine implements Lifecycle<RegionEngineOptions> {
         return Requires.requireNonNull(this.regionOpts, "opts").copy();
     }
 
-    public RegionEngineOptions copyNullRegionOpts() {
+    public DTGRegionEngineOptions copyNullRegionOpts() {
         return Requires.requireNonNull(this.regionOpts, "opts").copyNull();
     }
 

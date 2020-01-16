@@ -17,9 +17,8 @@
 package MQ.codec;
 
 import MQ.TransactionLogEntry;
-import MQ.codec.v1.MQV1Decoder;
-import MQ.codec.v2.MQV2LogEntryCodecFactory;
 import MQ.codec.v2.MQV2Decoder;
+import MQ.codec.v2.MQV2LogEntryCodecFactory;
 
 /**
  * Decoder that supports both v1 and v2 log entry codec protocol.

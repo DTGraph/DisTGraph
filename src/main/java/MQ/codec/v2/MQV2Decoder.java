@@ -18,15 +18,9 @@ package MQ.codec.v2;
 
 import MQ.TransactionLogEntry;
 import MQ.codec.MQLogEntryDecoder;
-import com.alipay.sofa.jraft.entity.codec.v2.LogOutter.PBLogEntry;
-import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.ZeroByteStringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tool.ObjectAndByte;
-
-import java.nio.ByteBuffer;
 
 /**
  * V2 log entry decoder based on protobuf, see src/main/resources/log.proto

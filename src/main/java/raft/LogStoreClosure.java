@@ -1,7 +1,10 @@
 package raft;
 
+import UserClient.Transaction.TransactionLog;
 import com.alipay.sofa.jraft.Status;
 import com.alipay.sofa.jraft.rhea.errors.Errors;
+
+import java.io.Serializable;
 
 /**
  * @author :jinkai
@@ -11,19 +14,12 @@ import com.alipay.sofa.jraft.rhea.errors.Errors;
  * @version:
  */
 
-public abstract class LogStoreClosure implements EntityStoreClosure {
+public abstract class LogStoreClosure implements EntityStoreClosure, Serializable {
 
-    private volatile Errors error;
-    private volatile Object data;
-    private volatile String TxId;
-
-    public void setTxId(String txId) {
-        TxId = txId;
-    }
-
-    public String getTxId() {
-        return TxId;
-    }
+    private static final long serialVersionUID = 3395208635576121604L;
+    private volatile Errors         error;
+    private volatile Object         data;
+    private volatile TransactionLog log;
 
     @Override
     public Errors getError() {
@@ -43,5 +39,13 @@ public abstract class LogStoreClosure implements EntityStoreClosure {
     @Override
     public void setData(Object data) {
         this.data = data;
+    }
+
+    public TransactionLog getLog() {
+        return log;
+    }
+
+    public void setLog(TransactionLog log) {
+        this.log = log;
     }
 }
