@@ -62,26 +62,24 @@ import java.util.concurrent.TimeUnit;
  *
  * @author jiachun.fjc
  */
-public class HeartbeatSender111 implements Lifecycle<HeartbeatOptions> {
+public class HeartbeatSender implements Lifecycle<HeartbeatOptions> {
 
     private static final Logger            LOG = LoggerFactory.getLogger(HeartbeatSender.class);
 
     private final DTGStoreEngine           storeEngine;
     private final DTGPlacementDriverClient pdClient;
-    private final RpcClient                rpcClient;
+    private final RpcCaller                rpcCaller;
 
     private StatsCollector                 statsCollector;
     private DTGInstructionProcessor        instructionProcessor;
-    private int                            heartbeatRpcTimeoutMillis;
-    private ThreadPoolExecutor             heartbeatRpcCallbackExecutor;
     private HashedWheelTimer               heartbeatTimer;
 
     private boolean                        started;
 
-    public HeartbeatSender111(DTGStoreEngine storeEngine) {
+    public HeartbeatSender(DTGStoreEngine storeEngine) {
         this.storeEngine = storeEngine;
         this.pdClient = storeEngine.getPlacementDriverClient();
-        this.rpcClient = ((DefaultPlacementDriverClient) this.pdClient).getRpcClient();
+        this.rpcCaller = storeEngine.getRpcCaller();
     }
 
     @Override
@@ -93,37 +91,21 @@ public class HeartbeatSender111 implements Lifecycle<HeartbeatOptions> {
         this.statsCollector = new StatsCollector(this.storeEngine);
         this.instructionProcessor = new DTGInstructionProcessor(this.storeEngine);
         this.heartbeatTimer = new HashedWheelTimer(new NamedThreadFactory("heartbeat-timer", true), 50,
-                TimeUnit.MILLISECONDS, 4096);
-        this.heartbeatRpcTimeoutMillis = opts.getHeartbeatRpcTimeoutMillis();
-        if (this.heartbeatRpcTimeoutMillis <= 0) {
-            throw new IllegalArgumentException("Heartbeat rpc timeout millis must > 0, "
-                                               + this.heartbeatRpcTimeoutMillis);
-        }
-        final String name = "rheakv-heartbeat-callback";
-        this.heartbeatRpcCallbackExecutor = ThreadPoolUtil.newBuilder() //
-            .poolName(name) //
-            .enableMetric(true) //
-            .coreThreads(4) //
-            .maximumThreads(4) //
-            .keepAliveSeconds(120L) //
-            .workQueue(new ArrayBlockingQueue<>(1024)) //
-            .threadFactory(new NamedThreadFactory(name, true)) //
-            .rejectedHandler(new DiscardOldPolicyWithReport(name)) //
-            .build();
+            TimeUnit.MILLISECONDS, 4096);
         final long storeHeartbeatIntervalSeconds = opts.getStoreHeartbeatIntervalSeconds();
         final long regionHeartbeatIntervalSeconds = opts.getRegionHeartbeatIntervalSeconds();
         if (storeHeartbeatIntervalSeconds <= 0) {
             throw new IllegalArgumentException("Store heartbeat interval seconds must > 0, "
-                    + storeHeartbeatIntervalSeconds);
+                                               + storeHeartbeatIntervalSeconds);
         }
         if (regionHeartbeatIntervalSeconds <= 0) {
             throw new IllegalArgumentException("Region heartbeat interval seconds must > 0, "
-                    + regionHeartbeatIntervalSeconds);
+                                               + regionHeartbeatIntervalSeconds);
         }
         final long now = System.currentTimeMillis();
         final StoreHeartbeatTask storeHeartbeatTask = new StoreHeartbeatTask(storeHeartbeatIntervalSeconds, now, false);
         final RegionHeartbeatTask regionHeartbeatTask = new RegionHeartbeatTask(regionHeartbeatIntervalSeconds, now,
-                false);
+            false);
         this.heartbeatTimer.newTimeout(storeHeartbeatTask, storeHeartbeatTask.getNextDelay(), TimeUnit.SECONDS);
         this.heartbeatTimer.newTimeout(regionHeartbeatTask, regionHeartbeatTask.getNextDelay(), TimeUnit.SECONDS);
         LOG.info("[HeartbeatSender] start successfully, options: {}.", opts);
@@ -132,7 +114,6 @@ public class HeartbeatSender111 implements Lifecycle<HeartbeatOptions> {
 
     @Override
     public synchronized void shutdown() {
-        ExecutorServiceHelper.shutdownAndAwaitTermination(this.heartbeatRpcCallbackExecutor);
         if (this.heartbeatTimer != null) {
             this.heartbeatTimer.stop();
         }
@@ -145,7 +126,7 @@ public class HeartbeatSender111 implements Lifecycle<HeartbeatOptions> {
         final TimeInterval timeInterval = new TimeInterval(lastTime, now);
         final StoreStats stats = this.statsCollector.collectStoreStats(timeInterval);
         request.setStats(stats);
-        final HeartbeatClosure<Object> closure = new HeartbeatClosure<Object>() {
+        final RpcCaller.RpcClosure<Object> closure = new RpcCaller.RpcClosure<Object>() {
 
             @Override
             public void run(final Status status) {
@@ -154,8 +135,8 @@ public class HeartbeatSender111 implements Lifecycle<HeartbeatOptions> {
                 heartbeatTimer.newTimeout(nexTask, nexTask.getNextDelay(), TimeUnit.SECONDS);
             }
         };
-        final Endpoint endpoint = this.pdClient.getPdLeader(forceRefreshLeader, this.heartbeatRpcTimeoutMillis);
-        callAsyncWithRpc(endpoint, request, closure);
+        final Endpoint endpoint = this.pdClient.getPdLeader(forceRefreshLeader, rpcCaller.getHeartbeatRpcTimeoutMillis());
+        rpcCaller.callAsyncWithRpc(endpoint, request, closure);
     }
 
     private void sendRegionHeartbeat(final long nextDelay, final long lastTime, final boolean forceRefreshLeader) {
@@ -171,7 +152,7 @@ public class HeartbeatSender111 implements Lifecycle<HeartbeatOptions> {
             this.heartbeatTimer.newTimeout(nextTask, nextTask.getNextDelay(), TimeUnit.SECONDS);
             if (LOG.isInfoEnabled()) {
                 LOG.info("So sad, there is no even a region leader on [clusterId:{}, storeId: {}, endpoint:{}].",
-                        this.storeEngine.getClusterId(), this.storeEngine.getStoreId(), this.storeEngine.getSelfEndpoint());
+                    this.storeEngine.getClusterId(), this.storeEngine.getStoreId(), this.storeEngine.getSelfEndpoint());
             }
             return;
         }
@@ -186,7 +167,7 @@ public class HeartbeatSender111 implements Lifecycle<HeartbeatOptions> {
             regionStatsList.add(Pair.of(region, stats));
         }
         request.setRegionStatsList(regionStatsList);
-        final HeartbeatClosure<List<DTGInstruction>> closure = new HeartbeatClosure<List<DTGInstruction>>() {
+        final RpcCaller.RpcClosure<List<DTGInstruction>> closure = new RpcCaller.RpcClosure<List<DTGInstruction>>() {
 
             @Override
             public void run(final Status status) {
@@ -202,59 +183,59 @@ public class HeartbeatSender111 implements Lifecycle<HeartbeatOptions> {
                 heartbeatTimer.newTimeout(nextTask, nextTask.getNextDelay(), TimeUnit.SECONDS);
             }
         };
-        final Endpoint endpoint = this.pdClient.getPdLeader(forceRefreshLeader, this.heartbeatRpcTimeoutMillis);
-        callAsyncWithRpc(endpoint, request, closure);//System.out.println("send region heartbeat");
+        final Endpoint endpoint = this.pdClient.getPdLeader(forceRefreshLeader, rpcCaller.getHeartbeatRpcTimeoutMillis());
+        rpcCaller.callAsyncWithRpc(endpoint, request, closure);//System.out.println("send region heartbeat");
     }
 
-    private <V> void callAsyncWithRpc(final Endpoint endpoint, final BaseRequest request,
-                                      final HeartbeatClosure<V> closure) {
-        final String address = endpoint.toString();
-        final InvokeContext invokeCtx = ExtSerializerSupports.getInvokeContext();
-        final InvokeCallback invokeCallback = new InvokeCallback() {
+//    private <V> void callAsyncWithRpc(final Endpoint endpoint, final BaseRequest request,
+//                                      final HeartbeatClosure<V> closure) {
+//        final String address = endpoint.toString();
+//        final InvokeContext invokeCtx = ExtSerializerSupports.getInvokeContext();
+//        final InvokeCallback invokeCallback = new InvokeCallback() {
+//
+//            @SuppressWarnings("unchecked")
+//            @Override
+//            public void onResponse(final Object result) {
+//                final BaseResponse<?> response = (BaseResponse<?>) result;
+//                if (response.isSuccess()) {
+//                    closure.setResult((V) response.getValue());
+//                    closure.run(Status.OK());
+//                } else {
+//                    closure.setError(response.getError());
+//                    closure.run(new Status(-1, "RPC failed with address: %s, response: %s", address, response));
+//                }
+//            }
+//
+//            @Override
+//            public void onException(final Throwable t) {
+//                closure.run(new Status(-1, t.getMessage()));
+//            }
+//
+//            @Override
+//            public Executor getExecutor() {
+//                return heartbeatRpcCallbackExecutor;
+//            }
+//        };
+//        try {
+//            this.rpcClient.invokeWithCallback(address, request, invokeCtx, invokeCallback,
+//                this.heartbeatRpcTimeoutMillis);
+//        } catch (final Throwable t) {
+//            closure.run(new Status(-1, t.getMessage()));
+//        }
+//    }
 
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onResponse(final Object result) {
-                final BaseResponse<?> response = (BaseResponse<?>) result;
-                if (response.isSuccess()) {
-                    closure.setResult((V) response.getValue());
-                    closure.run(Status.OK());
-                } else {
-                    closure.setError(response.getError());
-                    closure.run(new Status(-1, "RPC failed with address: %s, response: %s", address, response));
-                }
-            }
-
-            @Override
-            public void onException(final Throwable t) {
-                closure.run(new Status(-1, t.getMessage()));
-            }
-
-            @Override
-            public Executor getExecutor() {
-                return heartbeatRpcCallbackExecutor;
-            }
-        };
-        try {
-            this.rpcClient.invokeWithCallback(address, request, invokeCtx, invokeCallback,
-                this.heartbeatRpcTimeoutMillis);
-        } catch (final Throwable t) {
-            closure.run(new Status(-1, t.getMessage()));
-        }
-    }
-
-    private static abstract class HeartbeatClosure<V> extends BaseKVStoreClosure {
-
-        private volatile V result;
-
-        public V getResult() {
-            return result;
-        }
-
-        public void setResult(V result) {
-            this.result = result;
-        }
-    }
+//    private static abstract class HeartbeatClosure<V> extends BaseKVStoreClosure {
+//
+//        private volatile V result;
+//
+//        public V getResult() {
+//            return result;
+//        }
+//
+//        public void setResult(V result) {
+//            this.result = result;
+//        }
+//    }
 
     private final class StoreHeartbeatTask implements TimerTask {
 
