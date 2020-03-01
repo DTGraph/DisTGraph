@@ -1,6 +1,9 @@
 package raft;
 
 import Element.DTGOperation;
+import Region.DTGLockClosure;
+import Region.DTGRegion;
+import Region.FirstPhaseClosure;
 import scala.collection.Iterator;
 
 /**
@@ -11,11 +14,19 @@ import scala.collection.Iterator;
  * @version:
  */
 
-public interface DTGRawStore  {
+public interface DTGRawStore {
 
     Iterator localIterator();
 
     void saveLog(LogStoreClosure closure);
+
+    void setLock(final DTGOperation op, final DTGLockClosure closure, DTGRegion region);
+
+    void sendLock(final DTGOperation op, final EntityStoreClosure closure);
+
+    void commitSuccess(final long version);
+
+    void firstPhaseProcessor(final DTGOperation op, final FirstPhaseClosure closure, DTGRegion region);
 
     void ApplyEntityEntries(final DTGOperation op, final EntityStoreClosure closure);
 

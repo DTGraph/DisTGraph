@@ -20,7 +20,7 @@ public class TransactionLogEntry implements Checksum, Serializable {
     /** entry type */
     private EnumOutter.EntryType type;
     /** log id with index/term */
-    private MQLogId id;
+    private long version = -1;
     /** entry data */
     private byte[] data;
     /** checksum for log entry*/
@@ -28,20 +28,20 @@ public class TransactionLogEntry implements Checksum, Serializable {
     /** true when the log has checksum **/
     private boolean              hasChecksum;
 
-    public TransactionLogEntry(long index) {
+    public TransactionLogEntry(long version) {
         super();
-        id = new MQLogId(index);
+       this.version = version;
     }
 
-    public TransactionLogEntry(final EnumOutter.EntryType type, long index) {
+    public TransactionLogEntry(final EnumOutter.EntryType type, long version) {
         super();
         this.type = type;
-        id = new MQLogId(index);
+        this.version = version;
     }
 
     @Override
     public long checksum() {
-        long c = checksum(this.type.getNumber(), this.id.checksum());
+        long c = checksum(this.type.getNumber(), this.version);
         if (this.data != null && data.length > 0) {
             c = checksum(c, CrcUtil.crc64(this.data));
         }
@@ -109,12 +109,12 @@ public class TransactionLogEntry implements Checksum, Serializable {
         this.type = type;
     }
 
-    public MQLogId getId() {
-        return this.id;
+    public long getVersion() {
+        return version;
     }
 
-    public void setId(final MQLogId id) {
-        this.id = id;
+    public void setVersion(long version) {
+        this.version = version;
     }
 
     public ByteBuffer getData() {
@@ -124,13 +124,17 @@ public class TransactionLogEntry implements Checksum, Serializable {
         return ByteBuffer.wrap(this.data);
     }
 
+    public byte[] getByteData() {
+        return this.data;
+    }
+
     public void setData(final byte[] data) {
         this.data = data;
     }
 
     @Override
     public String toString() {
-        return "TransactionLogEntry [type=" + this.type + ", id=" + this.id + ", data="
+        return "TransactionLogEntry [type=" + this.type + ", id=" + this.version + ", data="
                 + (this.data != null ? data.length > 0 : 0) + "]";
     }
 
@@ -139,7 +143,8 @@ public class TransactionLogEntry implements Checksum, Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.data == null) ? 0 : this.data.hashCode());
-        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        result = prime * result + (int) (this.version ^ (this.version >>> 32));
+        //result = prime * result + ((this.version < 0) ? 0 : this.id.hashCode());
         result = prime * result + ((this.type == null) ? 0 : this.type.hashCode());
         return result;
     }
@@ -163,11 +168,11 @@ public class TransactionLogEntry implements Checksum, Serializable {
         } else if (!this.data.equals(other.data)) {
             return false;
         }
-        if (this.id == null) {
-            if (other.id != null) {
+        if (this.version < 0) {
+            if (other.version >= 0) {
                 return false;
             }
-        } else if (!this.id.equals(other.id)) {
+        } else if (this.version != other.version) {
             return false;
         }
         return this.type == other.type;

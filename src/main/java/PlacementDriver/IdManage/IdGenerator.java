@@ -69,7 +69,6 @@ public class IdGenerator {
         {
             return nextDefragId;
         }
-
         long id = highId.get();
         if ( id == INTEGER_MINUS_ONE )
         {

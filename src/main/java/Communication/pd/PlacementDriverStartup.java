@@ -16,8 +16,6 @@
  */
 package Communication.pd;
 
-
-
 import com.alipay.sofa.jraft.rhea.pd.PlacementDriverServer;
 import com.alipay.sofa.jraft.rhea.pd.errors.PlacementDriverServerStartupException;
 import com.alipay.sofa.jraft.rhea.pd.options.PlacementDriverServerOptions;

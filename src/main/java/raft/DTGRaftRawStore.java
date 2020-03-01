@@ -1,6 +1,9 @@
 package raft;
 
 import Element.DTGOperation;
+import Region.DTGLockClosure;
+import Region.DTGRegion;
+import Region.FirstPhaseClosure;
 import com.alipay.sofa.jraft.Node;
 import com.alipay.sofa.jraft.Status;
 import com.alipay.sofa.jraft.entity.Task;
@@ -44,6 +47,26 @@ public class DTGRaftRawStore implements DTGRawStore {
     }
 
     @Override
+    public void setLock(final DTGOperation op, final DTGLockClosure closure, DTGRegion region) {
+
+    }
+
+    @Override
+    public void sendLock(DTGOperation op, EntityStoreClosure closure) {
+
+    }
+
+    @Override
+    public void commitSuccess(long version) {
+
+    }
+
+    @Override
+    public void firstPhaseProcessor(DTGOperation op, final FirstPhaseClosure closure, DTGRegion region) {
+
+    }
+
+    @Override
     public void ApplyEntityEntries(DTGOperation op, EntityStoreClosure closure) {
         if(!isLeader()){
             closure.setError(Errors.NOT_LEADER);
@@ -73,5 +96,9 @@ public class DTGRaftRawStore implements DTGRawStore {
 
     private boolean isLeader() {
         return this.node.isLeader();
+    }
+
+    public DTGRawStore getDtgRawStore() {
+        return dtgRawStore;
     }
 }

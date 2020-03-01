@@ -15,5 +15,7 @@ public class OperationName {
     public static final byte  READONLY       = 0x04;
     public static final byte  COMMITTRANS    = 0x05;
     public static final byte  ROLLBACK       = 0x06;
-    public static final byte  ADDREGION      = 0X07;
+    public static final byte  ADDREGION      = 0x07;
+    public static final byte  ADDREMOVELIST  = 0x08;
+    public static final byte  SECONDPHASE    = 0x09;
 }

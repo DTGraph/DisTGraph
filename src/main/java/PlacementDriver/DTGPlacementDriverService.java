@@ -43,7 +43,8 @@ import com.alipay.sofa.jraft.rhea.cmd.pd.*;
 import com.alipay.sofa.jraft.rhea.errors.Errors;
 import com.alipay.sofa.jraft.rhea.metadata.Instruction;
 import com.alipay.sofa.jraft.rhea.metadata.Peer;
-import com.alipay.sofa.jraft.rhea.options.PlacementDriverServerOptions;
+import com.alipay.sofa.jraft.rhea.pd.options.PlacementDriverServerOptions;
+import com.alipay.sofa.jraft.rhea.pd.ClusterStatsManager;
 import com.alipay.sofa.jraft.rhea.util.Constants;
 import com.alipay.sofa.jraft.rhea.util.Pair;
 import com.alipay.sofa.jraft.rhea.util.StackTraceUtil;
@@ -85,6 +86,7 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
     private final RheaKVStore rheaKVStore;
     private IdGenerator nodeIdGenerator;
     private IdGenerator relationIdGenerator;
+    private IdGenerator versionControl;
     private int idBatchSize;
     private List<DTGInstruction> instructionList;
     private DTGStore lazyStore;
@@ -113,6 +115,7 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
         LOG.info("[DefaultPlacementDriverService] start successfully, options: {}.", opts);
         nodeIdGenerator =createIdGenerator(opts.getIdGeneratorOptions(), "nodeIdGenerator");
         relationIdGenerator = createIdGenerator(opts.getIdGeneratorOptions(), "relationIdGenerator");
+        versionControl = createIdGenerator(opts.getIdGeneratorOptions(), "versionControl");
         this.idBatchSize = opts.getIdGeneratorOptions().getBatchSize();
         return this.started = true;
     }
@@ -127,6 +130,7 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
             }
             nodeIdGenerator.close();
             relationIdGenerator.close();
+            versionControl.close();
             invalidLocalCache();
         } finally {
             this.started = false;
@@ -188,7 +192,7 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
 
             //DTGStore store = this.metadataStore.getStoreInfo(clusterId, storeId);
             List<Pair<DTGRegion, DTGRegionStats>> pairList = request.getRegionStatsList();
-            System.out.println( "store id = "+ storeId + "pair list size = " + pairList.size());
+            System.out.println( "store id = "+ storeId + "， pair list size = " + pairList.size());
             if(lazyStore == null || pairList.size() < lazyStoreLeaderRegionNum){
                 lazyStore = this.metadataStore.getStoreInfo(clusterId, storeId);
                 lazyStoreLeaderRegionNum = pairList.size();
@@ -513,6 +517,35 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
             closure.sendResponse(response);
         }
         System.out.println("finish return id");
+    }
+
+    public void handleGetVersionId(final GetVersionRequest request, final RequestProcessClosure<BaseRequest, BaseResponse> closure ){
+        System.out.println("handleGetVersionId : prepare return version!");
+        final GetVersionResponse response = new GetVersionResponse();
+        try {
+            if (!this.isLeader) {
+                response.setError(Errors.NOT_LEADER);
+                closure.sendResponse(response);
+                return;
+            }
+            CompletableFuture<Long> future = CompletableFuture.supplyAsync(() -> {
+                return versionControl.nextId();
+            }).whenComplete((version, e) ->{
+                if(e != null){
+                    LOG.error("Failed to handle: {}, {}.", request, StackTraceUtil.stackTrace(e));
+                    response.setError(Errors.forException(e));
+                    closure.sendResponse(response);
+                    return;
+                }
+                response.setValue(version);
+                closure.sendResponse(response);
+                System.out.println("success get version : " + version);
+            });
+        }catch (final Throwable t){
+            LOG.error("Failed to handle: {}, {}.", request, StackTraceUtil.stackTrace(t));
+            response.setError(Errors.forException(t));
+            closure.sendResponse(response);
+        }
     }
 
     private void invalidLocalCache() {

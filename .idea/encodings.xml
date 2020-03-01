@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="Encoding" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="UTF-8">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../sofa-jraft" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../sofa-jraft/jraft-core" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../sofa-jraft/jraft-example" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../sofa-jraft/jraft-rheakv" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../sofa-jraft/jraft-rheakv/rheakv-core" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../sofa-jraft/jraft-test" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../temporal-neo4j/community/cypher/acceptance" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../temporal-neo4j/community/cypher/cypher" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../temporal-neo4j/community/cypher/cypher-compiler-2.3" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../temporal-neo4j/community/cypher/frontend-2.3" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../temporal-neo4j/community/kernel" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../temporal-storage" charset="UTF-8" />
-    <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

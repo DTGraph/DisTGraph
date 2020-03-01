@@ -16,6 +16,8 @@
  */
 package Region;
 
+import Communication.DTGRpcService;
+import Communication.RpcCaller;
 import LocalDBMachine.DTGStateMachine;
 import com.alipay.remoting.rpc.RpcServer;
 import com.alipay.sofa.jraft.*;
@@ -59,7 +61,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author jiachun.fjc
  */
-public class DTGRegionEngine implements Lifecycle<DTGRegionEngineOptions> {
+public class  DTGRegionEngine implements Lifecycle<DTGRegionEngineOptions> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DTGRegionEngine.class);
 
@@ -74,6 +76,7 @@ public class DTGRegionEngine implements Lifecycle<DTGRegionEngineOptions> {
     private Node                   node;
     private DTGStateMachine        fsm;
     private DTGRegionEngineOptions regionOpts;
+    private RpcCaller              rpcCaller;
 
     //private GraphDatabaseService db;
 
@@ -84,6 +87,7 @@ public class DTGRegionEngine implements Lifecycle<DTGRegionEngineOptions> {
     public DTGRegionEngine(DTGRegion region, DTGStoreEngine storeEngine) {
         this.region = region;
         this.storeEngine = storeEngine;
+        this.rpcCaller = storeEngine.getRpcCaller();
     }
 
     @Override
@@ -264,6 +268,10 @@ public class DTGRegionEngine implements Lifecycle<DTGRegionEngineOptions> {
 
     public DTGRegionEngineOptions copyNullRegionOpts() {
         return Requires.requireNonNull(this.regionOpts, "opts").copyNull();
+    }
+
+    public RpcCaller getRpcCaller() {
+        return rpcCaller;
     }
 
     @Override

@@ -76,17 +76,20 @@ public class LockManager implements Lifecycle {
                 done.complete(false);
             }
         }
+
     }
 
     private class DTGLock{
 
         private byte type;
         private String txId;
+        private long maxVersion;
         //private byte state;
 
-        public DTGLock(byte type, String txId){
+        public DTGLock(byte type, String txId, long maxVersion){
             this.txId = txId;
             this.type = type;
+            this.maxVersion = maxVersion;
         }
 
         public String getTxId() {
@@ -97,7 +100,11 @@ public class LockManager implements Lifecycle {
             return type;
         }
 
-//        public byte getState() {
+        public long getMaxVersion() {
+            return maxVersion;
+        }
+
+        //        public byte getState() {
 //            return state;
 //        }
 //
@@ -111,15 +118,15 @@ public class LockManager implements Lifecycle {
         return true;
     }
 
-    public boolean addLock(long id, byte type, String txId, byte lockType){
+    public boolean addLock(long id, byte type, String txId, byte lockType, long maxVersion){
         if(lockType == MainType.REMOVE){
-            return addRemoveLock(id, type, txId);
+            return addRemoveLock(id, type, txId, maxVersion);
         }
         this.readLock.lock();
         boolean couldunlock = true;
         try {
             String index = getIndex(id, type);
-            putIntoLockMap(index, txId, MainType.REMOVE);
+            putIntoLockMap(index, txId, MainType.REMOVE, maxVersion);
             if(isInRemoveList(index)){
                 List<RemoveClosure> list = waitRemoveList.get(index);
                 couldunlock = false;
@@ -137,18 +144,19 @@ public class LockManager implements Lifecycle {
         }
     }
 
-    public boolean addRemoveLock(long id, byte type, String txId){
+    public boolean addRemoveLock(long id, byte type, String txId, long maxVersion){
         this.readLock.lock();
         boolean couldunlock = true;
         try {
             String index = getIndex(id, type);
-            putIntoLockMap(index, txId, MainType.REMOVE);
+            putIntoLockMap(index, txId, MainType.REMOVE, maxVersion);
             List<RemoveClosure> list = waitRemoveList.get(index);
             if(list == null){
                 list = new ArrayList<>();
                 waitRemoveList.put(index, list);
                 RemoveClosure closure = new RemoveClosure(new CompletableFuture<Boolean>(), txId, index);
                 list.add(closure);
+                //this.TxVersionMap.put(txId, maxVersion);
                 return true;
             }else {
                 RemoveClosure closure = new RemoveClosure(new CompletableFuture<Boolean>(), txId, index);
@@ -159,6 +167,7 @@ public class LockManager implements Lifecycle {
                     removeLock(id, type, txId, MainType.REMOVE);
                     return false;
                 }else {
+                    //this.TxVersionMap.put(txId, maxVersion);
                     return true;
                 }
             }
@@ -175,8 +184,8 @@ public class LockManager implements Lifecycle {
         return FutureHelper.get(future);
     }
 
-    private void putIntoLockMap(String index, String txId,  byte lockType){
-        DTGLock lock = new DTGLock(lockType, txId);
+    private void putIntoLockMap(String index, String txId,  byte lockType, long maxVersion){
+        DTGLock lock = new DTGLock(lockType, txId, maxVersion);
         ArrayList<DTGLock> waitList = this.lockMap.get(index);
         if(waitList != null){
             waitList.add(lock);
@@ -205,6 +214,7 @@ public class LockManager implements Lifecycle {
                         }
                     }
                 }
+                //this.TxVersionMap.remove(txId);
             }
             return true;
         }finally {
@@ -230,6 +240,7 @@ public class LockManager implements Lifecycle {
                         }
                     }
                 }
+                //this.TxVersionMap.remove(txId);
             }
             return true;
         }finally {
@@ -266,7 +277,26 @@ public class LockManager implements Lifecycle {
         return "";
     }
 
-    private boolean isInRemoveList(String index){
+
+    public boolean isInRemoveList(long id, byte type, long version){
+        if(!isInRemoveList(id, type)){
+            return false;
+        }
+        long maxVersion = this.lockMap.get(getIndex(id, type)).get(0).getMaxVersion();
+        if(maxVersion > version){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+
+    public boolean isInRemoveList(long id, byte type){
+        String index = getIndex(id, type);
+        return isInRemoveList(index);
+    }
+
+    public boolean isInRemoveList(String index){
         return waitRemoveList.containsKey(index);
     }
 
@@ -302,7 +332,7 @@ public class LockManager implements Lifecycle {
                 DTGLock lock = waitQueue.get(i);
                 if(lock.getTxId().equals(tx1) || lock.getTxId().equals(tx2)){
                     if(exchange != null){
-                        if()
+                        //if()
                         waitQueue.set(exchangeIndex, lock);
                         waitQueue.set(i, exchange);
                         break;

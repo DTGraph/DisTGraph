@@ -14,9 +14,14 @@ import java.util.List;
 public class DTGOperation implements Serializable {
     private static final long serialVersionUID = -1252903871896272256L;
     private List<EntityEntry> entityEntries;
-    private final byte type;
+    private List<EntityEntry> AllEntityEntries;
+    private List<Long> regionIds;
+    private byte type;
     private int size;
     private String txId;
+    private long version;
+    private long mainRegionId;
+    private boolean highA = true;
 
     private byte[] OpData;
 
@@ -25,6 +30,10 @@ public class DTGOperation implements Serializable {
 //    private long startNodeId;
 //    private long startRelationId;
 //    private long startTempProId;
+
+    public DTGOperation(){
+        size = 0;
+    }
 
     public DTGOperation(List<EntityEntry> entityEntries, byte type){
         this.type = type;
@@ -36,6 +45,10 @@ public class DTGOperation implements Serializable {
     }
 
     public DTGOperation(byte type){
+        this.type = type;
+    }
+
+    public void setType(byte type) {
         this.type = type;
     }
 
@@ -65,6 +78,50 @@ public class DTGOperation implements Serializable {
 
     public void setOpData(byte[] opData) {
         OpData = opData;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public long getMainRegionId() {
+        return mainRegionId;
+    }
+
+    public void setMainRegionId(long mainRegionId) {
+        this.mainRegionId = mainRegionId;
+    }
+
+    public List<EntityEntry> getAllEntityEntries() {
+        return AllEntityEntries;
+    }
+
+    public void setEntityEntries(List<EntityEntry> entityEntries) {
+        this.entityEntries = entityEntries;
+    }
+
+    public void setAllEntityEntries(List<EntityEntry> allEntityEntries) {
+        AllEntityEntries = allEntityEntries;
+    }
+
+    public List<Long> getRegionIds() {
+        return regionIds;
+    }
+
+    public void setRegionIds(List<Long> regionIds) {
+        this.regionIds = regionIds;
+    }
+
+    public boolean isHighA() {
+        return highA;
+    }
+
+    public void setHighA(boolean highA) {
+        this.highA = highA;
     }
 
     //    public void setStartRelationId(long startRelationId) {

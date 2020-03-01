@@ -42,11 +42,12 @@ public class DTGTransaction implements AutoCloseable {
     private Map<Integer, Object> result;
     private long maxNodeId = -1;
     private long maxRelationId = -1;
+    private long version;
 
     private LinkedList<EntityEntry> entityEntryList;
 
     public DTGTransaction(DTGSaveStore store, TransactionOptions opts, String txId){
-        System.out.println("INIT : " + System.currentTimeMillis());
+        //System.out.println("INIT : " + System.currentTimeMillis());
         log.info("start a distribute transaction ...");
         entityEntryList = new LinkedList<>();
         entityNum = 0;
@@ -60,11 +61,18 @@ public class DTGTransaction implements AutoCloseable {
         return this.isClose;
     }
 
-    public void start(){
-        System.out.println("START : " + System.currentTimeMillis());
+    public Map<Integer, Object> start(){
+        System.out.println("start : " + entityEntryList.size());
+        this.version = this.store.getPlacementDriverClient().getVersion();
+        long start = System.currentTimeMillis();
+        //System.out.println("START : " + System.currentTimeMillis());
         this.isClose = false;
-        store.applyTransaction(this.entityEntryList, this.txId, this.failoverRetries);
-        System.out.println("END : " + System.currentTimeMillis());
+        //store.applyTransaction(this.entityEntryList, this.txId, this.failoverRetries, version);
+        Map<Integer, Object> result =  store.applyRequest(this.entityEntryList, this.txId, this.failoverRetries, null, true, version);
+        //System.out.println("END : " + System.currentTimeMillis());
+        long end = System.currentTimeMillis();
+        //System.out.println("cost : " + (end-start));
+        return result;
     }
 
     public void startFirstPhase(final Throwable lastCause){
@@ -82,7 +90,7 @@ public class DTGTransaction implements AutoCloseable {
 
     public void close(){
         this.isClose = true;
-        System.out.println("Transaction close");
+        //System.out.println("Transaction close");
     }
 
     public void addEntityEntries(EntityEntry entityEntry){

@@ -156,7 +156,11 @@ public interface DTGPlacementDriverClient extends Lifecycle<DTGPlacementDriverOp
 
     void getIds(byte type);
 
+    void initIds();
+
     long getId(byte type);
+
+    long getVersion();
 
     DTGMetadataRpcClient getDTGMetadataRpcClient();
 

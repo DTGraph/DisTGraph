@@ -3,7 +3,7 @@ package DBExceptions;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum DTGLockError {
+public enum TxError {
 
     /**
      * Unknown error
@@ -15,16 +15,12 @@ public enum DTGLockError {
      */
     SUCCESS(0),
 
-    FAILED(3001),
+    FAILED(4001);
 
-    OBJECTNOTEXIST(30001),
-
-    HASREMOVED(30002);
-
-    private static final Map<Integer, DTGLockError> Lock_ERROR_MAP = new HashMap<>();
+    private static final Map<Integer, TxError> Lock_ERROR_MAP = new HashMap<>();
 
     static {
-        for (final DTGLockError error : DTGLockError.values()) {
+        for (final TxError error : TxError.values()) {
             Lock_ERROR_MAP.put(error.getNumber(), error);
         }
     }
@@ -33,18 +29,18 @@ public enum DTGLockError {
         return this.value;
     }
 
-    public static DTGLockError forNumber(final int value) {
+    public static TxError forNumber(final int value) {
         return Lock_ERROR_MAP.getOrDefault(value, UNKNOWN);
     }
 
     public static String describeCode(final int code) {
-        DTGLockError e = forNumber(code);
+        TxError e = forNumber(code);
         return e != null ? e.name() : "<Unknown:" + code + ">";
     }
 
     private final int value;
 
-    DTGLockError(final int value) {
+    TxError(final int value) {
         this.value = value;
     }
 }

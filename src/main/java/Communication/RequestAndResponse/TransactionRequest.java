@@ -22,6 +22,8 @@ public class TransactionRequest extends BaseRequest {
 
     private String txId;
 
+    private long version;
+
     public String getTxId() {
         return txId;
     }
@@ -36,6 +38,14 @@ public class TransactionRequest extends BaseRequest {
 
     public void setEntries(List<EntityEntry> entries) {
         this.entries = entries;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
     }
 
     @Override

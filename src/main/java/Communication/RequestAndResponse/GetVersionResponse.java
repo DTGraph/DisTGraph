@@ -1,6 +1,7 @@
 package Communication.RequestAndResponse;
 
-import com.alipay.sofa.jraft.rhea.cmd.store.BaseResponse;
+
+import com.alipay.sofa.jraft.rhea.cmd.pd.BaseResponse;
 
 /**
  * @author :jinkai
@@ -10,6 +11,6 @@ import com.alipay.sofa.jraft.rhea.cmd.store.BaseResponse;
  * @version:
  */
 
-public class CommitResponse extends BaseResponse<Boolean> {
-    private static final long serialVersionUID = 7459510498371789069L;
+public class GetVersionResponse extends BaseResponse<Long> {
+    private static final long serialVersionUID = 1135775871085821999L;
 }

@@ -124,7 +124,7 @@ public class DefaultDTGRpcService implements DTGRpcService {
     private <V> void internalCallAsyncWithRpc(final Endpoint endpoint, final BaseRequest request,
                                               final FailoverClosure<V> closure) {
         final String address = endpoint.toString();
-        System.out.println(address);
+        //System.out.println(address);
         final InvokeContext invokeCtx = ExtSerializerSupports.getInvokeContext();
         final InvokeCallback invokeCallback = new InvokeCallback() {
 

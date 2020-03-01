@@ -18,6 +18,7 @@ package PlacementDriver.KVPD;
 
 import Communication.RequestAndResponse.CreateRegionRequest;
 import Communication.RequestAndResponse.DTGRegionHeartbeatRequest;
+import Communication.RequestAndResponse.GetVersionRequest;
 import Communication.RequestAndResponse.SetDTGStoreInfoRequest;
 import PlacementDriver.DTGPlacementDriverProcessor;
 import PlacementDriver.DTGPlacementDriverService;
@@ -29,7 +30,7 @@ import com.alipay.sofa.jraft.rhea.client.DefaultRheaKVStore;
 import com.alipay.sofa.jraft.rhea.client.RheaKVStore;
 import com.alipay.sofa.jraft.rhea.client.pd.PlacementDriverClient;
 import com.alipay.sofa.jraft.rhea.cmd.pd.*;
-import com.alipay.sofa.jraft.rhea.options.PlacementDriverServerOptions;
+import com.alipay.sofa.jraft.rhea.pd.options.PlacementDriverServerOptions;
 import com.alipay.sofa.jraft.rhea.options.RheaKVStoreOptions;
 import com.alipay.sofa.jraft.rhea.util.concurrent.CallerRunsPolicyWithReport;
 import com.alipay.sofa.jraft.rhea.util.concurrent.NamedThreadFactory;
@@ -150,6 +151,7 @@ public class DTGPDPlacementDriverServer implements Lifecycle<DTGPlacementDriverS
                 ((DTGPlacementDriverService) this.placementDriverService));
         addPlacementDriverProcessor(storeEngine.getRpcServer());
         LOG.info("[PlacementDriverServer] start successfully, options: {}.", opts);
+        System.out.println("[PlacementDriverServer] start successfully, address = ");
         return this.started = true;
     }
 
@@ -221,6 +223,8 @@ public class DTGPDPlacementDriverServer implements Lifecycle<DTGPlacementDriverS
         rpcServer.registerUserProcessor(new DTGPlacementDriverProcessor<>(GetIdsRequest.class,
                 this.placementDriverService, this.pdExecutor));
         rpcServer.registerUserProcessor(new DTGPlacementDriverProcessor<>(CreateRegionRequest.class,
+                this.placementDriverService, this.pdExecutor));
+        rpcServer.registerUserProcessor(new DTGPlacementDriverProcessor<>(GetVersionRequest.class,
                 this.placementDriverService, this.pdExecutor));
 
     }

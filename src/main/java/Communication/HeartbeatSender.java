@@ -62,7 +62,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author jiachun.fjc
  */
-public class HeartbeatSender111 implements Lifecycle<HeartbeatOptions> {
+public class HeartbeatSender implements Lifecycle<HeartbeatOptions> {
 
     private static final Logger            LOG = LoggerFactory.getLogger(HeartbeatSender.class);
 
@@ -78,7 +78,7 @@ public class HeartbeatSender111 implements Lifecycle<HeartbeatOptions> {
 
     private boolean                        started;
 
-    public HeartbeatSender111(DTGStoreEngine storeEngine) {
+    public HeartbeatSender(DTGStoreEngine storeEngine) {
         this.storeEngine = storeEngine;
         this.pdClient = storeEngine.getPlacementDriverClient();
         this.rpcClient = ((DefaultPlacementDriverClient) this.pdClient).getRpcClient();

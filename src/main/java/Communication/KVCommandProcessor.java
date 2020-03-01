@@ -16,10 +16,7 @@
  */
 package Communication;
 
-import Communication.RequestAndResponse.CommitRequest;
-import Communication.RequestAndResponse.FirstPhaseRequest;
-import Communication.RequestAndResponse.SecondPhaseRequest;
-import Communication.RequestAndResponse.TransactionRequest;
+import Communication.RequestAndResponse.*;
 import Region.DTGRegionService;
 import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
@@ -64,6 +61,9 @@ public class KVCommandProcessor<T extends BaseRequest> extends AsyncUserProcesso
             return;
         }
         switch (request.magic()) {
+            case BaseRequest.KEY_LOCK:
+                regionService.HandleLockRequest((LockRequest) request, closure);
+                break;
             case BaseRequest.MERGE:
                 regionService.handleMergeRequest((MergeRequest) request, closure);
                 break;
@@ -81,6 +81,9 @@ public class KVCommandProcessor<T extends BaseRequest> extends AsyncUserProcesso
                 break;
             case BaseRequest.COMMIT_REQUEST:
                 regionService.handleCommitRequest((CommitRequest) request, closure);
+                break;
+            case DTGConstants.FIRST_PHASE_SUCCESS_REQUEST:
+                regionService.handleFirstPhaseSuccessRequest((FirstPhaseSuccessRequest) request, closure);
                 break;
             default:
                 throw new RheaRuntimeException("Unsupported request type: " + request.getClass().getName());

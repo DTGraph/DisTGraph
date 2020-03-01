@@ -17,9 +17,11 @@ import java.io.Serializable;
 public abstract class LogStoreClosure implements EntityStoreClosure, Serializable {
 
     private static final long serialVersionUID = 3395208635576121604L;
+
     private volatile Errors         error;
     private volatile Object         data;
     private volatile TransactionLog log;
+    private volatile long           version;
 
     @Override
     public Errors getError() {
@@ -47,5 +49,13 @@ public abstract class LogStoreClosure implements EntityStoreClosure, Serializabl
 
     public void setLog(TransactionLog log) {
         this.log = log;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
+    }
+
+    public long getVersion() {
+        return version;
     }
 }

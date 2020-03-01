@@ -64,8 +64,10 @@ public class DTGRegion implements Copiable<DTGRegion>, Serializable {
 
     private int nodeUpperBound, relationUpperBound;
     private int nodecount, relationcount;
-    private boolean hasNextRegion;
     private volatile int transactionCount;
+
+
+    //private long maxVersion;
 
     private RegionEpoch       regionEpoch;                                    // region term
     private List<Peer>        peers;                                          // all peers in the region
@@ -114,20 +116,6 @@ public class DTGRegion implements Copiable<DTGRegion>, Serializable {
         this.relationcount = relationcount;
     }
 
-//    public DTGRegion(long id, byte[] nodeStartId, byte[] nodeEndId, byte[] relationStartId, byte[] relationEndId,
-//                     byte[] temporalPropertyStartId, byte[] temporalPropertyEndId, RegionEpoch regionEpoch,
-//                     List<Peer> peers) {
-//        this.id = id;
-//        this.nodeStartId = nodeStartId;
-//        this.nodeEndId = nodeEndId;
-//        this.relationStartId = relationStartId;
-//        this.relationEndId = relationEndId;
-//        this.temporalPropertyStartId = temporalPropertyStartId;
-//        this.temporalPropertyEndId = temporalPropertyEndId;
-//        this.regionEpoch = regionEpoch;
-//        this.peers = peers;
-//    }
-
     public long getId() {
         return id;
     }
@@ -136,70 +124,15 @@ public class DTGRegion implements Copiable<DTGRegion>, Serializable {
         this.id = id;
     }
 
-//    public byte[] getStartKey() {
-//        return startKey;
+//    public long getMaxVersion() {
+//        return maxVersion;
 //    }
 //
-//    public void setStartKey(byte[] startKey) {
-//        this.startKey = startKey;
+//    public void updataMaxVersion(long version) {
+//        if(this.maxVersion < version){
+//            this.maxVersion = version;
+//        }
 //    }
-//
-//    public byte[] getEndKey() {
-//        return endKey;
-//    }
-//
-//    public void setEndKey(byte[] endKey) {
-//        this.endKey = endKey;
-//    }
-//
-//    public byte[] getNodeStartId() {
-//        return nodeStartId;
-//    }
-//
-//    public void setNodeStartId(byte[] nodeStartId) {
-//        this.nodeStartId = nodeStartId;
-//    }
-//
-//    public byte[] getNodeEndId() {
-//        return nodeEndId;
-//    }
-//
-//    public void setNodeEndId(byte[] nodeEndId) {
-//        this.nodeEndId = nodeEndId;
-//    }
-//
-//    public byte[] getRelationStartId() {
-//        return relationStartId;
-//    }
-//
-//    public void setRelationStartId(byte[] relationStartId) {
-//        this.relationStartId = relationStartId;
-//    }
-//
-//    public byte[] getRelationEndId() {
-//        return relationEndId;
-//    }
-//
-//    public void setRelationEndId(byte[] relationEndId) {
-//        this.relationEndId = relationEndId;
-//    }
-//
-//    public byte[] getTemporalPropertyStartId() {
-//        return temporalPropertyStartId;
-//    }
-//
-//    public void setTemporalPropertyStartId(byte[] temporalPropertyStartId) {
-//        this.temporalPropertyStartId = temporalPropertyStartId;
-//    }
-//
-//    public byte[] getTemporalPropertyEndId() {
-//        return temporalPropertyEndId;
-//    }
-//
-//    public void setTemporalPropertyEndId(byte[] temporalPropertyEndId) {
-//        this.temporalPropertyEndId = temporalPropertyEndId;
-//    }
-
 
     public List<long[]> getNodeIdRangeList() {
         return NodeIdRangeList;

@@ -15,6 +15,8 @@ public enum DTGLockError {
      */
     SUCCESS(0),
 
+    FAILED(3001),
+
     OBJECTNOTEXIST(30001),
 
     HASREMOVED(30002);

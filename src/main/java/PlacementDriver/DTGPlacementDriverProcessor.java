@@ -2,6 +2,7 @@ package PlacementDriver;
 
 import Communication.RequestAndResponse.CreateRegionRequest;
 import Communication.RequestAndResponse.DTGRegionHeartbeatRequest;
+import Communication.RequestAndResponse.GetVersionRequest;
 import Communication.RequestAndResponse.SetDTGStoreInfoRequest;
 import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
@@ -10,6 +11,7 @@ import com.alipay.sofa.jraft.rhea.RequestProcessClosure;
 import com.alipay.sofa.jraft.rhea.cmd.pd.*;
 import com.alipay.sofa.jraft.rhea.errors.RheaRuntimeException;
 import com.alipay.sofa.jraft.util.Requires;
+import config.DTGConstants;
 
 import java.util.concurrent.Executor;
 
@@ -39,6 +41,9 @@ public class DTGPlacementDriverProcessor<T extends BaseRequest> extends AsyncUse
         final RequestProcessClosure<BaseRequest, BaseResponse> closure = new RequestProcessClosure<>(request, bizCtx,
                 asyncCtx);
         switch (request.magic()) {
+            case DTGConstants.GET_VERSION_REQUEST:
+                this.placementDriverService.handleGetVersionId((GetVersionRequest) request, closure);
+                break;
             case BaseRequest.STORE_HEARTBEAT:
                 this.placementDriverService.handleStoreHeartbeatRequest((StoreHeartbeatRequest) request, closure);
                 break;

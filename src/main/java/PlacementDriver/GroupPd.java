@@ -1,7 +1,7 @@
 package PlacementDriver;
 
 import PlacementDriver.KVPD.DTGPDPlacementDriverServer;
-import com.alipay.sofa.jraft.rhea.options.PlacementDriverServerOptions;
+import com.alipay.sofa.jraft.rhea.pd.options.PlacementDriverServerOptions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import options.DTGPlacementDriverServerOptions;

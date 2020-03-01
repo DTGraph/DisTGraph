@@ -33,7 +33,8 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
     private static final Logger LOG = LoggerFactory.getLogger(MQRocksDBLogStorage.class);
 
     public static final byte[] FIRST_LOG_IDX_KEY  = Utils.getBytes("meta/0firstLogIndex");
-    public static final byte[] COMMIT_LOG_IDX_KEY = Utils.getBytes("meta/1commitLogIndex");
+//    public static final byte[] COMMIT_LOG_IDX_KEY = Utils.getBytes("meta/1commitLogIndex");
+//    public static final byte[] MAX_VERSION        = Utils.getBytes("meta/2maxVersion");
 
     static {
         RocksDB.loadLibrary();
@@ -63,14 +64,9 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
 
     private volatile boolean                hasLoadFirstLogIndex;
 
-    private MQLogEntryEncoder logEntryEncoder;
-    private MQLogEntryDecoder logEntryDecoder;
-
     public MQRocksDBLogStorage(final String path) {
         super();
         this.path = path;
-        //this.sync = raftOptions.isSync();
-        //this.openStatistics = raftOptions.isOpenStatistics();
     }
 
     public static DBOptions createDBOptions() {
@@ -88,7 +84,6 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
 
     @Override
     public boolean init(MQLogStorageOptions opts) {
-       // Requires.requireNonNull(opts.getConfigurationManager(), "Null conf manager");
         Requires.requireNonNull(opts.getLogEntryCodecFactory(), "Null log entry codec factory");
         this.writeLock.lock();
         try {
@@ -96,10 +91,6 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
                 LOG.warn("MQRocksDBLogStorage init() already.");
                 return true;
             }
-            this.logEntryDecoder = opts.getLogEntryCodecFactory().decoder();
-            this.logEntryEncoder = opts.getLogEntryCodecFactory().encoder();
-            Requires.requireNonNull(this.logEntryDecoder, "Null log entry decoder");
-            Requires.requireNonNull(this.logEntryEncoder, "Null log entry encoder");
             this.dbOptions = createDBOptions();
             this.totalOrderReadOptions = new ReadOptions();
             this.totalOrderReadOptions.setTotalOrderSeek(true);
@@ -159,65 +150,65 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
         }
     }
 
-    public long getCommitLogIndex() {
-        return getCommitLogIndex(false);
-    }
+//    public long getCommitLogIndex() {
+//        return getCommitLogIndex(false);
+//    }
+
+//    @Override
+//    public long getCommitLogIndex(boolean flush) {
+//        this.readLock.lock();
+//        RocksIterator it = null;
+//        try {
+//            if(!flush){
+//                return this.commitLogIndex;
+//            }
+//            checkState();
+//            final byte[] bs = this.db.get(this.confHandle, this.COMMIT_LOG_IDX_KEY);
+//            if(bs != null){
+//                return Bits.getLong(bs, 0);
+//            }
+//            return 0L;
+//        } catch (RocksDBException e) {
+//            e.printStackTrace();
+//        } finally {
+//            if (it != null) {
+//                it.close();
+//            }
+//            this.readLock.unlock();
+//        }
+//        return 0L;
+//    }
+//
+//    @Override
+//    public void setCommitLogIndex(long index) {
+//        if(index < this.firstLogIndex || index < this.commitLogIndex){
+//            throw new LogIdException("commit index out of bound : index = " + index + ", firstLogIndex :" + firstLogIndex + ", commitLogIndex" + commitLogIndex);
+//        }
+//        saveCommitLogIndex(index);
+//
+//    }
 
     @Override
-    public long getCommitLogIndex(boolean flush) {
+    public TransactionLogEntry getEntry(long version) {
         this.readLock.lock();
-        RocksIterator it = null;
         try {
-            if(!flush){
-                return this.commitLogIndex;
-            }
-            checkState();
-            final byte[] bs = this.db.get(this.confHandle, this.COMMIT_LOG_IDX_KEY);
-            if(bs != null){
-                return Bits.getLong(bs, 0);
-            }
-            return 0L;
-        } catch (RocksDBException e) {
-            e.printStackTrace();
-        } finally {
-            if (it != null) {
-                it.close();
-            }
-            this.readLock.unlock();
-        }
-        return 0L;
-    }
-
-    @Override
-    public void setCommitLogIndex(long index) {
-        if(index < this.firstLogIndex || index < this.commitLogIndex){
-            throw new LogIdException("commit index out of bound : index = " + index + ", firstLogIndex :" + firstLogIndex + ", commitLogIndex" + commitLogIndex);
-        }
-        saveCommitLogIndex(index);
-
-    }
-
-    @Override
-    public TransactionLogEntry getEntry(long index) {
-        this.readLock.lock();
-        try {
-            if (this.hasLoadFirstLogIndex && index < this.firstLogIndex) {
+            if (this.hasLoadFirstLogIndex && version < this.firstLogIndex) {
                 return null;
             }
-            final byte[] keyBytes = getKeyBytes(index);
+            final byte[] keyBytes = getKeyBytes(version);
             final byte[] bs = onDataGet(getValueFromRocksDB(keyBytes));
             if (bs != null) {
-                final TransactionLogEntry entry = this.logEntryDecoder.decode(bs);
+                final TransactionLogEntry entry = (TransactionLogEntry)ObjectAndByte.toObject(bs);
                 if (entry != null) {
                     return entry;
                 } else {
-                    LOG.error("Bad log entry format for index={}, the log data is: {}.", index, BytesUtil.toHex(bs));
+                    LOG.error("Bad log entry format for version={}, the log data is: {}.", version, BytesUtil.toHex(bs));
                     // invalid data remove? TODO
                     return null;
                 }
             }
         } catch (final RocksDBException | IOException e) {
-            LOG.error("Fail to get log entry at index {}.", index, e);
+            LOG.error("Fail to get log entry at version {}.", version, e);
         } finally {
             this.readLock.unlock();
         }
@@ -238,7 +229,7 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
                 if(it.key().length == 8){
                     long index = Bits.getLong(it.key(), 0);
                     if(index >= start && index <= end){
-                        TransactionLogEntry entry = this.logEntryDecoder.decode(it.value());
+                        TransactionLogEntry entry = (TransactionLogEntry)ObjectAndByte.toObject(it.value());
                         list.add(entry);
                     }
                 }
@@ -250,30 +241,64 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
         }
     }
 
+//    @Override
+//    public int getMaxVersion() {
+//        this.readLock.lock();
+//        RocksIterator it = null;
+//        try {
+//            checkState();
+//            final byte[] bs = this.db.get(this.confHandle, this.MAX_VERSION);
+//            if(bs != null){
+//                return Bits.getInt(bs, 0);
+//            }
+//            return 1;
+//        } catch (RocksDBException e) {
+//            e.printStackTrace();
+//        } finally {
+//            if (it != null) {
+//                it.close();
+//            }
+//            this.readLock.unlock();
+//        }
+//        return 1;
+//    }
+//
+//    @Override
+//    public void setMaxVersion(int maxVersion) {
+//        this.readLock.lock();
+//        try {
+//            final byte[] vs = new byte[4];
+//            Bits.putInt( vs, 0, maxVersion);
+//            checkState();
+//            this.db.put(this.confHandle, this.writeOptions, MAX_VERSION, vs);
+//        } catch (final RocksDBException e) {
+//            LOG.error("Fail to save commit log index {}.", maxVersion, e);
+//        } finally {
+//            this.readLock.unlock();
+//        }
+//    }
+
+
     @Override
     public boolean appendEntry(TransactionLogEntry entry) {
-        System.out.println("save log :" + System.currentTimeMillis());
-        if (entry.getType() == EnumOutter.EntryType.ENTRY_TYPE_CONFIGURATION) {
-            return executeBatch(batch -> addConfBatch(entry, batch));
-        } else {
-            this.readLock.lock();
-            try {
-                if (this.db == null) {
-                    LOG.warn("DB not initialized or destroyed.");
-                    return false;
-                }
-                final long logIndex = entry.getId().getIndex();
-                final byte[] valueBytes = this.logEntryEncoder.encode(entry);
-                final byte[] newValueBytes = onDataAppend(logIndex, valueBytes);
-                this.db.put(this.defaultHandle, this.writeOptions, getKeyBytes(logIndex), newValueBytes);
-                System.out.println("end save log :" + System.currentTimeMillis());
-                return true;
-            } catch (final RocksDBException | IOException e) {
-                LOG.error("Fail to append entry.", e);
+        //System.out.println("save log :" + System.currentTimeMillis());
+        this.readLock.lock();
+        try {
+            if (this.db == null) {
+                LOG.warn("DB not initialized or destroyed.");
                 return false;
-            } finally {
-                this.readLock.unlock();
             }
+            final long logIndex = entry.getVersion();
+            final byte[] valueBytes = ObjectAndByte.toByteArray(entry);
+            final byte[] newValueBytes = onDataAppend(logIndex, valueBytes);
+            this.db.put(this.defaultHandle, this.writeOptions, getKeyBytes(logIndex), newValueBytes);
+            System.out.println("end save log :" + System.currentTimeMillis());
+            return true;
+        } catch (final RocksDBException | IOException e) {
+            LOG.error("Fail to append entry.", e);
+            return false;
+        } finally {
+            this.readLock.unlock();
         }
     }
 
@@ -287,11 +312,7 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
         final boolean ret = executeBatch(batch -> {
             for (int i = 0; i < entriesCount; i++) {
                 final TransactionLogEntry entry = entries.get(i);
-                if (entry.getType() == EnumOutter.EntryType.ENTRY_TYPE_CONFIGURATION) {
-                    addConfBatch(entry, batch);
-                } else {
-                    addDataBatch(entry, batch);
-                }
+                addDataBatch(entry, batch);
             }
         });
         if (ret) {
@@ -300,6 +321,18 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
         } else {
             return 0;
         }
+    }
+
+    public boolean removeEntry(long version){
+        this.readLock.lock();
+        try{
+            this.db.delete(this.defaultHandle, getKeyBytes(version));
+        } catch (RocksDBException e) {
+            e.printStackTrace();
+        } finally {
+            this.readLock.unlock();
+        }
+        return true;
     }
 
     @Override
@@ -375,7 +408,8 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
                     if (entry == null) {
                         entry = new TransactionLogEntry(0);
                         entry.setType(EnumOutter.EntryType.ENTRY_TYPE_NO_OP);
-                        entry.setId(new MQLogId(nextLogIndex, 0));
+                        entry.setVersion(nextLogIndex);
+                        //entry.setId(new MQLogId(nextLogIndex, 0));
                         LOG.warn("Entry not found for nextLogIndex {} when reset.", nextLogIndex);
                     }
                     return appendEntry(entry);
@@ -482,8 +516,29 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
                 it.next();
             }
         }
-        this.commitLogIndex = getCommitLogIndex(true);
-        System.out.println("init : commitLogIndex : " + commitLogIndex);
+//        this.commitLogIndex = getCommitLogIndex(true);
+//        System.out.println("init : commitLogIndex : " + commitLogIndex);
+    }
+
+    @Override
+    public List<TransactionLogEntry> getUnCommitLog(){
+        List<TransactionLogEntry> list = new ArrayList<>();
+        this.readLock.lock();
+        try{
+            RocksIterator it = this.db.newIterator(this.defaultHandle, this.totalOrderReadOptions);
+            it.seekToFirst();
+            while (it.isValid()){
+                if(it.key().length == 8){
+                    long index = Bits.getLong(it.key(), 0);
+                    TransactionLogEntry entry = (TransactionLogEntry)ObjectAndByte.toObject(it.value());
+                    list.add(entry);
+                }
+                it.next();
+            }
+            return list;
+        }finally {
+            this.readLock.unlock();
+        }
     }
 
     private void checkState() {
@@ -515,23 +570,23 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
         }
     }
 
-    private boolean saveCommitLogIndex(final long CommitLogIndex) {
-        this.readLock.lock();
-        try {
-            this.commitLogIndex = CommitLogIndex;
-            final byte[] vs = new byte[8];
-            Bits.putLong(vs, 0, CommitLogIndex);
-            checkState();
-            this.db.put(this.confHandle, this.writeOptions, COMMIT_LOG_IDX_KEY, vs);
-            //System.out.println("save commitIndex: " + CommitLogIndex);
-            return true;
-        } catch (final RocksDBException e) {
-            LOG.error("Fail to save commit log index {}.", CommitLogIndex, e);
-            return false;
-        } finally {
-            this.readLock.unlock();
-        }
-    }
+//    private boolean saveCommitLogIndex(final long CommitLogIndex) {
+//        this.readLock.lock();
+//        try {
+//            this.commitLogIndex = CommitLogIndex;
+//            final byte[] vs = new byte[8];
+//            Bits.putLong(vs, 0, CommitLogIndex);
+//            checkState();
+//            this.db.put(this.confHandle, this.writeOptions, COMMIT_LOG_IDX_KEY, vs);
+//            //System.out.println("save commitIndex: " + CommitLogIndex);
+//            return true;
+//        } catch (final RocksDBException e) {
+//            LOG.error("Fail to save commit log index {}.", CommitLogIndex, e);
+//            return false;
+//        } finally {
+//            this.readLock.unlock();
+//        }
+//    }
 
 
 
@@ -583,15 +638,15 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
         return this.db.get(this.defaultHandle, keyBytes);
     }
 
-    private void addConfBatch(final TransactionLogEntry entry, final WriteBatch batch) throws RocksDBException {
-        final byte[] ks = getKeyBytes(entry.getId().getIndex());
-        final byte[] content = this.logEntryEncoder.encode(entry);
-        batch.put(this.defaultHandle, ks, content);
-        batch.put(this.confHandle, ks, content);
-    }
+//    private void addConfBatch(final TransactionLogEntry entry, final WriteBatch batch) throws RocksDBException {
+//        final byte[] ks = getKeyBytes(entry.getVersion());
+//        final byte[] content = this.logEntryEncoder.encode(entry);
+//        batch.put(this.defaultHandle, ks, content);
+//        batch.put(this.confHandle, ks, content);
+//    }
 
     private void addDataBatch(final TransactionLogEntry entry, final WriteBatch batch) throws RocksDBException, IOException {
-        final long logIndex = entry.getId().getIndex();
+        final long logIndex = entry.getVersion();
         //final byte[] s = ObjectAndByte.toByteArray(new TransactionLogEntry(1));
 
         byte[] content = ObjectAndByte.toByteArray(entry);

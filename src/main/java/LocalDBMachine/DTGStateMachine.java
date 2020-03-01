@@ -112,15 +112,31 @@ public class DTGStateMachine extends StateMachineAdapter implements Serializable
                 switch (op.getType()){
                     case OperationName.COMMITTRANS:
                     case OperationName.ROLLBACK:
+//                    case OperationName.ROLLBACK:{
+//                        this.localDB.runOp(op, done, isLeader(),region);
+//                        break;
+//                    }
                     case OperationName.TRANSACTIONOP:{
-//                        if(!isLeader()){
-//                            this.localDB.ApplyEntityEntries(op, done);
-//                        }
-                        this.localDB.runOp(op, done, isLeader(),region);
+                        //if(!isLeader()){
+                            this.localDB.runOp(op, done, isLeader(),region);
+                            //this.localDB.ApplyEntityEntries(op, done);
+                        //}else {
+                            //System.out.println("main localDB runOp ok");
+                            //done.setData(true);
+                            //done.run(Status.OK());
+                        //}
+                        //this.localDB.runOp(op, done, isLeader(),region);
+                        break;
+                    }
+                    case OperationName.ADDREMOVELIST:{
+                        //System.out.println("ADDREMOVELIST!");
+                        this.localDB.addRemoveLock(op, done);
                         break;
                     }
                     case OperationName.ADDREGION:{
+                        System.out.println("add region!");
                         doAddRegion(op, done);
+                        break;
                     }
                     case OperationName.MERGE:{
                         break;

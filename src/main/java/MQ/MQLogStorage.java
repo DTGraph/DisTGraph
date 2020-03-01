@@ -41,14 +41,14 @@ public interface MQLogStorage extends Lifecycle<MQLogStorageOptions>, Storage {
      */
     long getLastLogIndex();
 
-    long getCommitLogIndex(boolean flush);
+    //long getCommitLogIndex(boolean flush);
 
-    void setCommitLogIndex(long index);
+    //void setCommitLogIndex(long index);
 
     /**
      * Get logEntry by index.
      */
-    TransactionLogEntry getEntry(final long index);
+    TransactionLogEntry getEntry(final long version);
 
     /**
      * Append entries to log.
@@ -79,5 +79,13 @@ public interface MQLogStorage extends Lifecycle<MQLogStorageOptions>, Storage {
     boolean reset(final long nextLogIndex);
 
     List<TransactionLogEntry> getEntries(long start, long end);
+
+//    int getMaxVersion();
+//
+//    void setMaxVersion(int maxVersion);
+
+    List<TransactionLogEntry> getUnCommitLog();
+
+    boolean removeEntry(long version);
 
 }

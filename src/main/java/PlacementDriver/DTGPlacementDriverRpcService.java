@@ -127,7 +127,6 @@ public class DTGPlacementDriverRpcService implements PlacementDriverRpcService {
             }
         };
         try {
-            System.out.println("send rpc");
             this.rpcClient.invokeWithCallback(address, request, invokeCtx, invokeCallback, this.rpcTimeoutMillis);
         } catch (final Throwable t) {
             closure.failure(t);

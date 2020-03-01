@@ -16,7 +16,9 @@
  */
 package storage;
 
+import Communication.DTGRpcService;
 import Communication.HeartbeatSender;
+import Communication.RpcCaller;
 import Communication.instructions.AddRegionInfo;
 import DBExceptions.RegionStoreException;
 import Element.DTGOperation;
@@ -24,6 +26,8 @@ import Element.EntityEntry;
 import Element.OperationName;
 import LocalDBMachine.LocalDB;
 import PlacementDriver.DTGPlacementDriverClient;
+import PlacementDriver.DefaultPlacementDriverClient;
+import UserClient.DTGSaveStore;
 import com.alipay.remoting.rpc.RpcServer;
 import com.alipay.sofa.jraft.Lifecycle;
 import com.alipay.sofa.jraft.RouteTable;
@@ -108,9 +112,11 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
     protected LocalDB                                       localDB;
     protected BatchRawKVStore<?>                            rawKVStore;
     private   DTGStore                                      store;
+    private   DTGSaveStore                                  saveStore;
 
     protected HeartbeatSender                               heartbeatSender;
     protected DTGStoreEngineOptions                         storeOpts;
+    private   RpcCaller                                     rpcCaller;
 
     // Shared executor services
     protected ExecutorService                            readIndexExecutor;
@@ -142,9 +148,10 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
             return true;
         }
 
+        rpcCaller = new RpcCaller(this.pdClient);
+        this.saveStore = opts.getSaveStore();
         this.filePath = opts.getRaftDataPath();
         this.storeOpts = Requires.requireNonNull(opts, "opts");
-
         Endpoint serverAddress = Requires.requireNonNull(opts.getServerAddress(), "opts.serverAddress");
         this.endpoint = serverAddress;
         final int port = serverAddress.getPort();
@@ -166,7 +173,7 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
 //        initOpts.setInitTempProId(-2);
 //        rOptsList.add(0,initOpts);
         DTGRegionEngineOptions rOpt = new DTGRegionEngineOptions();
-        rOpt.setRegionId(Constants.DEFAULT_REGION_ID);
+        rOpt.setRegionId(DTGConstants.DEFAULT_INIT_REGION);
         rOptsList.add(0, rOpt);
         storeId = this.pdClient.getStoreId(opts);
         List<Long> regionsId = readConfig();
@@ -179,7 +186,6 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
             }
             opts.setRegionEngineOptionsList(rOptsList);
         }
-
         if (rOptsList == null || rOptsList.isEmpty()) {
             // -1 region
 //            final RegionEngineOptions rOpts = new RegionEngineOptions();
@@ -495,7 +501,13 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
         return splitting.get();
     }
 
-//    public void applySplit(final Long regionId, final Long newRegionId, final KVStoreClosure closure) {
+    public void setRpcService(DTGRpcService rpcService){
+        for(long regionId : regionServiceTable.keySet()){
+            regionServiceTable.get(regionId).setDtgRpcService(rpcService);
+        }
+    }
+
+    //    public void applySplit(final Long regionId, final Long newRegionId, final KVStoreClosure closure) {
 //        Requires.requireNonNull(regionId, "regionId");
 //        Requires.requireNonNull(newRegionId, "newRegionId");
 //        if (this.regionEngineTable.containsKey(newRegionId)) {
@@ -594,6 +606,11 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
 //            this.splitting.set(false);
 //        }
 //    }
+
+
+    public DTGPlacementDriverClient getPdClient() {
+        return pdClient;
+    }
 
     protected void startMetricReporters(final long metricsReportPeriod) {
         if (metricsReportPeriod <= 0) {
@@ -843,7 +860,7 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
 //        rOpt.setRegionId(Constants.DEFAULT_REGION_ID);
 //        rOptsList.add(0, rOpt);
         final List<DTGRegion> regionList = store.getRegions();
-        System.out.println("rOptsList size = " + rOptsList.size() + "   , regionList size = " + regionList.size());
+        //System.out.println("rOptsList size = " + rOptsList.size() + "   , regionList size = " + regionList.size());
         Requires.requireTrue(rOptsList.size() == regionList.size());
 
         for (int i = 0; i < rOptsList.size(); i++) {
@@ -1090,6 +1107,18 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
         } catch (RegionStoreException e) {
             e.printStackTrace();
         }
+    }
+
+    public RpcCaller getRpcCaller() {
+        return rpcCaller;
+    }
+
+    public DTGSaveStore getSaveStore() {
+        return saveStore;
+    }
+
+    public DTGRegionService getRegionService(long regionId){
+        return this.regionServiceTable.get(regionId);
     }
 
     @Override

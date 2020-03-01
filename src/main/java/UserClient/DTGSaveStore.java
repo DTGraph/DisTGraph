@@ -34,7 +34,6 @@ import com.alipay.sofa.jraft.rhea.client.FutureGroup;
 import com.alipay.sofa.jraft.rhea.client.FutureHelper;
 import com.alipay.sofa.jraft.rhea.client.failover.RetryCallable;
 import com.alipay.sofa.jraft.rhea.client.failover.RetryRunner;
-import com.alipay.sofa.jraft.rhea.cmd.store.BaseRequest;
 import com.alipay.sofa.jraft.rhea.errors.ApiExceptionHelper;
 import com.alipay.sofa.jraft.rhea.errors.Errors;
 import com.alipay.sofa.jraft.rhea.errors.RheaRuntimeException;
@@ -128,7 +127,7 @@ public class DTGSaveStore implements Lifecycle<DTGStoreOptions> {
         }
         if(!opts.getPlacementDriverOptions().isLocalClient()){
             final DTGStoreEngineOptions stOpts = opts.getStoreEngineOptions();
-            System.out.println("setSaveStore");
+            //System.out.println("setSaveStore");
             stOpts.setSaveStore(this);
             if (stOpts != null) {
                 stOpts.setInitialServerList(opts.getInitialServerList());
@@ -139,6 +138,7 @@ public class DTGSaveStore implements Lifecycle<DTGStoreOptions> {
                 }
             }
         }else {
+            //System.out.println("...refreshRouteTable....");
             pdClient.refreshRouteTable(true);
         }
 
@@ -159,6 +159,10 @@ public class DTGSaveStore implements Lifecycle<DTGStoreOptions> {
             LOG.error("Fail to init [RheaKVRpcService].");
             return false;
         }
+        if(!opts.getPlacementDriverOptions().isLocalClient()){
+            this.storeEngine.setRpcService(dtgRpcService);
+        }
+
         this.failoverRetries = opts.getFailoverRetries();
         this.futureTimeoutMillis = opts.getFutureTimeoutMillis();
         this.onlyLeaderRead = opts.isOnlyLeaderRead();
@@ -195,15 +199,15 @@ public class DTGSaveStore implements Lifecycle<DTGStoreOptions> {
         LOG.info("[DefaultRheaKVStore] shutdown successfully.");
     }
 
-    public boolean applyTransaction(final List<EntityEntry> entries, final String txId, final int retriesLeft){
-        CompletableFuture<Boolean> future = internalApplyTransaction(entries, txId, new CompletableFuture<>(), retriesLeft, null);
+    public boolean applyTransaction(final List<EntityEntry> entries, final String txId, final int retriesLeft, long version){
+        CompletableFuture<Boolean> future = internalApplyTransaction(entries, txId, new CompletableFuture<>(), retriesLeft, null, version);
         return FutureHelper.get(future);
     }
 
     public CompletableFuture<Boolean> internalApplyTransaction(final List<EntityEntry> entries, String txId, final CompletableFuture<Boolean> future, final int retriesLeft,
-                                         final Errors lastCause){
+                                         final Errors lastCause, long version){
         final RetryRunner retryRunner = retryCause -> internalApplyTransaction(entries, txId, future, retriesLeft - 1,
-                retryCause);
+                retryCause, version);
         final FailoverClosure<Boolean> closure = new FailoverClosureImpl<>(future, false, retriesLeft, retryRunner);
         DTGRegion region = getRegion(entries);
         final TransactionRequest request = new TransactionRequest();
@@ -211,6 +215,7 @@ public class DTGSaveStore implements Lifecycle<DTGStoreOptions> {
         request.setEntries(entries);
         request.setRegionEpoch(region.getRegionEpoch());
         request.setRegionId(region.getId());
+        request.setVersion(version);
         this.dtgRpcService.callAsyncWithRpc(request, closure, lastCause);
         return future;
     }
@@ -246,8 +251,14 @@ public class DTGSaveStore implements Lifecycle<DTGStoreOptions> {
         return FutureHelper.get(FutureHelper.joinMap(futureGroup));
     }
 
+    public Map<Integer, Object> applyRequest(final List<EntityEntry> entries, String txId,
+                                             final int retriesLeft, final Throwable lastCause, boolean tryBatching, long version){
+        final FutureGroup<Map<Integer, Object>> futureGroup = runApply(entries, txId, retriesLeft, lastCause, tryBatching, version);
+        return FutureHelper.get(FutureHelper.joinMap(futureGroup));
+    }
+
     public FutureGroup<Map<Integer, Object>> runApply(final List<EntityEntry> entries, String txId, final int retriesLeft, final Throwable lastCause, boolean tryBatching){
-        System.out.println("try " + retriesLeft);
+        //System.out.println("try " + retriesLeft);
         List<DTGRegion> regionList = new LinkedList<>();
         Requires.requireNonNull(entries, "entries");
         Requires.requireTrue(!entries.isEmpty(), "entries empty");
@@ -271,6 +282,45 @@ public class DTGSaveStore implements Lifecycle<DTGStoreOptions> {
         return new FutureGroup<>(futures);
     }
 
+    public FutureGroup<Map<Integer, Object>> runApply(final List<EntityEntry> entries, String txId, final int retriesLeft, final Throwable lastCause, boolean tryBatching, long version){
+        //System.out.println("try " + retriesLeft);
+        List<DTGRegion> regionList = new LinkedList<>();
+        Requires.requireNonNull(entries, "entries");
+        Requires.requireTrue(!entries.isEmpty(), "entries empty");
+        Map<DTGRegion, List<EntityEntry>> distributeMap = dirtributeEntity(entries, lastCause);
+        Requires.requireNonNull(distributeMap, "distributeMap");
+        final List<CompletableFuture<Map<Integer, Object>>> futures = Lists.newArrayListWithCapacity(distributeMap.size());
+        final Errors lastError = lastCause == null ? null : Errors.forException(lastCause);
+        //int i = 0;
+        long mainRegionId = distributeMap.keySet().iterator().next().getId();
+        List<Long> regionIds = new ArrayList<>();
+        for(DTGRegion region : distributeMap.keySet()){
+            regionIds.add(region.getId());
+        }
+
+        for (final Map.Entry<DTGRegion, List<EntityEntry>> entry : distributeMap.entrySet()) {
+            final DTGRegion region = entry.getKey();
+            final List<EntityEntry> subEntries = entry.getValue();
+            DTGOperation op = new DTGOperation(subEntries, OperationName.TRANSACTIONOP);
+            if(region.getId() == mainRegionId){
+                op.setAllEntityEntries(entries);
+                op.setRegionIds(regionIds);
+            }
+//            op.setTxId(txId + "" + region.getId());
+            op.setTxId(txId);
+            op.setVersion(version);
+            op.setMainRegionId(mainRegionId);
+            //System.out.println("main region id = " + mainRegionId);
+            CompletableFuture<Map<Integer, Object>> future = new CompletableFuture();
+            applyOperation(op, region, future, retriesLeft, lastError);
+            futures.add(future);
+            regionList.add(region);
+            //i++;
+        }
+        //waitCommitMap.put(txId, regionList);
+        return new FutureGroup<>(futures);
+    }
+
     public void applyOperation(final DTGOperation op, final DTGRegion region, final CompletableFuture<Map<Integer, Object>> future,
                                final int retriesLeft, final Errors lastCause){
         final RetryRunner retryRunner = retryCause -> applyOperation(op, region, future, retriesLeft - 1,
@@ -278,19 +328,20 @@ public class DTGSaveStore implements Lifecycle<DTGStoreOptions> {
         final FailoverClosure<Map<Integer, Object>> closure = new FailoverClosureImpl<>(future, false, retriesLeft, retryRunner);
         CompletableFuture<byte[]> future2 = new CompletableFuture<>();
         internalRegionPut(region, op, future2, retriesLeft, lastCause);
-        try {
+//        try {
             //byte[] res = future2.get(FutureHelper.DEFAULT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
-            Object res = future2.get(FutureHelper.DEFAULT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
-            //System.out.print("success applyOperation");
-            closure.setData(res);
+            byte[] res = FutureHelper.get(future2);
+            //byte[] res = future2.get(FutureHelper.DEFAULT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+            //System.out.println("success applyOperation");
+            closure.setData((Map<Integer, Object>)toObject(res));
             //closure.setData(toObject(res));
             closure.run(Status.OK());
-        }
-        catch (InterruptedException | ExecutionException | TimeoutException e){
-            //System.out.print("error applyOperation");
-            closure.setError(Errors.forException(e));
-            closure.run(new Status(-1, "request lock failed with region ID: %s, transaction op id: %s", region.getId(), op.getTxId()));
-        }
+//        }
+//        catch (InterruptedException | ExecutionException | TimeoutException e){
+//            //System.out.print("error applyOperation");
+//            closure.setError(Errors.forException(e));
+//            closure.run(new Status(-1, "request lock failed with region ID: %s, transaction op id: %s", region.getId(), op.getTxId()));
+//        }
     }
 
     public void applyCommit(final DTGOperation op, final DTGRegion region, final CompletableFuture<Boolean> future,
@@ -383,21 +434,23 @@ public class DTGSaveStore implements Lifecycle<DTGStoreOptions> {
         final FailoverClosure<T> closure = new FailoverClosureImpl<>(future, false, retriesLeft,
                 retryRunner);
         if (regionEngine != null) {
-            if (ensureOnValidEpoch(region, regionEngine, closure)) {
-                final DTGRawStore rawStore = getRawStore(regionEngine);
-                if (this.kvDispatcher == null) {
-                    //rawKVStore.put(subEntries, closure);
-                    rawStore.ApplyEntityEntries(op, closure);
-                } else {
-                    this.kvDispatcher.execute(() -> rawStore.ApplyEntityEntries(op, closure));
-                }
-            }
+            this.storeEngine.getRegionService(region.getId()).internalFirstPhase(op, closure);
+//            if (ensureOnValidEpoch(region, regionEngine, closure)) {
+//                final DTGRawStore rawStore = getRawStore(regionEngine);
+//                if (this.kvDispatcher == null) {
+//                    //rawKVStore.put(subEntries, closure);
+//                    rawStore.ApplyEntityEntries(op, closure);
+//                } else {
+//                    this.kvDispatcher.execute(() -> rawStore.ApplyEntityEntries(op, closure));
+//                }
+//            }
         } else {
             final DTGBaseRequest request = getRequest(op.getType());
-            System.out.println("send request..." + request.TypeString());//System.out.println(op.getSize());
+            //System.out.println("send request..." + request.TypeString());//System.out.println(op.getSize());
             request.setDTGOpreration(op);
             request.setRegionId(region.getId());
             request.setRegionEpoch(region.getRegionEpoch());
+            //System.out.println(op.getTxId() + " send request : " + System.currentTimeMillis());
             this.dtgRpcService.callAsyncWithRpc(request, closure, lastCause);
         }
     }
@@ -586,5 +639,16 @@ public class DTGSaveStore implements Lifecycle<DTGStoreOptions> {
             }
         }
         return returnRegion;
+    }
+
+    public DTGRpcService getDtgRpcService() {
+        return dtgRpcService;
+    }
+
+    public DTGDatabase getDB(){
+        DTGDatabase db = new DTGDatabase(this);
+        Endpoint endpoint = this.opts.getStoreEngineOptions().getServerAddress();
+        db.init(endpoint.getIp(), endpoint.getPort(), "D:\\garbage");
+        return db;
     }
 }

@@ -1,6 +1,6 @@
 package options;
 
-import com.alipay.sofa.jraft.rhea.options.PlacementDriverServerOptions;
+import com.alipay.sofa.jraft.rhea.pd.options.PlacementDriverServerOptions;
 import com.alipay.sofa.jraft.rhea.options.RheaKVStoreOptions;
 
 /**

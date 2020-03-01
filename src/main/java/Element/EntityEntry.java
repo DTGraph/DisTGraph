@@ -34,15 +34,6 @@ public class EntityEntry implements Serializable, Comparable<EntityEntry> {
 
     private int               transactionNum;
 
-//    private byte              operationType;//add, remove, set or get
-//    private byte[]            key; //property name
-//    private byte[]            value; //property value
-//    private byte              type; //node, relation or temporal property
-//    private byte[]            time;  //temporal property time, if other is not -1, it is end time.
-//    private byte[]            other; //end time
-//    private byte[]            id; //node or relation id
-//    private byte[]            paraId;
-
     private byte              operationType;//add, remove, set or get
     private String            key; //property name
     private Object            value; //property value
@@ -50,7 +41,7 @@ public class EntityEntry implements Serializable, Comparable<EntityEntry> {
     private int               start;  //temporal property time, if other is not -1, it is end time.
                                        //if isTemporalProperty = false, it represent start node id
     private int               other; //end time, if isTemporalProperty = false, it represent end node id
-    private long              id; //node or relation id, if id = -1, it represnet real id is paraId
+    private long              id; //node or relation id, if id = -2, it represnet real id is paraId
     private int               paraId;
     private boolean           isTemporalProperty;
 

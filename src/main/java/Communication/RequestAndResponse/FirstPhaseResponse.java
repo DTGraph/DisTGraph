@@ -11,6 +11,15 @@ import com.alipay.sofa.jraft.rhea.cmd.store.BaseResponse;
  */
 
 public class FirstPhaseResponse extends BaseResponse<byte[]> {
+    private static final long serialVersionUID = -2649911091366848410L;//byte[]
 
-    private static final long serialVersionUID = -2649911091366848410L;
+    private long selfRegionId;
+
+    public void setSelfRegionId(long selfRegionId) {
+        this.selfRegionId = selfRegionId;
+    }
+
+    public long getSelfRegionId() {
+        return selfRegionId;
+    }
 }

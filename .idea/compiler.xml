@@ -6,25 +6,19 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="Dis-TGraph" />
+        <module name="jraft-core" />
+        <module name="jraft-example" />
         <module name="jraft-rheakv-core" />
         <module name="jraft-test" />
         <module name="temporal-property-store" />
-        <module name="jraft-core" />
-        <module name="Dis-TGraph" />
-        <module name="jraft-example" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Dis-TGraph" target="8" />
-      <module name="jraft-core" target="1.8" />
-      <module name="jraft-example" target="1.8" />
-      <module name="jraft-parent" target="1.8" />
-      <module name="jraft-rheakv" target="1.8" />
-      <module name="jraft-rheakv-core" target="1.8" />
-      <module name="jraft-rheakv-pd" target="1.8" />
-      <module name="jraft-test" target="1.8" />
-      <module name="neo4j-kernel" target="1.7" />
-      <module name="temporal-property-store" target="1.8" />
+      <module name="neo4j-cypher" target="1.7" />
+      <module name="neo4j-cypher-acceptance" target="1.7" />
+      <module name="neo4j-cypher-compiler-2.3" target="1.7" />
+      <module name="neo4j-cypher-frontend-2.3" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>

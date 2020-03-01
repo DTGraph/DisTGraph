@@ -1,6 +1,7 @@
 package raft;
 
 import Element.DTGOperation;
+import DBExceptions.DTGLockError;
 import com.alipay.sofa.jraft.Status;
 import com.alipay.sofa.jraft.rhea.errors.Errors;
 import org.slf4j.Logger;
@@ -81,6 +82,7 @@ public class EntityEntryClosureAdapter implements EntityStoreClosure{
                     case EIO:
                         setError(Errors.STORAGE_ERROR);
                         break;
+                    //case DTGLockError.FAILED:
                     default:
                         setError(Errors.LEADER_NOT_AVAILABLE);
                         break;

@@ -30,21 +30,25 @@ public class DefaultOptions {
     public static final int    MAXRETRY                    =  5;
     public static final String DB_PATH                     = "DTG_DB" + File.separator;
     public static final String RAFT_DATA_PATH              = "raft_data" + File.separator;
-    public static final String ALL_NODE_ADDRESSES          = "127.0.0.1:8184,127.0.0.1:8185,127.0.0.1:8186,127.0.0.1:8187";
+    public static final String ALL_NODE_ADDRESSES          = "127.0.0.1:8184,127.0.0.1:8185,127.0.0.1:8186";
     public static final String CLUSTER_NAME                = "DTG_DEFAULT";
     public static final String PDGROUPID                   = "METADATA_SAVE";
-    public static final String INITIALSERVERLIST           = "127.0.0.1:8184,127.0.0.1:8185,127.0.0.1:8186,127.0.0.1:8187" ;
+    public static final String INITIALSERVERLIST           = "127.0.0.1:8184,127.0.0.1:8185,127.0.0.1:8186" ;
     public static final String INITIALPDSERVERLIST         = "127.0.0.1:8181,127.0.0.1:8182,127.0.0.1:8183";
     public static final int    MINIDBATCHSIZE              = 50;
+    public static final int    IDBATCHSIZE                 = 5000;
     public static final int    CLUSTERID                   = 1;
     public static final int    PDCLUSTERID                 = 0;
     public static final int    GRABSIZE                    = 50000;
     public static final int    BATCHSIZE                   = 100;
     public static final int    PIPELINECOREPOOLSIZE        = 4;
     public static final int    PIPELINEMAXMUMPOOLSIZE      = 4;
-    public static final int     DEFAULTREGIONNODESIZE       = 4;
-    public static final int     DEFAULTREGIONRELATIONSIZE   = 4;
-    public static final int     DEFAULTSTARTTIME            = 0;
+
+    public static final int    DEFAULTREGIONNODESIZE       = 5000;
+    public static final int    DEFAULTREGIONRELATIONSIZE   = 5000;
+
+    public static final int    DEFAULTSTARTTIME            = 0;
+    public static final int    INITREGIONNUMBER            = 3;
 
     public static CliOptions defaultCliOptios(){
         CliOptions opts = new CliOptions();
@@ -156,7 +160,7 @@ public class DefaultOptions {
 
     public static IdGeneratorOptions defaultIdGeneratorOptions(String path){
         IdGeneratorOptions opts = new IdGeneratorOptions();
-        opts.setBatchSize(MINIDBATCHSIZE);
+        opts.setBatchSize(IDBATCHSIZE);
         opts.setGrabSize(GRABSIZE);
         opts.setIdGeneratorPath(path);
         return opts;
@@ -217,11 +221,11 @@ public class DefaultOptions {
 
 
         List<DTGRegionEngineOptions> rOptsList = Lists.newArrayList();
-        for(long i = 1; i < 5; i++){
+        for(long i = DTGConstants.FIRST_REGION_ID, t = 1; t < INITREGIONNUMBER; i++, t++){
             DTGRegionEngineOptions rOpts = new DTGRegionEngineOptions();
             rOpts.setRegionId(i);
-            rOpts.setInitNodeId(i * DEFAULTREGIONNODESIZE);
-            rOpts.setInitRelationId(i * DEFAULTREGIONRELATIONSIZE);
+            rOpts.setInitNodeId(t * DEFAULTREGIONNODESIZE);
+            rOpts.setInitRelationId(t * DEFAULTREGIONRELATIONSIZE);
             rOptsList.add(rOpts);
         }
         opts.setRegionEngineOptionsList(rOptsList);

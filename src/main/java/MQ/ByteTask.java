@@ -16,14 +16,16 @@ import java.nio.ByteBuffer;
 public class ByteTask extends Task {
 
     private byte[] byteData;
+    private long version;
 
     public ByteTask(){
         super();
     }
 
-    public ByteTask(byte[] data, Closure done){
+    public ByteTask(byte[] data, long version, Closure done){
         this.byteData = data;
         super.setDone(done);
+        this.version = version;
     }
 
     @Override
@@ -37,5 +39,13 @@ public class ByteTask extends Task {
 
     public void setData(byte[] data) {
         this.byteData = data;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
     }
 }

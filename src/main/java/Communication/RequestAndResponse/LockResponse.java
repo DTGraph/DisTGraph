@@ -10,6 +10,6 @@ import com.alipay.sofa.jraft.rhea.cmd.store.BaseResponse;
  * @version:
  */
 
-public class CommitResponse extends BaseResponse<Boolean> {
+public class LockResponse extends BaseResponse<Boolean> {
     private static final long serialVersionUID = 7459510498371789069L;
 }

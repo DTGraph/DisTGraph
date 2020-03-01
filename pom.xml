@@ -4,12 +4,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-<!--    <parent>-->
-<!--        <artifactId>jraft-parent</artifactId>-->
-<!--        <groupId>com.alipay.sofa</groupId>-->
-<!--        <version>1.2.6</version>-->
-<!--    </parent>-->
-
     <groupId>JINKAI</groupId>
     <artifactId>Dis-TGraph</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -33,8 +27,8 @@
     <dependencies>
         <dependency>
             <groupId>com.alipay.sofa</groupId>
-            <artifactId>jraft-rheakv-pd</artifactId>
-            <version>1.2.6</version>
+            <artifactId>jraft-rheakv-core</artifactId>
+            <version>1.3.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -47,15 +41,25 @@
             <version>2.3.13-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>2.13.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j-lucene-index</artifactId>
             <version>2.3.13-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-cypher</artifactId>
-            <version>2.3.13-SNAPSHOT</version>
+            <groupId>org.neo4j.driver</groupId>
+            <artifactId>neo4j-java-driver</artifactId>
+            <version>4.0.0</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.neo4j</groupId>-->
+            <!--<artifactId>neo4j-cypher</artifactId>-->
+            <!--<version>2.3.13-SNAPSHOT</version>-->
+        <!--</dependency>-->
 
     </dependencies>
 

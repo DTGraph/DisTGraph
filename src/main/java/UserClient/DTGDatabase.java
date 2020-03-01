@@ -55,20 +55,30 @@ public class DTGDatabase {
     private static TransactionManage transactionManage;
     private DTGSaveStore store;
     private IdGenerator TxIdGenerator;
+    private String macAddress;
 
     public DTGDatabase(){
         this.transactionManage = new TransactionManage();
     }
 
+    public DTGDatabase(DTGSaveStore store){
+        this.store = store;
+        this.transactionManage = new TransactionManage();
+    }
+
     public synchronized boolean init(String ip, int port, String path){
         LOG.info("build DTGDatabaseClient ...");
-        this.store= new DTGSaveStore();
+        if(store == null){
+            this.store= new DTGSaveStore();
+        }
         DTGStoreOptions opts = defaultClientDTGStoreOptions(ip, port, path);
         opts.getPlacementDriverOptions().setLocalClient(true);
         opts.getPlacementDriverOptions().setRemotePd(false);
         store.init(opts);
         this.pdClient = store.getPlacementDriverClient();
         this.TxIdGenerator = createTxIdGenerator();
+        this.pdClient.initIds();
+        this.macAddress = GetSystem.getMacAddress();
         return true;
     }
 
@@ -79,7 +89,8 @@ public class DTGDatabase {
     }
 
     public DTGTransaction CreateTransaction(){
-        String txId = GetSystem.getMacAddress() + "" + TxIdGenerator.nextId();
+        //System.out.println(System.currentTimeMillis());
+        String txId = this.macAddress + "" + TxIdGenerator.nextId();
         DTGTransaction tx = new DTGTransaction(store, new TransactionOptions().newDefaultOpt(), txId);
         if(transactionManage.getTransaction() !=null ){
             DTGTransaction transaction = transactionManage.getTransaction();
@@ -95,7 +106,7 @@ public class DTGDatabase {
         DTGTransaction transaction = transactionManage.getTransaction();
         NodeAgent node = new NodeAgent(transactionManage);
         EntityEntry entry = new EntityEntry();
-        entry.setId(pdClient.getId(NODETYPE));
+        entry.setId(pdClient.getId(NODETYPE));//System.out.println("node id = " + entry.getId());
         entry.setTransactionNum(transaction.getEntityNum());
         entry.setType(NODETYPE);
         entry.setOperationType(EntityEntry.ADD);

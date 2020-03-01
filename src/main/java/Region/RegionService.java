@@ -1,12 +1,11 @@
 package Region;
 
-import Communication.RequestAndResponse.CommitRequest;
-import Communication.RequestAndResponse.FirstPhaseRequest;
-import Communication.RequestAndResponse.SecondPhaseRequest;
-import Communication.RequestAndResponse.TransactionRequest;
+import Communication.RequestAndResponse.*;
+import Element.DTGOperation;
 import com.alipay.sofa.jraft.rhea.RequestProcessClosure;
 import com.alipay.sofa.jraft.rhea.cmd.store.*;
 import com.alipay.sofa.jraft.rhea.metadata.RegionEpoch;
+import raft.FailoverClosure;
 
 /**
  * @author :jinkai
@@ -39,4 +38,9 @@ public interface RegionService {
 
     void handleCommitRequest(final CommitRequest request,
                                  final RequestProcessClosure<BaseRequest, BaseResponse<?>> closure);
+
+    void HandleLockRequest(final LockRequest request,
+                                   final RequestProcessClosure<BaseRequest, BaseResponse<?>> closure);
+
+    void internalFirstPhase(final DTGOperation op, final FailoverClosure closure);
 }

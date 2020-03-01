@@ -1,5 +1,6 @@
 package storage;
 
+import UserClient.DTGDatabase;
 import UserClient.DTGSaveStore;
 import options.DTGStoreOptions;
 
@@ -36,5 +37,15 @@ public class ClusterServer {
 
     public void shutdown(){
         this.store.shutdown();
+    }
+
+    public DTGDatabase getDB(){
+        this.start();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return this.store.getDB();
     }
 }

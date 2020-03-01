@@ -17,6 +17,7 @@
 package Communication;
 
 import Communication.RequestAndResponse.CreateRegionRequest;
+import Communication.RequestAndResponse.GetVersionRequest;
 import Communication.RequestAndResponse.SetDTGStoreInfoRequest;
 import com.alipay.sofa.jraft.rhea.client.FutureHelper;
 import com.alipay.sofa.jraft.rhea.client.failover.FailoverClosure;
@@ -57,6 +58,19 @@ public class DTGMetadataRpcClient {
         final FailoverClosure<List<Long>> closure = new FailoverClosureImpl<>(future, retriesLeft, retryRunner);
         final GetIdsRequest request = new GetIdsRequest();
         request.setIdType(type);
+        this.pdRpcService.callPdServerWithRpc(request, closure, lastCause);
+    }
+
+    public long getVersion(){
+        final CompletableFuture<Long> future = new CompletableFuture<>();
+        internalGetVersion(future, this.failoverRetries, null);
+        return FutureHelper.get(future);
+    }
+
+    private void internalGetVersion(final CompletableFuture<Long> future, final int retriesLeft, final Errors lastCause){
+        final RetryRunner retryRunner = retryCause -> internalGetVersion(future, retriesLeft - 1, retryCause);
+        final FailoverClosure<Long> closure = new FailoverClosureImpl<>(future, retriesLeft, retryRunner);
+        final GetVersionRequest request = new GetVersionRequest();
         this.pdRpcService.callPdServerWithRpc(request, closure, lastCause);
     }
 

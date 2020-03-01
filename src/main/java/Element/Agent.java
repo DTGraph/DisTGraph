@@ -114,7 +114,7 @@ public abstract class Agent {
         EntityEntry entry = new EntityEntry();
         entry.setTransactionNum(transaction.getEntityNum());
         entry.setType(getType());
-        entry.setOperationType(EntityEntry.SET);
+        entry.setOperationType(EntityEntry.REMOVE);
         entry.setIsTemporalProperty(true);
         entry.setId(-2);
         entry.setKey(key);
@@ -129,8 +129,8 @@ public abstract class Agent {
         EntityEntry entry = new EntityEntry();
         entry.setTransactionNum(transaction.getEntityNum());
         entry.setType(getType());
-        entry.setOperationType(EntityEntry.SET);
-        entry.setIsTemporalProperty(true);
+        entry.setOperationType(EntityEntry.GET);
+        entry.setIsTemporalProperty(false);
         entry.setId(-2);
         entry.setKey(key);
         Requires.requireNonNull(TransactionObjectId, "Transaction error");
@@ -144,7 +144,7 @@ public abstract class Agent {
         EntityEntry entry = new EntityEntry();
         entry.setTransactionNum(transaction.getEntityNum());
         entry.setType(getType());
-        entry.setOperationType(EntityEntry.SET);
+        entry.setOperationType(EntityEntry.GET);
         entry.setIsTemporalProperty(true);
         entry.setId(-2);
         entry.setKey(key);

@@ -20,7 +20,6 @@ import Communication.DTGMetadataRpcClient;
 import DBExceptions.IdDistributeException;
 import DBExceptions.TypeDoesnotExistException;
 import Element.EntityEntry;
-import PlacementDriver.PD.DTGMetadataStore;
 import com.alipay.remoting.rpc.RpcClient;
 import com.alipay.sofa.jraft.CliService;
 import com.alipay.sofa.jraft.RaftServiceFactory;
@@ -31,15 +30,12 @@ import com.alipay.sofa.jraft.core.CliServiceImpl;
 import com.alipay.sofa.jraft.entity.PeerId;
 import com.alipay.sofa.jraft.option.CliOptions;
 import com.alipay.sofa.jraft.rhea.JRaftHelper;
-import com.alipay.sofa.jraft.rhea.client.RegionRouteTable;
 import com.alipay.sofa.jraft.rhea.client.RoundRobinLoadBalancer;
-import com.alipay.sofa.jraft.rhea.client.pd.MetadataRpcClient;
 import com.alipay.sofa.jraft.rhea.client.pd.PlacementDriverRpcService;
 import com.alipay.sofa.jraft.rhea.errors.RouteTableException;
 import com.alipay.sofa.jraft.rhea.metadata.*;
 import com.alipay.sofa.jraft.rhea.options.RegionEngineOptions;
 import com.alipay.sofa.jraft.rhea.options.RegionRouteTableOptions;
-import com.alipay.sofa.jraft.rhea.options.StoreEngineOptions;
 import com.alipay.sofa.jraft.rhea.options.configured.RpcOptionsConfigured;
 import com.alipay.sofa.jraft.rhea.util.Lists;
 import com.alipay.sofa.jraft.rhea.util.StackTraceUtil;
@@ -49,7 +45,6 @@ import com.alipay.sofa.jraft.rpc.CliClientService;
 import com.alipay.sofa.jraft.rpc.impl.AbstractBoltClientService;
 import com.alipay.sofa.jraft.util.Endpoint;
 import com.alipay.sofa.jraft.util.Requires;
-import com.sun.org.apache.regexp.internal.RE;
 import config.DTGConstants;
 import config.DefaultOptions;
 import options.DTGPlacementDriverOptions;
@@ -63,9 +58,7 @@ import Region.DTGRegion;
 import storage.DTGCluster;
 import storage.DTGStore;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
 
@@ -159,13 +152,13 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
             //int a = 0;
             LOG.info("[DTGPlacementDriverClient] start successfully, options: {}.", opts);
         }
-        if(opts.isLocalClient()){
-            this.getIds(NODETYPE);
-            this.getIds(RELATIONTYPE);
-            while (true){
-                if(this.relationIdList.size()>0&&this.nodeIdList.size()>0)break;
-            }
-        }
+//        if(opts.isLocalClient()){
+//            this.getIds(NODETYPE);
+//            this.getIds(RELATIONTYPE);
+//            while (true){
+//                if(this.relationIdList.size()>0&&this.nodeIdList.size()>0)break;
+//            }
+//        }
         return this.started = true;
     }
 
@@ -326,6 +319,7 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
     public Endpoint getLeader(final long regionId, final boolean forceRefresh, final long timeoutMillis) {
         final String raftGroupId = JRaftHelper.getJRaftGroupId(this.clusterName, regionId);
         PeerId leader = getLeader(raftGroupId, forceRefresh, timeoutMillis);
+        if(leader == null){System.out.println("leader is null");}
         if (leader == null && !forceRefresh) {
             // Could not found leader from cache, try again and force refresh cache
             leader = getLeader(raftGroupId, true, timeoutMillis);
@@ -516,7 +510,7 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
     }
 
     @Override
-    public void refreshRouteTable(boolean needLock) {System.out.println("start refresh..");
+    public void refreshRouteTable(boolean needLock) {//System.out.println("start refresh..");
         final DTGCluster cluster = this.metadataRpcClient.getClusterInfo(this.clusterId);
         if (cluster == null) {
             LOG.warn("Cluster info is empty: {}.", this.clusterId);
@@ -547,7 +541,7 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
         }
         int a = 1;
         returnRegionRouteTable(NODETYPE).updataTop(cluster.getNodeIdTopRestrict());
-        returnRegionRouteTable(RELATIONTYPE).updataTop(cluster.getRelationIdTopRestrict());System.out.println("refresh done!");
+        returnRegionRouteTable(RELATIONTYPE).updataTop(cluster.getRelationIdTopRestrict());//System.out.println("refresh done!");
     }
 
     private DTGRegionRouteTable returnRegionRouteTable(final byte type){
@@ -665,7 +659,16 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
     }
 
     @Override
-    public long getId(byte type) {
+    public void initIds() {
+        this.getIds(NODETYPE);
+        this.getIds(RELATIONTYPE);
+        while (true){
+            if(this.relationIdList.size()>0&&this.nodeIdList.size()>0)break;
+        }
+    }
+
+    @Override
+    public synchronized long getId(byte type) {
         LinkedList<Long> list = getIdList(type);
         long id = list.poll();
         if(list.size() < minIdBatchSize){
@@ -674,6 +677,12 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
             });
         }
         return id;
+    }
+
+    @Override
+    public long getVersion() {
+        //System.out.println("get version :" + System.currentTimeMillis());
+        return this.metadataRpcClient.getVersion();
     }
 
     @Override

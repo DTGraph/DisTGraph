@@ -16,7 +16,7 @@
  */
 package PlacementDriver.PD;
 
-import com.alipay.sofa.jraft.rhea.MetadataKeyHelper;
+import com.alipay.sofa.jraft.rhea.pd.MetadataKeyHelper;
 import Region.DTGRegionStats;
 import com.alipay.sofa.jraft.rhea.client.RheaKVStore;
 import com.alipay.sofa.jraft.rhea.metadata.*;

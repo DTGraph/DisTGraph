@@ -7,6 +7,7 @@ import UserClient.DTGDatabase;
 import UserClient.Transaction.DTGTransaction;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author :jinkai
@@ -18,33 +19,15 @@ import java.io.IOException;
 
 public class remoteClient {
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws InterruptedException {
         DTGDatabase db = new DTGDatabase();
         db.init("127.0.0.1", 10086, "D:\\garbage");
-//        try (DTGTransaction tx = db.CreateTransaction()){
-//            System.out.println(tx.getTxId());
-//            NodeAgent node = db.addNode();
-//            node.setProperty("a","this is a");
-//            node.setTemporalProperty("b", 0, 3, "this is b");
-//            tx.start(null);
-//            tx.commit();
-//        }
-//        System.out.println("END : " + System.currentTimeMillis());
-//        try (DTGTransaction tx = db.CreateTransaction()){
-//            System.out.println(tx.getTxId());
-//            NodeAgent node = db.getNodeById(0);
-//            NodeAgent node2 = db.addNode();
-//            db.addNode();
-//            RelationshipAgent r = db.addRelationship(node, node2);
-//            r.setProperty("a","this is a");
-//            r.setTemporalProperty("b", 0, 3, "this is b");
-//            tx.start(null);
-//            tx.commit();
-//        }
-//        System.out.println("END : " + System.currentTimeMillis());
 
         try (DTGTransaction tx = db.CreateTransaction()){
-            db.addNode();
+//            NodeAgent node = db.addNode();
+//            node.setProperty("chaos.aa", "tt");
+//            node.setTemporalProperty("cd", 1, "ss");
+            //int id = node.getTransactionObjectId();
             db.addNode();
             db.addNode();
             db.addNode();
@@ -52,11 +35,132 @@ public class remoteClient {
             db.addNode();
 
             tx.start();
+            //Map<Integer, Object> map = tx.start();
+            //System.out.println(map.get(id).toString());
             //tx.commit();
         }
 
+        Thread.sleep(1000);
+
+        try (DTGTransaction tx = db.CreateTransaction()){
+//            NodeAgent node = db.addNode();
+//            node.setProperty("chaos.aa", "tt");
+//            node.setTemporalProperty("cd", 1, "ss");
+            //int id = node.getTransactionObjectId();
+            NodeAgent node = db.getNodeById(0);
+            node.deleteself();
+
+            tx.start();
+            //Map<Integer, Object> map = tx.start();
+            //System.out.println(map.get(id).toString());
+            //tx.commit();
+        }
+
+        long start = System.currentTimeMillis();
+        //System.out.println(start);
+        for(int i = 0; i < 10; i++){
+            //System.out.println("start : " + System.currentTimeMillis());
+            TxThread a = new TxThread(db, i, start);
+            a.start();
+        }
+
+//        for(int i = 0; i < 10; i++){
+//            long start = System.currentTimeMillis();
+//            try (DTGTransaction tx = db.CreateTransaction()){
+////            NodeAgent node = db.addNode();
+////            node.setProperty("chaos.aa", "tt");
+////            node.setTemporalProperty("cd", 1, "ss");
+//                //int id = node.getTransactionObjectId();
+//                db.addNode();
+//                db.addNode();
+//                db.addNode();
+//                db.addNode();
+//                db.addNode();
+//
+//                Map<Integer, Object> map = tx.start();
+//                System.out.println(map.get(-1));
+//                //Map<Integer, Object> map = tx.start();
+//                //System.out.println(map.get(id).toString());
+//                //tx.commit();
+//            }
+//            long end = System.currentTimeMillis();
+//            System.out.println("cost : " + (end - start));
+//        }
+
+//        try (DTGTransaction tx = db.CreateTransaction()){
+////            NodeAgent node = db.addNode();
+////            node.setProperty("chaos.aa", "tt");
+////            node.setTemporalProperty("cd", 1, "ss");
+//            //int id = node.getTransactionObjectId();
+//            db.addNode();
+//            db.addNode();
+//            db.addNode();
+//            db.addNode();
+//            db.addNode();
+//
+//            tx.start();
+//            //Map<Integer, Object> map = tx.start();
+//            //System.out.println(map.get(id).toString());
+//            //tx.commit();
+//        }
+
+//        try (DTGTransaction tx = db.CreateTransaction()){
+////            NodeAgent node = db.getNodeById(0);
+////            int id1 = node.getProperty("chaos.aa");
+////            int id2 = node.getNodeTemporalProperty("cd", 1);
+////            node.setTemporalProperty("cd", 2, "sss");
+////            node.setProperty("chaos.aa", "ttt");
+//            db.addNode();
+//            db.addNode();
+//            db.addNode();
+//            db.addNode();
+//            db.addNode();
+//            db.addNode();
+//
+//            Map<Integer, Object> map = tx.start();
+////            System.out.println(map.get(id1));
+////            System.out.println(map.get(id2));
+//            //tx.commit();
+//        }
+//
+//        try (DTGTransaction tx = db.CreateTransaction()){
+////            NodeAgent node = db.getNodeById(0);
+////            int id1 = node.getProperty("chaos.aa");
+////            int id2 = node.getNodeTemporalProperty("cd", 2);
+//            db.addNode();
+//            db.addNode();
+//            db.addNode();
+//            db.addNode();
+//            db.addNode();
+//            db.addNode();
+//
+//            //tx.start();
+//            Map<Integer, Object> map = tx.start();
+////            System.out.println(map.get(id1));
+////            System.out.println(map.get(id2));
+//            //tx.commit();
+//        }
+//
+//        try (DTGTransaction tx = db.CreateTransaction()){
+////            NodeAgent node = db.getNodeById(0);
+////            int id1 = node.getProperty("chaos.aa");
+////            int id2 = node.getNodeTemporalProperty("cd", 2);
+//            db.addNode();
+//            db.addNode();
+//            db.addNode();
+//            db.addNode();
+//            db.addNode();
+//            db.addNode();
+//
+//            //tx.start();
+//            Map<Integer, Object> map = tx.start();
+////            System.out.println(map.get(id1));
+////            System.out.println(map.get(id2));
+//            //tx.commit();
+//        }
+//
         try {
-            Thread.sleep(10000);
+            Thread.sleep(1000000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -89,5 +193,43 @@ public class remoteClient {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             db.shutdown();
         }));
+    }
+}
+
+class TxThread extends Thread{
+
+    DTGDatabase db;
+    int i;
+    long start;
+
+    public TxThread(DTGDatabase db, int i, long start){
+        this.db = db;
+        this.i = i;
+        this.start = start;
+    }
+
+    @Override
+    public void run() {
+        try (DTGTransaction tx = db.CreateTransaction()){
+            //System.out.println(" i : " + System.currentTimeMillis());
+            //NodeAgent node = db.addNode();
+            //node.setProperty("chaos.aa", "tt");
+            //node.setTemporalProperty("cd", 1, "ss");
+            //int id = node.getTransactionObjectId();
+            db.addNode();
+            db.addNode();
+            db.addNode();
+            db.addNode();
+            db.addNode();
+
+            Map<Integer, Object> map = tx.start();
+            System.out.println(map.get(-1));
+            //Map<Integer, Object> map = tx.start();
+            //tx.commit();
+            long end = System.currentTimeMillis();
+            //System.out.println("end :" + end);
+            System.out.println(this.i + " - cost : " + (end - this.start));
+            //tx.commit();
+        }
     }
 }
