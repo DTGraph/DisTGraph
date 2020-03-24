@@ -33,6 +33,16 @@ public class remoteClient {
             db.addNode();
             db.addNode();
             db.addNode();
+            db.addNode();
+            db.addNode();
+            db.addNode();
+            db.addNode();
+            db.addNode();
+            db.addNode();
+            db.addNode();
+            db.addNode();
+            db.addNode();
+            db.addNode();
 
             tx.start();
             //Map<Integer, Object> map = tx.start();
@@ -42,23 +52,23 @@ public class remoteClient {
 
         Thread.sleep(1000);
 
-        try (DTGTransaction tx = db.CreateTransaction()){
-//            NodeAgent node = db.addNode();
-//            node.setProperty("chaos.aa", "tt");
-//            node.setTemporalProperty("cd", 1, "ss");
-            //int id = node.getTransactionObjectId();
-            NodeAgent node = db.getNodeById(0);
-            node.deleteself();
-
-            tx.start();
-            //Map<Integer, Object> map = tx.start();
-            //System.out.println(map.get(id).toString());
-            //tx.commit();
-        }
+//        try (DTGTransaction tx = db.CreateTransaction()){
+////            NodeAgent node = db.addNode();
+////            node.setProperty("chaos.aa", "tt");
+////            node.setTemporalProperty("cd", 1, "ss");
+//            //int id = node.getTransactionObjectId();
+//            NodeAgent node = db.getNodeById(0);
+//            node.deleteself();
+//
+//            tx.start();
+//            //Map<Integer, Object> map = tx.start();
+//            //System.out.println(map.get(id).toString());
+//            //tx.commit();
+//        }
 
         long start = System.currentTimeMillis();
         //System.out.println(start);
-        for(int i = 0; i < 10; i++){
+        for(int i = 0; i < 250; i++){
             //System.out.println("start : " + System.currentTimeMillis());
             TxThread a = new TxThread(db, i, start);
             a.start();
@@ -223,7 +233,7 @@ class TxThread extends Thread{
             db.addNode();
 
             Map<Integer, Object> map = tx.start();
-            System.out.println(map.get(-1));
+            //System.out.println(map.get(-1));
             //Map<Integer, Object> map = tx.start();
             //tx.commit();
             long end = System.currentTimeMillis();

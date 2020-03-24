@@ -11,14 +11,11 @@
         <module name="jraft-example" />
         <module name="jraft-rheakv-core" />
         <module name="jraft-test" />
+        <module name="neo4j-cypher" />
+        <module name="neo4j-cypher-compiler-2.3" />
+        <module name="neo4j-cypher-frontend-2.3" />
         <module name="temporal-property-store" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="neo4j-cypher" target="1.7" />
-      <module name="neo4j-cypher-acceptance" target="1.7" />
-      <module name="neo4j-cypher-compiler-2.3" target="1.7" />
-      <module name="neo4j-cypher-frontend-2.3" target="1.7" />
-    </bytecodeTargetLevel>
   </component>
 </project>

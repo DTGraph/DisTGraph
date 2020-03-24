@@ -8,7 +8,6 @@
     <file url="file://$PROJECT_DIR$/../sofa-jraft/jraft-rheakv" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../sofa-jraft/jraft-rheakv/rheakv-core" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../sofa-jraft/jraft-test" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../temporal-neo4j/community/cypher/acceptance" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../temporal-neo4j/community/cypher/cypher" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../temporal-neo4j/community/cypher/cypher-compiler-2.3" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../temporal-neo4j/community/cypher/frontend-2.3" charset="UTF-8" />

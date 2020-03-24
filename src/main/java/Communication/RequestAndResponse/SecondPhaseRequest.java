@@ -18,6 +18,15 @@ public class SecondPhaseRequest extends DTGBaseRequest {
     private long version;
     private String txId;
     private boolean isSuccess;
+    private boolean requireTxNotNull;
+
+    public boolean isRequireTxNotNull() {
+        return requireTxNotNull;
+    }
+
+    public void setRequireTxNotNull(boolean requireTxNotNull) {
+        this.requireTxNotNull = requireTxNotNull;
+    }
 
     public String getTxId() {
         return txId;

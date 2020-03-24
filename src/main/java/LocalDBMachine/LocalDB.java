@@ -16,6 +16,7 @@ import com.alipay.sofa.jraft.Lifecycle;
 import com.alipay.sofa.jraft.Status;
 import com.alipay.sofa.jraft.rhea.client.FutureHelper;
 import com.alipay.sofa.jraft.rhea.errors.Errors;
+import config.DTGConstants;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -26,11 +27,13 @@ import raft.DTGRawStore;
 import raft.LogStoreClosure;
 import scala.collection.Iterator;
 import options.LocalDBOption;
+import tool.OutPutCsv;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static config.MainType.NODETYPE;
 import static config.MainType.RELATIONTYPE;
@@ -48,8 +51,11 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
     private Map<String, LocalTransaction> waitCommitMap;
     private GraphDatabaseService db;
 
+    private final Map<String, Byte> txStatus = new HashMap<>();
+
     //private List<String> waitRemoveList;
     private LockProcess lockProcess;
+    //private static AtomicInteger count = new AtomicInteger(0);
 
 
     @Override
@@ -147,7 +153,7 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
             case OperationName.TRANSACTIONOP:{
                 Map<Integer, Object> resultMap = new HashMap<>();
                 try {
-                    if(!isLeader){
+                    if(!isLeader && !this.waitCommitMap.containsKey(op.getTxId())){
                         resultMap.put(-1, true);
                          //System.out.println("runOp : start get transaction");
                         TransactionThreadLock txLock = new TransactionThreadLock(op.getTxId());
@@ -164,7 +170,7 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
                         addToCommitMap(tx, op.getTxId());
                     }
                     if(closure != null){
-                       // System.out.println("localDB runOp ok");
+                        //System.out.println("localDB runOp ok");
                         closure.setData(resultMap);
                         closure.run(Status.OK());
                     }
@@ -178,16 +184,17 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
             }
             case OperationName.COMMITTRANS:{//System.out.println("start commit");
                 try {
-                    //System.out.println("start commit");
+                    //System.out.println("start commit" + op.getTxId());
                     commitTx(op.getTxId());
                     //System.out.println("finish commit");
                     if(closure != null){
+                        //System.out.println("finish commit " + op.getTxId());
                         closure.setData(true);
                         closure.run(Status.OK());
                     }
                 }catch (Throwable e){
                     if(closure != null){
-                        System.out.println("commit error");
+                        System.out.println("commit error" + op.getTxId());
                         closure.setData(false);
                         closure.setError(Errors.forException(e));
                         closure.run(new Status(-1, "request lock failed, transaction op id: %s", op.getTxId()));
@@ -195,7 +202,7 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
                 }
                 break;
             }
-            case OperationName.ROLLBACK:{//System.out.println("start rollback");
+            case OperationName.ROLLBACK:{System.out.println("start rollback" + op.getTxId());
                 try {
                     //removeTx(op.getTxId());
                     rollbackTx(op.getTxId());
@@ -231,6 +238,8 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
 //        waitCommitMap.put(id, lock);//System.out.println("put commit, id : " + id);
 //    }
 
+
+    //static OutPutCsv output = new OutPutCsv("D:\\DTG\\test\\commit"+ System.currentTimeMillis() +".csv", "txid");
     public void commitTx(String id) throws InterruptedException, TypeDoesnotExistException, EntityEntryException, RegionStoreException {
 
 //        TransactionThreadLock lock = waitCommitMap.get(id);
@@ -244,7 +253,16 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
 //        }
 
         LocalTransaction tx = waitCommitMap.get(id);
+        if(this.txStatus.containsKey(id)){
+            return;
+        }
+        int i = 0;
         while(tx == null){
+            if(i > DTGConstants.MAXWAITTIME){
+                return;
+            }
+            i++;
+            System.out.println("tx = null ：" + id);
             Thread.sleep(10);
             tx = waitCommitMap.get(id);
         }
@@ -266,8 +284,15 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
         if(tx.isHighA()){
             tx.updateVersion();
         }
-        //System.out.println("start commitTxbbbbbbbbbbbb");
-        waitCommitMap.remove(id);//System.out.println("remove commit, id : " + id);
+        waitCommitMap.remove(id);
+        this.txStatus.put(id, DTGConstants.TXSUCCESS);
+        //System.out.println("end commitTx : " + tx.getTxId());
+//        synchronized (output){
+//            output.write(id);
+//        }
+//        System.out.println(System.currentTimeMillis() + "  end commitTx : " + tx.getTxId() + ",  " + count.getAndIncrement());
+        System.out.println(System.currentTimeMillis() + "  end commitTx : " + tx.getTxId());
+
     }
 
     public void rollbackTx(String id) throws InterruptedException, EntityEntryException {
@@ -281,6 +306,7 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
         }
         tx.rollbackAdd();
         waitCommitMap.remove(id);
+        System.out.println("rollback tx : " + id);
     }
 
 //    public void removeTx(String id) throws InterruptedException {

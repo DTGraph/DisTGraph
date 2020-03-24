@@ -17,6 +17,7 @@ public class FirstPhaseSuccessRequest extends DTGBaseRequest {
     private String txId;
     private long selfRegionId;
     private boolean IsSuccess;
+    private int repeate = 1;
 
     public boolean isSuccess() {
         return IsSuccess;
@@ -40,6 +41,14 @@ public class FirstPhaseSuccessRequest extends DTGBaseRequest {
 
     public void setSelfRegionId(long selfRegionId) {
         this.selfRegionId = selfRegionId;
+    }
+
+    public int getRepeate() {
+        return repeate;
+    }
+
+    public void setRepeate(int repeate) {
+        this.repeate = repeate;
     }
 
     @Override

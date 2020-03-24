@@ -34,7 +34,11 @@ public class simple {
                 .newGraphDatabase();
         //Node node1, node2;
         Transaction tx = db.beginTx();
-          db.getNodeById(0);
+        for(int i = 0; i < 100; i++){
+            db.getNodeById(i);
+        }
+        //db.getNodeById(4997);
+
 //        System.out.println(node1.getProperty("d"));
 //        node1 =  db.createNode();
 //        System.out.println(node1.getId());

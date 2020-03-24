@@ -319,7 +319,6 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
     public Endpoint getLeader(final long regionId, final boolean forceRefresh, final long timeoutMillis) {
         final String raftGroupId = JRaftHelper.getJRaftGroupId(this.clusterName, regionId);
         PeerId leader = getLeader(raftGroupId, forceRefresh, timeoutMillis);
-        if(leader == null){System.out.println("leader is null");}
         if (leader == null && !forceRefresh) {
             // Could not found leader from cache, try again and force refresh cache
             leader = getLeader(raftGroupId, true, timeoutMillis);

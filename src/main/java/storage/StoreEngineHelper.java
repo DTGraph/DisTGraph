@@ -66,6 +66,11 @@ public final class StoreEngineHelper {
         return newPool(coreThreads, maxThreads, "rheakv-kv-store-rpc-executor");
     }
 
+    public static ExecutorService createKvRpcExecutor(final int coreThreads, final int maxThreads) {
+        System.out.println("StoreEngineHelper new SynchronousQueue: coreThreads = " + coreThreads + ", maxThreads:" + maxThreads);
+        return newPool(coreThreads, maxThreads, "rheakv-kv-store-rpc-executor");
+    }
+
     public static ScheduledExecutorService createMetricsScheduler() {
         return Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("rheakv-metrics-reporter", true));
     }

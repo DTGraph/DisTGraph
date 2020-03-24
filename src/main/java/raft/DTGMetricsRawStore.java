@@ -180,25 +180,23 @@ public class DTGMetricsRawStore implements DTGRawStore, Lifecycle<DTGMetricsRawS
         //System.out.println("lock over : " + System.currentTimeMillis());
         Map<Integer, Object> resultMap = new HashMap<>();
         resultMap.put(-1, true);
-//
-//        final CompletableFuture future = CompletableFuture.runAsync(() -> {
-            try {
-                TransactionThreadLock txLock = new TransactionThreadLock(op.getTxId());
-                LocalTransaction tx = new LocalTransaction(localDB.getDb(), op, resultMap, txLock, region);//System.out.println("run op... ：3  " + region.getId());
-                tx.start();
-                localDB.addToCommitMap(tx, op.getTxId());
-                synchronized (resultMap){
-                    resultMap.wait(FutureHelper.DEFAULT_TIMEOUT_MILLIS);//System.out.println("run op... ：5  " + region.getId());
-                }
-                //tx.commit();
-                //System.out.println("tx over : " + System.currentTimeMillis());
-                closure.setData(resultMap);
-                closure.run(Status.OK());
-            } catch (Throwable throwable) {
-                System.out.println("error!");//System.out.println("tx error response request" + regionId);
-                closure.run(new Status(DTGLockError.FAILED.getNumber(), "transaction excute failed!"));
+
+        try {
+            TransactionThreadLock txLock = new TransactionThreadLock(op.getTxId());
+            LocalTransaction tx = new LocalTransaction(localDB.getDb(), op, resultMap, txLock, region);//System.out.println("run op... ：3  " + region.getId());
+            tx.start();
+            localDB.addToCommitMap(tx, op.getTxId());
+            synchronized (resultMap){
+                resultMap.wait(FutureHelper.DEFAULT_TIMEOUT_MILLIS);//System.out.println("run op... ：5  " + region.getId());
             }
-//        });
+            //tx.commit();
+            //System.out.println("tx over : " + tx.getTxId());
+            closure.setData(resultMap);
+            closure.run(Status.OK());
+        } catch (Throwable throwable) {
+            System.out.println(op.getTxId() + "  error!： " + throwable);//System.out.println("tx error response request" + regionId);
+            closure.run(new Status(DTGLockError.FAILED.getNumber(), "transaction excute failed!"));
+        }
 
         this.TxVersionMap.put(op.getTxId(), version);
     }
@@ -217,7 +215,7 @@ public class DTGMetricsRawStore implements DTGRawStore, Lifecycle<DTGMetricsRawS
     private void internalCommitSuccess( long version, final CompletableFuture<Boolean> future,
                                         int retriesLeft, final Errors lastCause){
         final RetryRunner retryRunner = retryCause -> internalCommitSuccess(version, future, retriesLeft - 1, retryCause);
-        final FailoverClosureImpl<Boolean> closure = new FailoverClosureImpl<>(future, false, retriesLeft, retryRunner);
+        final FailoverClosureImpl<Boolean> closure = new FailoverClosureImpl<>(future, false, retriesLeft, retryRunner, DTGConstants.RETRIYRUNNERWAIT);
         LogStoreClosure logClosure = new LogStoreClosure() {
             @Override
             public void run(Status status) {
@@ -248,7 +246,7 @@ public class DTGMetricsRawStore implements DTGRawStore, Lifecycle<DTGMetricsRawS
                 public void run(Status status) {
                     if(!status.isOk()){
                         System.out.println("save log error");
-                        closure.setError(getError());
+                        closure.setError(Errors.TRANSACTION_FIRSTPHASE_ERROR);
                         closure.run(status);
                     }
                 }
@@ -258,17 +256,31 @@ public class DTGMetricsRawStore implements DTGRawStore, Lifecycle<DTGMetricsRawS
             saveLog(logClosure);
         }
 
+
+        //just for log test
+//        System.out.println("aaaaaaaaaaaaaa");
+//        try {
+//            Thread.sleep(5000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        System.out.println("bbbbbbbbbb");
+
         //System.out.println("get lock : " + System.currentTimeMillis());
         DTGLockClosure lockClosure = new DTGLockClosure() {
             @Override
             public void run(Status status) {
+                if(hasSendRes()){
+                    return;
+                }
+                sendResult();
                 if(status.isOk()){
                     closure.setData(getData());
                     closure.run(Status.OK());
                 }else {
                     commitSuccess(op.getVersion());//just remove log
-                    System.out.println("failed request lock!");
-                    closure.setError(getError());
+                    System.out.println("failed request lock!" + op.getTxId());
+                    closure.setError(Errors.TRANSACTION_LOCK_ERROR);
                     closure.run(new Status(DTGLockError.FAILED.getNumber(), "request lock failed!"));
                 }
             }

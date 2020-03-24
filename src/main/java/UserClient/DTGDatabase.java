@@ -55,7 +55,7 @@ public class DTGDatabase {
     private static TransactionManage transactionManage;
     private DTGSaveStore store;
     private IdGenerator TxIdGenerator;
-    private String macAddress;
+    private String macAddress = "";
 
     public DTGDatabase(){
         this.transactionManage = new TransactionManage();
@@ -78,7 +78,8 @@ public class DTGDatabase {
         this.pdClient = store.getPlacementDriverClient();
         this.TxIdGenerator = createTxIdGenerator();
         this.pdClient.initIds();
-        this.macAddress = GetSystem.getMacAddress();
+        //this.macAddress = GetSystem.getMacAddress();
+        System.out.println("macAddress : " + macAddress);
         return true;
     }
 

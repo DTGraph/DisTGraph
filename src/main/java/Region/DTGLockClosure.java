@@ -11,6 +11,15 @@ public abstract class DTGLockClosure implements EntityStoreClosure, Serializable
 
     private volatile Errors error;
     private volatile Object data;
+    private volatile boolean sendRes = false;
+
+    public boolean hasSendRes(){
+        return sendRes;
+    }
+
+    public void sendResult(){
+        this.sendRes = true;
+    }
 
     @Override
     public Errors getError() {
@@ -31,5 +40,6 @@ public abstract class DTGLockClosure implements EntityStoreClosure, Serializable
     public void setData(Object data) {
         this.data = data;
     }
+
 
 }

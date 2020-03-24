@@ -22,6 +22,7 @@ public class DTGOperation implements Serializable {
     private long version;
     private long mainRegionId;
     private boolean highA = true;
+    private boolean isReadOnly = false;
 
     private byte[] OpData;
 
@@ -122,6 +123,14 @@ public class DTGOperation implements Serializable {
 
     public void setHighA(boolean highA) {
         this.highA = highA;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        isReadOnly = readOnly;
+    }
+
+    public boolean isReadOnly() {
+        return isReadOnly;
     }
 
     //    public void setStartRelationId(long startRelationId) {

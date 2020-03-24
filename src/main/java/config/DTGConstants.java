@@ -30,9 +30,12 @@ public class DTGConstants {
 
     public static final byte    TXRECEIVED                   = 0x20;
     public static final byte    TXDONEFIRST                  = 0x21;
-    public static final byte    TXRUNFIRST                   = 0x22;
+    public static final byte    TXRERUNFIRST                 = 0x22;
     public static final byte    TXFAILEDFIRST                = 0x23;
     public static final byte    TXROLLBACK                   = 0x24;
+    public static final byte    TXSUCCESS                    = 0x25;
+    public static final byte    SYNOP                        = 0x26;
+    public static final byte    SYNOPFAILED                  = 0x27;
 
     //RAFT OPTION
     public static final int DisruptorPublishEventWaitTimeoutSecs = 10;
@@ -46,4 +49,6 @@ public class DTGConstants {
     public static final boolean TX_LOG_SAVE_LEVEL            = false;
     public static final long    NULL_INDEX                   = -99998;
     public static final int     FAILOVERRETRIES              = 5;
+    public static final int     RETRIYRUNNERWAIT             = 500;
+    public static final int     MAXWAITTIME                  = 100;
 }

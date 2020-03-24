@@ -652,7 +652,7 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
         byte[] content = ObjectAndByte.toByteArray(entry);
         //final byte[] content = this.logEntryEncoder.encode(entry);
         batch.put(this.defaultHandle, getKeyBytes(logIndex), onDataAppend(logIndex, content));
-        System.out.println("add entry " + logIndex);
+        //System.out.println("add entry " + logIndex);
     }
 
     /**

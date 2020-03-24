@@ -350,7 +350,7 @@ public class DTGMQ implements Lifecycle<MQOptions> {
             List<EntityEntry> entries = ((TransactionLog) ObjectAndByte.toObject(log.getByteData())).getOps();
             long version = log.getVersion();
             String txId = "reRun_" + version;
-            store.applyRequest(entries, txId, DTGConstants.FAILOVERRETRIES, null, true, version);
+            store.applyRequest(entries, txId, false, false, DTGConstants.FAILOVERRETRIES, null, true, version);
         }
     }
 }

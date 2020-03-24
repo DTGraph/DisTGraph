@@ -19,6 +19,9 @@ package Communication;
 import Communication.RequestAndResponse.CreateRegionRequest;
 import Communication.RequestAndResponse.GetVersionRequest;
 import Communication.RequestAndResponse.SetDTGStoreInfoRequest;
+import DBExceptions.TransactionException;
+import com.alipay.sofa.jraft.Status;
+import com.alipay.sofa.jraft.error.RaftError;
 import com.alipay.sofa.jraft.rhea.client.FutureHelper;
 import com.alipay.sofa.jraft.rhea.client.failover.FailoverClosure;
 import com.alipay.sofa.jraft.rhea.client.failover.RetryRunner;
@@ -27,6 +30,7 @@ import com.alipay.sofa.jraft.rhea.client.pd.PlacementDriverRpcService;
 import com.alipay.sofa.jraft.rhea.cmd.pd.*;
 import com.alipay.sofa.jraft.rhea.errors.Errors;
 import com.alipay.sofa.jraft.util.Endpoint;
+import config.DTGConstants;
 import storage.DTGCluster;
 import storage.DTGStore;
 
@@ -67,8 +71,23 @@ public class DTGMetadataRpcClient {
         return FutureHelper.get(future);
     }
 
-    private void internalGetVersion(final CompletableFuture<Long> future, final int retriesLeft, final Errors lastCause){
+    public void internalGetVersion(final CompletableFuture<Long> future, final int retriesLeft, final Errors lastCause){
         final RetryRunner retryRunner = retryCause -> internalGetVersion(future, retriesLeft - 1, retryCause);
+        final FailoverClosure<Long> closure = new FailoverClosureImpl<>(future, retriesLeft, retryRunner, DTGConstants.RETRIYRUNNERWAIT);
+        CompletableFuture<Long> future1 = new CompletableFuture<>();
+        sendGetVersion(future1, retriesLeft, null);
+        try{
+            long version = FutureHelper.get(future1);
+            closure.setData(version);
+            closure.run(Status.OK());
+        }catch (Exception e){
+            closure.setError(Errors.NOT_LEADER);
+            closure.run(new Status(RaftError.ENEWLEADER.getNumber(), "get version failed"));
+        }
+    }
+
+    private void sendGetVersion(final CompletableFuture<Long> future, final int retriesLeft, final Errors lastCause){
+        final RetryRunner retryRunner = retryCause -> sendGetVersion(future, retriesLeft - 1, retryCause);
         final FailoverClosure<Long> closure = new FailoverClosureImpl<>(future, retriesLeft, retryRunner);
         final GetVersionRequest request = new GetVersionRequest();
         this.pdRpcService.callPdServerWithRpc(request, closure, lastCause);

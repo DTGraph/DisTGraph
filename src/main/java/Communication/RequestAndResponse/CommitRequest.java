@@ -10,8 +10,7 @@ package Communication.RequestAndResponse;
 
 public class CommitRequest extends DTGBaseRequest {
 
-    private static final long serialVersionUID = 9094996319975697956L;
-
+    private static final long serialVersionUID = 5058637005605352471L;
     private boolean shouldCommit;
 
     @Override

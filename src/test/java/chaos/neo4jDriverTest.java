@@ -23,78 +23,113 @@ public class neo4jDriverTest implements AutoCloseable{
         driver.close();
     }
 
-    public void printGreeting(final String message, final int i){
+    public void printGreeting(final String message, String i){
         try(Session session = driver.session()) {
-            //long start = System.currentTimeMillis();
+
             String greeting = session.writeTransaction(new TransactionWork<String>(){
                 @Override
                 public String execute(Transaction tx){
-                    long start = System.currentTimeMillis();
-
-//                    //for(int i = 0; i < 10; i++){
-//                        //Result result = tx.run("Match (n: Person) where n.name = 'a9"+ i +"' return n");
-//                        Result result = tx.run("CREATE (a15" + i + ":Person {name: 'a15" + i+ "'})");
-//
-//                        System.out.println(result.hasNext());
-//                    //}
-                    for(int j = 0; j < 10; j++){
-                        TThread thread = new TThread(start, j, tx);
-
-                        thread.start();
-
-                        long end = System.currentTimeMillis();
-                        System.out.println("tx cost: " + (end - start));
-                    }
-
-                    try {
-                        Thread.sleep(100000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    Result result = tx.run("CREATE (aa7" + i + ":Person {name: 'aa7" + i+ "'})");
                     return null;
-                    //return result.single().get(0).asString();
                 }
             });
+
+//            long start = System.currentTimeMillis();
+//            for(int j = 0; j < k; j++){
+//                TThread thread = new TThread(start, i +"" + j, session);
+//                thread.start();
+//            }
+
+//            String greeting = session.writeTransaction(new TransactionWork<String>(){
+//                @Override
+//                public String execute(Transaction tx){
+//                    //long start = System.currentTimeMillis();
+//
+////                    for(int i = 0; i < 10; i++){
+////                        //Result result = tx.run("Match (n: Person) where n.name = 'a9"+ i +"' return n");
+//                        Result result = tx.run("CREATE (a2" + i + ":Person {name: 'a2" + i+ "'})");
+////
+////                        System.out.println(result.hasNext());
+////                     }
+////                    for(int j = 0; j < 5; j++){
+////                        TThread thread = new TThread(start, j, tx);
+////                        thread.start();
+////                        long end = System.currentTimeMillis();
+////                        System.out.println("tx cost: " + (end - start));
+////                    }
+////
+////                    try {
+////                        Thread.sleep(100000);
+////                    } catch (InterruptedException e) {
+////                        e.printStackTrace();
+////                    }
+//                    return null;
+//                    //return result.single().get(0).asString();
+//                }
+//            });
 //            long end = System.currentTimeMillis();
-//            System.out.println("tx cost: " + (end - start));
+//            System.out.println("250 cost: " + (end - start));
+//            Thread.sleep(10000);
 //            System.out.println(greeting);
         }
+//        catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public static void main(String[] args) throws Exception{
-        try (neo4jDriverTest greeter = new neo4jDriverTest("bolt://localhost:8810", "neo4j", "123000")){
+        try (neo4jDriverTest greeter = new neo4jDriverTest("bolt://localhost:8811", "neo4j", "123000")){
             long start = System.currentTimeMillis();
-            for(int i = 0; i < 1; i++){
-                greeter.printGreeting("hello", i);
+            greeter.printGreeting("hello", "a1");
+            Thread.sleep(1000);
+            //greeter.printGreeting("hello", 1, 250);
+            for(int i = 0; i < 300; i++){
+                //greeter.printGreeting("hello", 0, 1);
+                TThread thread = new TThread(start,i +"b" , greeter);
+                thread.start();
             }
             long end = System.currentTimeMillis();
             System.out.println("all cost : " + (end - start));
+            Thread.sleep(10000);
         }
-
-        Thread.sleep(10000);
     }
 }
 
 class TThread extends Thread{
 
     long start;
-    int i;
-    Transaction tx;
+    String i;
+    //Transaction tx;
+    //Session session;
+    neo4jDriverTest greeter;
 
 
-    public TThread(long start, int i, Transaction tx){
+    public TThread(long start, String i, neo4jDriverTest greeter){
         this.start = start;
         this.i = i;
-        this.tx = tx;
+        this.greeter = greeter;
+        //this.tx = tx;
+        //this.session = session;
     }
 
     @Override
     public void run() {
-        Result result = tx.run("CREATE (a18" + i + ":Person {name: 'a18" + i+ "'})");
+//        Result result = tx.run("CREATE (a2" + i + ":Person {name: 'a2" + i+ "'})");
+//        System.out.println(result.hasNext());
+//        long end = System.currentTimeMillis();
+//        System.out.println(end - start);
 
-        System.out.println(result.hasNext());
+//        String greeting = session.writeTransaction(new TransactionWork<String>(){
+//            @Override
+//            public String execute(Transaction tx){
+//                Result result = tx.run("CREATE (a9" + i + ":Person {name: 'a9" + i+ "'})");
+//                return null;
+//            }
+//        });
+
+        greeter.printGreeting("hello", i);
         long end = System.currentTimeMillis();
-        System.out.println(end - start);
+        System.out.println("tx cost: " + (end - start));
     }
 }
 

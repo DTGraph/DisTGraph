@@ -100,7 +100,6 @@ public class DTGRegionRouteTable {
                 //checkRegion(entityEntry, region);
                 final DTGRegion region1;
                 if(region == null){
-                    int a =0 ;
                     region1 = findRegionByKeyWithoutLock(entityEntry.getId());
                 }
                 else {

@@ -18,6 +18,7 @@ package UserClient.Transaction;
 
 import Element.EntityEntry;
 import UserClient.DTGSaveStore;
+import config.DTGConstants;
 import options.TransactionOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,7 @@ public class DTGTransaction implements AutoCloseable {
     private Map<Integer, Object> result;
     private long maxNodeId = -1;
     private long maxRelationId = -1;
-    private long version;
+    private long version = -1;
 
     private LinkedList<EntityEntry> entityEntryList;
 
@@ -52,7 +53,7 @@ public class DTGTransaction implements AutoCloseable {
         entityEntryList = new LinkedList<>();
         entityNum = 0;
         this.store = store;
-        this.failoverRetries = opts.getFailoverRetries();
+        this.failoverRetries = DTGConstants.FAILOVERRETRIES;
         readOnly = true;
         this.txId = txId;
     }
@@ -62,30 +63,20 @@ public class DTGTransaction implements AutoCloseable {
     }
 
     public Map<Integer, Object> start(){
-        System.out.println("start : " + entityEntryList.size());
-        this.version = this.store.getPlacementDriverClient().getVersion();
+        //System.out.println("start : " + entityEntryList.size());
+        if(!readOnly){
+            this.version = this.store.getPlacementDriverClient().getVersion();
+        }
         long start = System.currentTimeMillis();
         //System.out.println("START : " + System.currentTimeMillis());
         this.isClose = false;
         //store.applyTransaction(this.entityEntryList, this.txId, this.failoverRetries, version);
-        Map<Integer, Object> result =  store.applyRequest(this.entityEntryList, this.txId, this.failoverRetries, null, true, version);
+        Map<Integer, Object> result =  store.applyRequest(this.entityEntryList, this.txId, this.readOnly, true,
+                this.failoverRetries, null, true, version);
         //System.out.println("END : " + System.currentTimeMillis());
         long end = System.currentTimeMillis();
         //System.out.println("cost : " + (end-start));
         return result;
-    }
-
-    public void startFirstPhase(final Throwable lastCause){
-        System.out.println("START : " + System.currentTimeMillis());
-        this.isClose = false;
-        store.checkMaxId(maxNodeId, maxRelationId);
-        result =  store.applyRequest(this.entityEntryList, this.txId, this.failoverRetries, null, true);
-        System.out.println(result.size());
-    }
-
-    public void startNow(final Throwable lastCause){
-        this.isClose = false;
-        result =  store.applyRequest(this.entityEntryList, this.txId, this.failoverRetries, null, false);
     }
 
     public void close(){

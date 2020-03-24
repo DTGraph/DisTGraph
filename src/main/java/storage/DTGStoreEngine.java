@@ -238,7 +238,13 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
                 this.raftRpcExecutor = StoreEngineHelper.createRaftRpcExecutor(opts.getRaftRpcCoreThreads());
             }
             if (this.kvRpcExecutor == null) {
-                this.kvRpcExecutor = StoreEngineHelper.createKvRpcExecutor(opts.getKvRpcCoreThreads());
+                if(opts.getMaxKvRpcCoreThreads() > 0){
+                    this.kvRpcExecutor = StoreEngineHelper.createKvRpcExecutor(opts.getKvRpcCoreThreads(), opts.getMaxKvRpcCoreThreads());
+                }
+                else {
+                    this.kvRpcExecutor = StoreEngineHelper.createKvRpcExecutor(opts.getKvRpcCoreThreads());
+                }
+
             }
         }
         // init metrics

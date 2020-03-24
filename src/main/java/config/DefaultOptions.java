@@ -36,7 +36,7 @@ public class DefaultOptions {
     public static final String INITIALSERVERLIST           = "127.0.0.1:8184,127.0.0.1:8185,127.0.0.1:8186" ;
     public static final String INITIALPDSERVERLIST         = "127.0.0.1:8181,127.0.0.1:8182,127.0.0.1:8183";
     public static final int    MINIDBATCHSIZE              = 50;
-    public static final int    IDBATCHSIZE                 = 5000;
+    public static final int    IDBATCHSIZE                 = 100000;
     public static final int    CLUSTERID                   = 1;
     public static final int    PDCLUSTERID                 = 0;
     public static final int    GRABSIZE                    = 50000;
@@ -48,7 +48,9 @@ public class DefaultOptions {
     public static final int    DEFAULTREGIONRELATIONSIZE   = 5000;
 
     public static final int    DEFAULTSTARTTIME            = 0;
-    public static final int    INITREGIONNUMBER            = 3;
+    public static final int    INITREGIONNUMBER            = 5;
+
+    private static final int   MaxKvRpcCoreThreads         = 1001;
 
     public static CliOptions defaultCliOptios(){
         CliOptions opts = new CliOptions();
@@ -61,6 +63,7 @@ public class DefaultOptions {
         RpcOptions rpcOpts = RpcOptionsConfigured.newDefaultConfig();
         rpcOpts.setCallbackExecutorCorePoolSize(0);
         rpcOpts.setCallbackExecutorMaximumPoolSize(0);
+        rpcOpts.setCallbackExecutorQueueCapacity(2048);
         return rpcOpts;
     }
 
@@ -205,6 +208,7 @@ public class DefaultOptions {
 
     public static DTGStoreEngineOptions defaultPDStoreEngineOptions(String ip, int port, String localdbPath){
         DTGStoreEngineOptions opts = new DTGStoreEngineOptions();
+        //opts.setMaxKvRpcCoreThreads(10000);
         opts.setStorageType(StorageType.RocksDB);
         opts.setRocksDBOptions(RocksDBOptionsConfigured.newConfigured().withDbPath(localdbPath + "\\pd" + ip + port).config());
         opts.setRaftDataPath(localdbPath+"\\"+ RAFT_DATA_PATH);
@@ -214,6 +218,7 @@ public class DefaultOptions {
 
     public static DTGStoreEngineOptions defaultClusterStoreEngineOptions(String ip, int port, String localdbPath){
         DTGStoreEngineOptions opts = new DTGStoreEngineOptions();
+        opts.setMaxKvRpcCoreThreads(MaxKvRpcCoreThreads);
         opts.setStorageType(StorageType.LocalDB);
         opts.setLocalDBOption(defaultLocalDBOption(localdbPath + "\\" +DB_PATH));
         opts.setRaftDataPath(localdbPath+"\\"+ RAFT_DATA_PATH);

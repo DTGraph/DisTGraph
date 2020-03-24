@@ -47,6 +47,8 @@ public class DTGStoreEngineOptions implements Serializable {
     private int                       cliRpcCoreThreads             = Utils.cpus() << 2;
     private int                       raftRpcCoreThreads            = Math.max(Utils.cpus() << 3, 32);
     private int                       kvRpcCoreThreads              = Math.max(Utils.cpus() << 3, 32);
+    private int                       maxKvRpcCoreThreads           = -1;
+
     // metrics schedule option (seconds), won't start reporter id metricsReportPeriod <= 0
     private long                      metricsReportPeriod           = TimeUnit.MINUTES.toSeconds(5);
     // the minimum number of keys required to split, less than this value will refuse to split
@@ -133,6 +135,7 @@ public class DTGStoreEngineOptions implements Serializable {
     }
 
     public int getReadIndexCoreThreads() {
+        //System.out.println("readIndexCoreThreads :" + readIndexCoreThreads);
         return readIndexCoreThreads;
     }
 
@@ -141,6 +144,7 @@ public class DTGStoreEngineOptions implements Serializable {
     }
 
     public int getLeaderStateTriggerCoreThreads() {
+        //System.out.println("leaderStateTriggerCoreThreads :" + leaderStateTriggerCoreThreads);
         return leaderStateTriggerCoreThreads;
     }
 
@@ -149,6 +153,7 @@ public class DTGStoreEngineOptions implements Serializable {
     }
 
     public int getSnapshotCoreThreads() {
+        //System.out.println("snapshotCoreThreads :" + snapshotCoreThreads);
         return snapshotCoreThreads;
     }
 
@@ -157,6 +162,7 @@ public class DTGStoreEngineOptions implements Serializable {
     }
 
     public int getCliRpcCoreThreads() {
+        //System.out.println("cliRpcCoreThreads :" + cliRpcCoreThreads);
         return cliRpcCoreThreads;
     }
 
@@ -165,6 +171,7 @@ public class DTGStoreEngineOptions implements Serializable {
     }
 
     public int getRaftRpcCoreThreads() {
+        //System.out.println("raftRpcCoreThreads :" + raftRpcCoreThreads);
         return raftRpcCoreThreads;
     }
 
@@ -173,11 +180,20 @@ public class DTGStoreEngineOptions implements Serializable {
     }
 
     public int getKvRpcCoreThreads() {
+        //System.out.println("kvRpcCoreThreads :" + kvRpcCoreThreads);
         return kvRpcCoreThreads;
     }
 
     public void setKvRpcCoreThreads(int kvRpcCoreThreads) {
         this.kvRpcCoreThreads = kvRpcCoreThreads;
+    }
+
+    public int getMaxKvRpcCoreThreads() {
+        return maxKvRpcCoreThreads;
+    }
+
+    public void setMaxKvRpcCoreThreads(int maxKvRpcCoreThreads) {
+        this.maxKvRpcCoreThreads = maxKvRpcCoreThreads;
     }
 
     public long getMetricsReportPeriod() {

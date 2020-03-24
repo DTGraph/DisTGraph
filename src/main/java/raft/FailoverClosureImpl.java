@@ -20,10 +20,13 @@ import com.alipay.sofa.jraft.Status;
 import com.alipay.sofa.jraft.rhea.client.failover.RetryRunner;
 import com.alipay.sofa.jraft.rhea.errors.Errors;
 import com.alipay.sofa.jraft.rhea.errors.ErrorsHelper;
+import config.DTGConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A helper closure for failover, which is an immutable object.
@@ -41,10 +44,24 @@ public final class FailoverClosureImpl<T> extends BaseStoreClosure implements Fa
     private final boolean              retryOnInvalidEpoch;
     private final int                  retriesLeft;
     private final RetryRunner          retryRunner;
-    private long returnTxId;
+    private long                       returnTxId;
+    private int                        RetrySleep = 0;
+
+    private static AtomicInteger errorCount = new AtomicInteger(0);
+    private static AtomicInteger errorCount2 = new AtomicInteger(0);
 
     public FailoverClosureImpl(CompletableFuture<T> future, int retriesLeft, RetryRunner retryRunner) {
         this(future, true, retriesLeft, retryRunner);
+    }
+
+    public FailoverClosureImpl(CompletableFuture<T> future, int retriesLeft, RetryRunner retryRunner ,int RetrySleep) {
+        this(future, true, retriesLeft, retryRunner);
+        this.RetrySleep = RetrySleep;
+    }
+
+    public FailoverClosureImpl(CompletableFuture<T> future, boolean retryOnInvalidEpoch, int retriesLeft, RetryRunner retryRunner ,int RetrySleep) {
+        this(future, retryOnInvalidEpoch, retriesLeft, retryRunner);
+        this.RetrySleep = RetrySleep;
     }
 
     public FailoverClosureImpl(CompletableFuture<T> future, boolean retryOnInvalidEpoch, int retriesLeft,
@@ -65,13 +82,27 @@ public final class FailoverClosureImpl<T> extends BaseStoreClosure implements Fa
 
         final Errors error = getError();
         if (this.retriesLeft > 0
-            && (ErrorsHelper.isInvalidPeer(error) || (this.retryOnInvalidEpoch && ErrorsHelper.isInvalidEpoch(error)))) {
+            && (ErrorsHelper.isInvalidPeer(error) || (this.retryOnInvalidEpoch && ErrorsHelper.isInvalidEpoch(error)) || ErrorsHelper.isTransactionError(error))) {
             LOG.warn("[Failover] status: {}, error: {}, [{}] retries left.", status, error, this.retriesLeft);
+            if(this.RetrySleep != 0){
+                try {
+                    int t = (new Random()).nextInt(DTGConstants.FAILOVERRETRIES);
+                    Thread.sleep(t * this.RetrySleep);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             this.retryRunner.run(error);
         } else {
             if (this.retriesLeft <= 0) {
-                LOG.error("[InvalidEpoch-Failover] status: {}, error: {}, {} retries left.", status, error,
-                    this.retriesLeft);
+                if(this.RetrySleep != 0){
+                    LOG.error("[InvalidEpoch-Failover] status: {}, error: {}, {} retries left. errorCount {}", status, error,
+                            this.retriesLeft, errorCount.getAndIncrement());
+                }
+                else {
+                    LOG.error("[InvalidEpoch-Failover] status: {}, error: {}, {} retries left. errorCount2 {}", status, error,
+                            this.retriesLeft, errorCount2.getAndIncrement());
+                }
             }
             failure(error);
         }
