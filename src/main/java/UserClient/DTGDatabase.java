@@ -78,8 +78,8 @@ public class DTGDatabase {
         this.pdClient = store.getPlacementDriverClient();
         this.TxIdGenerator = createTxIdGenerator();
         this.pdClient.initIds();
-        //this.macAddress = GetSystem.getMacAddress();
-        System.out.println("macAddress : " + macAddress);
+        this.macAddress = GetSystem.getMacAddress();
+        //System.out.println("macAddress : " + macAddress);
         return true;
     }
 

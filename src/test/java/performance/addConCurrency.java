@@ -13,7 +13,7 @@ public class addConCurrency {
     public void addTests(){
         DTGDatabase db = new DTGDatabase();
         db.init("127.0.0.1", 10086, "D:\\garbage");
-        OutPutCsv output = new OutPutCsv("D:\\DTG\\test\\addInConcurrency1000-2.csv", "i,start,end,cost");
+        OutPutCsv output = new OutPutCsv("D:\\DTG\\test\\addInConcurrency500-lin.csv", "i,start,end,cost");
 
 //        try (DTGTransaction tx = db.CreateTransaction()){
 //            db.addNode();
@@ -22,7 +22,7 @@ public class addConCurrency {
 
         long start = System.currentTimeMillis();
         System.out.println(System.currentTimeMillis());
-        for(int i = 0; i < 1000; i++){
+        for(int i = 0; i < 500; i++){
             TxThread a = new TxThread(db, i, start, output);
             a.start();
         }

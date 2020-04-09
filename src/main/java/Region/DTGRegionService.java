@@ -743,9 +743,15 @@ public class DTGRegionService implements RegionService {
         CompletableFuture.runAsync(() -> {
             CompletableFuture<Boolean> future = new CompletableFuture<>();
             this.successMap.put(txId, future);
-            if(!FutureHelper.get(future)){
+            boolean result = FutureHelper.get(future);
+            while(!result){
                 reAsk(op, false, txRepeateVersion);
+                future = new CompletableFuture<>();
+                result = FutureHelper.get(future);
             }
+//            if(!FutureHelper.get(future)){
+//                reAsk(op, false, txRepeateVersion);
+//            }
         });
     }
 

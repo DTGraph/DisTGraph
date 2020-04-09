@@ -26,15 +26,22 @@ import java.util.List;
  */
 
 public class DefaultOptions {
-    public static final int    TIMEOUTMS                   =  2000;
+    public static final int    TIMEOUTMS                   =  40000;
     public static final int    MAXRETRY                    =  5;
     public static final String DB_PATH                     = "DTG_DB" + File.separator;
     public static final String RAFT_DATA_PATH              = "raft_data" + File.separator;
-    public static final String ALL_NODE_ADDRESSES          = "127.0.0.1:8184,127.0.0.1:8185,127.0.0.1:8186";
+    //public static final String ALL_NODE_ADDRESSES          = "127.0.0.1:8184,127.0.0.1:8185,127.0.0.1:8186";
     public static final String CLUSTER_NAME                = "DTG_DEFAULT";
     public static final String PDGROUPID                   = "METADATA_SAVE";
-    public static final String INITIALSERVERLIST           = "127.0.0.1:8184,127.0.0.1:8185,127.0.0.1:8186" ;
-    public static final String INITIALPDSERVERLIST         = "127.0.0.1:8181,127.0.0.1:8182,127.0.0.1:8183";
+    //public static final String INITIALSERVERLIST           = "127.0.0.1:8184,127.0.0.1:8185,127.0.0.1:8186" ;
+    public static final String INITIALSERVERLIST           = "139.198.19.46:8184,139.198.0.201:8184,139.198.17.249:8184" ;
+    //public static final String INITIALSERVERLIST           = "182.129.214.222:8184,182.129.214.222:8185,182.129.214.222:8186";
+    //public static final String INITIALSERVERLIST           = "127.0.0.1:8184,139.198.0.201:8184,182.32.203.173:8184";
+    //public static final String INITIALSERVERLIST           = "139.198.19.46:8184,127.0.0.1:8184,182.32.203.173:8184" ;
+    //public static final String INITIALSERVERLIST           = "139.198.19.46:8184,139.198.0.201:8184,127.0.0.1:8184";
+    public static final String INITIALPDSERVERLIST         = "49.233.217.199:8181,49.233.217.199:8182,49.233.217.199:8183";
+    //public static final String          = "139.198.19.46:8181,139.198.19.46:8182,139.198.19.46:8183";
+    //spublic static final String INITIALPDSERVERLIST         = "127.0.0.1:8181,127.0.0.1:8182,127.0.0.1:8183";
     public static final int    MINIDBATCHSIZE              = 50;
     public static final int    IDBATCHSIZE                 = 100000;
     public static final int    CLUSTERID                   = 1;

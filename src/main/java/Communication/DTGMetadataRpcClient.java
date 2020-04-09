@@ -36,6 +36,9 @@ import storage.DTGStore;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  *
@@ -52,7 +55,7 @@ public class DTGMetadataRpcClient {
     }
 
     public List<Long> getIds(byte type){
-        final CompletableFuture<List<Long>> future = new CompletableFuture<>();
+        CompletableFuture<List<Long>> future = new CompletableFuture<>();
         internalGetIds(type, future, this.failoverRetries, null);
         return FutureHelper.get(future);
     }

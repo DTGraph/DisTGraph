@@ -54,6 +54,7 @@ Communication\RequestAndResponse\TransactionResponse.class
 MQ\DTGMQ$RunClosureFactory.class
 UserClient\DTGSaveStore$1.class
 Communication\HeartbeatSender$StoreHeartbeatTask.class
+ClusterServer1.class
 Communication\RequestAndResponse\FirstPhaseSuccessRequest.class
 storage\RawEntityStore.class
 Communication\util\pipeline\DTGHandler.class
@@ -106,6 +107,8 @@ Communication\util\pipeline\DTGHandler$Sharable.class
 raft\DTGMetricsRawStore$2.class
 Communication\util\pipeline\DTGOutboundHandlerAdapter.class
 storage\StoreEngineHelper.class
+tool\OutPutCsv.class
+pdServerAll.class
 storage\ClusterServer.class
 Communication\HeartbeatSender1111$StoreHeartbeatTask.class
 tool\GetSystem.class
@@ -216,6 +219,7 @@ options\LocalDBOption.class
 DBExceptions\TypeDoesnotExistException.class
 Communication\pd\pipeline\handler\DTGRegionStatsValidator.class
 LocalDBMachine\LockStatus.class
+Region\DTGRegionService$TxRepeateVersion.class
 Communication\DefaultDTGRpcService$1.class
 tool\RangeTool.class
 UserClient\Transaction\TransactionManage.class
@@ -227,7 +231,6 @@ MQ\TransactionLogEntryAndClosure.class
 MQ\MQLogId.class
 MQ\codec\MQLogEntryCodecFactory.class
 PlacementDriver\DTGPlacementDriverRpcService.class
-Region\DTGRegionService$7.class
 MQ\codec\v2\MQV2Decoder.class
 Communication\util\pipeline\DTGHandlerInvoker.class
 raft\EntityEntryClosureAdapter$1.class

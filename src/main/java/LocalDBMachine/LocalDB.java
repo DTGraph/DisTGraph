@@ -290,7 +290,7 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
 //        synchronized (output){
 //            output.write(id);
 //        }
-//        System.out.println(System.currentTimeMillis() + "  end commitTx : " + tx.getTxId() + ",  " + count.getAndIncrement());
+        //System.out.println(System.currentTimeMillis() + "  end commitTx : " + tx.getTxId() + ",  " + count.getAndIncrement());
         System.out.println(System.currentTimeMillis() + "  end commitTx : " + tx.getTxId());
 
     }

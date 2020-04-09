@@ -713,6 +713,7 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
         final String childPath = "db_" + this.storeId + "_" + opts.getServerAddress().getPort();
         rocksOpts.setDbPath(Paths.get(dbPath, childPath).toString());
         this.dbPath = new File(rocksOpts.getDbPath());
+        System.out.println(rocksOpts.getDbPath());
         final RocksRawKVStore rocksRawKVStore = new RocksRawKVStore();
         if (!rocksRawKVStore.init(rocksOpts)) {
             LOG.error("Fail to init [RocksRawKVStore].");

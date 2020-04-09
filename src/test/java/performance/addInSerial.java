@@ -9,10 +9,10 @@ public class addInSerial {
     @Test
     public void addTests(){
         DTGDatabase db = new DTGDatabase();
-        db.init("127.0.0.1", 10086, "D:\\garbage");
+        db.init("182.129.214.222", 10086, "D:\\garbage");
         OutPutCsv output = new OutPutCsv("D:\\DTG\\test\\addInSerial-4.csv", "start,end,cost");
 
-        for(int i = 0; i < 1000; i++){
+        for(int i = 0; i < 10; i++){
             long start = System.currentTimeMillis();
             try (DTGTransaction tx = db.CreateTransaction()){
                 db.addNode();

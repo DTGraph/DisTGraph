@@ -458,7 +458,7 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
     }
 
     public void handleGetIdsRequest(final GetIdsRequest request, final RequestProcessClosure<BaseRequest, BaseResponse> closure){
-        System.out.println("get id request....");
+        //System.out.println("get id request....");
         final GetIdsResponse response = new GetIdsResponse();
         try {
             if (!this.isLeader) {
@@ -467,23 +467,37 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
                 return;
             }
             IdGenerator idg = getIdGenerator(request.getIdType());
-            CompletableFuture<List<Long>> future = CompletableFuture.supplyAsync(() -> {
-                List<Long> returnId = new LinkedList();
-                for(int i = 0; i < idBatchSize; i++){
-                    returnId.add(idg.nextId());
-                }
-                return returnId;
-            }).whenComplete((returnId, e) ->{
-                if(e != null){
-                    LOG.error("Failed to handle: {}, {}.", request, StackTraceUtil.stackTrace(e));
-                    response.setError(Errors.forException(e));
-                    closure.sendResponse(response);
-                    return;
-                }
-                response.setValue(returnId);
-                closure.sendResponse(response);
-            });
+            List<Long> returnId = new LinkedList();
+            for(int i = 0; i < idBatchSize; i++){
+                returnId.add(idg.nextId());
+            }
+            response.setValue(returnId);
+            closure.sendResponse(response);
+//            CompletableFuture<List<Long>> future = CompletableFuture.supplyAsync(() -> {
+//                List<Long> returnId = new LinkedList();
+//                for(int i = 0; i < idBatchSize; i++){
+//                    returnId.add(idg.nextId());
+//                }
+//                try {
+//                    Thread.sleep(10000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                return returnId;
+//            }).whenComplete((returnId, e) ->{
+//                if(e != null){
+//                    System.out.println("error handleGetIdsRequest");
+//                    LOG.error("Failed to handle: {}, {}.", request, StackTraceUtil.stackTrace(e));
+//                    response.setError(Errors.forException(e));
+//                    closure.sendResponse(response);
+//                    return;
+//                }
+//                response.setValue(returnId);
+//                closure.sendResponse(response);
+//                System.out.println("success handleGetIdsRequest");
+//            });
         }catch (final Throwable t){
+            System.out.println("error handleGetIdsRequest 1");
             LOG.error("Failed to handle: {}, {}.", request, StackTraceUtil.stackTrace(t));
             response.setError(Errors.forException(t));
             closure.sendResponse(response);
@@ -491,7 +505,7 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
     }
 
     public void handleReturnIdsRequest(final ReturnIdsRequest request, final RequestProcessClosure<BaseRequest, BaseResponse> closure){
-        System.out.println("get return id request....");
+        //System.out.println("get return id request....");
         List<Long> ids = request.getIdList();
         final ReturnIdsResponse response = new ReturnIdsResponse();
         try {
@@ -516,7 +530,7 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
             response.setError(Errors.forException(t));
             closure.sendResponse(response);
         }
-        System.out.println("finish return id");
+        //System.out.println("finish return id");
     }
 
     public void handleGetVersionId(final GetVersionRequest request, final RequestProcessClosure<BaseRequest, BaseResponse> closure ){

@@ -15,12 +15,12 @@ public class addTemporalTest {
     public void addTests() throws InterruptedException {
         DTGDatabase db = new DTGDatabase();
         db.init("127.0.0.1", 10086, "D:\\garbage");
-        OutPutCsv output = new OutPutCsv("D:\\DTG\\test\\addTemporal000-2.csv", "i,start,end,cost");
+        OutPutCsv output = new OutPutCsv("D:\\DTG\\test\\addTemporal0-lin.csv", "i,start,end,cost");
 
         for(int i = 0; i < 1; i++){
             long start = System.currentTimeMillis();
             try (DTGTransaction tx = db.CreateTransaction()){
-                for(int j = 0; j < 100; j++){
+                for(int j = 0; j < 10; j++){
                     db.addNode();
                 }
                 tx.start();
@@ -30,7 +30,7 @@ public class addTemporalTest {
 
         long start = System.currentTimeMillis();
         System.out.println(System.currentTimeMillis());
-        for(int i = 0; i < 1000; i++){
+        for(int i = 0; i < 10; i++){
             TxThread2 a = new TxThread2(db, i, start, output);
             a.start();
 

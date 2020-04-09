@@ -111,6 +111,7 @@ public class DTGPlacementDriverRpcService implements PlacementDriverRpcService {
                     closure.setData(response.getValue());
                     closure.run(Status.OK());
                 } else {
+                    System.out.println(response.getError());
                     closure.setError(response.getError());
                     closure.run(new Status(-1, "RPC failed with address: %s, response: %s", address, response));
                 }

@@ -1,9 +1,6 @@
-package TransactionTest;
-
 import PlacementDriver.GroupPd;
-import PlacementDriver.PdServer;
-import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -22,7 +19,7 @@ public class pdServerAll {
 //        server.start();
 //
 //        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-//            try {
+//               try {
 //                server.shutdown();
 //            } catch (IOException e) {
 //                e.printStackTrace();
@@ -31,8 +28,12 @@ public class pdServerAll {
 //    }
 
     public static void main(String[] args) throws IOException {
-        GroupPd server = new GroupPd("D:\\garbage","127.0.0.1:8181,127.0.0.1:8182,127.0.0.1:8183");
-        //GroupPd server = new GroupPd("D:\\garbage","182.129.214.222:8181,182.129.214.222:8182,182.129.214.222:8183");
+        //File dir = new File("/usr/pdCluster");
+        File dir = new File(args[0]);
+        if (!dir.exists()) {// 判断目录是否存在
+            dir.mkdir();
+        }
+        GroupPd server = new GroupPd(args[0],args[1] + ":8181,"+ args[1] + ":8182," + args[1] + ":8183");
         server.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

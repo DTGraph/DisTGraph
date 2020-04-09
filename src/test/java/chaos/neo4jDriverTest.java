@@ -29,7 +29,7 @@ public class neo4jDriverTest implements AutoCloseable{
             String greeting = session.writeTransaction(new TransactionWork<String>(){
                 @Override
                 public String execute(Transaction tx){
-                    Result result = tx.run("CREATE (aa7" + i + ":Person {name: 'aa7" + i+ "'})");
+                    Result result = tx.run("CREATE (a0" + i + ":Person {name: 'a0" + i+ "'})");
                     return null;
                 }
             });
@@ -78,12 +78,12 @@ public class neo4jDriverTest implements AutoCloseable{
     }
 
     public static void main(String[] args) throws Exception{
-        try (neo4jDriverTest greeter = new neo4jDriverTest("bolt://localhost:8811", "neo4j", "123000")){
+        try (neo4jDriverTest greeter = new neo4jDriverTest("bolt://139.198.17.249:8181", "neo4j", "neo4j")){
             long start = System.currentTimeMillis();
             greeter.printGreeting("hello", "a1");
             Thread.sleep(1000);
             //greeter.printGreeting("hello", 1, 250);
-            for(int i = 0; i < 300; i++){
+            for(int i = 0; i < 100; i++){
                 //greeter.printGreeting("hello", 0, 1);
                 TThread thread = new TThread(start,i +"b" , greeter);
                 thread.start();
