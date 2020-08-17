@@ -18,4 +18,5 @@ public class OperationName {
     public static final byte  ADDREGION      = 0x07;
     public static final byte  ADDREMOVELIST  = 0x08;
     public static final byte  SECONDPHASE    = 0x09;
+    public static final byte  SCEONDREAD     = 0x10;
 }

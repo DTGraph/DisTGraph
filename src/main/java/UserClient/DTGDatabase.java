@@ -56,6 +56,7 @@ public class DTGDatabase {
     private DTGSaveStore store;
     private IdGenerator TxIdGenerator;
     private String macAddress = "";
+    private TransactionManager versionManager;
 
     public DTGDatabase(){
         this.transactionManage = new TransactionManage();
@@ -79,6 +80,7 @@ public class DTGDatabase {
         this.TxIdGenerator = createTxIdGenerator();
         this.pdClient.initIds();
         this.macAddress = GetSystem.getMacAddress();
+        this.versionManager = new TransactionManager(this.store.getPlacementDriverClient());
         //System.out.println("macAddress : " + macAddress);
         return true;
     }
@@ -92,7 +94,7 @@ public class DTGDatabase {
     public DTGTransaction CreateTransaction(){
         //System.out.println(System.currentTimeMillis());
         String txId = this.macAddress + "" + TxIdGenerator.nextId();
-        DTGTransaction tx = new DTGTransaction(store, new TransactionOptions().newDefaultOpt(), txId);
+        DTGTransaction tx = new DTGTransaction(store, versionManager, new TransactionOptions().newDefaultOpt(), txId);
         if(transactionManage.getTransaction() !=null ){
             DTGTransaction transaction = transactionManage.getTransaction();
             if(transaction.isClosed()){

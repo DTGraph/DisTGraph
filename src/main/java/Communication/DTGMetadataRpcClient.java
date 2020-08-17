@@ -74,8 +74,14 @@ public class DTGMetadataRpcClient {
         return FutureHelper.get(future);
     }
 
+    public Long[] getVersions(int txNumber){
+        final CompletableFuture<Long[]> future = new CompletableFuture<>();
+        internalGetVersions(future, txNumber, this.failoverRetries, null);
+        return FutureHelper.get(future);
+    }
+
     public void internalGetVersion(final CompletableFuture<Long> future, final int retriesLeft, final Errors lastCause){
-        final RetryRunner retryRunner = retryCause -> internalGetVersion(future, retriesLeft - 1, retryCause);
+        final RetryRunner retryRunner = retryCause -> internalGetVersion(future,retriesLeft - 1, retryCause);
         final FailoverClosure<Long> closure = new FailoverClosureImpl<>(future, retriesLeft, retryRunner, DTGConstants.RETRIYRUNNERWAIT);
         CompletableFuture<Long> future1 = new CompletableFuture<>();
         sendGetVersion(future1, retriesLeft, null);
@@ -89,10 +95,33 @@ public class DTGMetadataRpcClient {
         }
     }
 
+    public void internalGetVersions(final CompletableFuture<Long[]> future, final int txNumber, final int retriesLeft, final Errors lastCause){
+        final RetryRunner retryRunner = retryCause -> internalGetVersions(future, txNumber, retriesLeft - 1, retryCause);
+        final FailoverClosure<Long[]> closure = new FailoverClosureImpl<>(future, retriesLeft, retryRunner, DTGConstants.RETRIYRUNNERWAIT);
+        CompletableFuture<Long[]> future1 = new CompletableFuture<>();
+        sendGetVersions(future1, txNumber, retriesLeft, null);
+        try{
+            Long[] version = FutureHelper.get(future1);
+            closure.setData(version);
+            closure.run(Status.OK());
+        }catch (Exception e){
+            closure.setError(Errors.NOT_LEADER);
+            closure.run(new Status(RaftError.ENEWLEADER.getNumber(), "get version failed"));
+        }
+    }
+
     private void sendGetVersion(final CompletableFuture<Long> future, final int retriesLeft, final Errors lastCause){
         final RetryRunner retryRunner = retryCause -> sendGetVersion(future, retriesLeft - 1, retryCause);
         final FailoverClosure<Long> closure = new FailoverClosureImpl<>(future, retriesLeft, retryRunner);
         final GetVersionRequest request = new GetVersionRequest();
+        this.pdRpcService.callPdServerWithRpc(request, closure, lastCause);
+    }
+
+    private void sendGetVersions(final CompletableFuture<Long[]> future, final int txNumber, final int retriesLeft, final Errors lastCause){
+        final RetryRunner retryRunner = retryCause -> sendGetVersions(future, txNumber,retriesLeft - 1, retryCause);
+        final FailoverClosure<Long[]> closure = new FailoverClosureImpl<>(future, retriesLeft, retryRunner);
+        final GetVersionRequest request = new GetVersionRequest();
+        request.setGetVersions(txNumber);
         this.pdRpcService.callPdServerWithRpc(request, closure, lastCause);
     }
 

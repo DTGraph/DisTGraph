@@ -17,4 +17,5 @@ public class MainType {
     public static final byte  SET     = 0x05;
     public static final byte  REMOVE  = 0x06;
     public static final byte  GET     = 0x07;
+    public static final byte  LOCKGET = 0x08;
 }

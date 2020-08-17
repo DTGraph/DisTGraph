@@ -12,7 +12,6 @@ import com.alipay.sofa.jraft.rhea.errors.Errors;
 import com.alipay.sofa.jraft.rhea.serialization.Serializers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scala.collection.Iterator;
 
 import java.nio.ByteBuffer;
 
@@ -37,22 +36,12 @@ public class DTGRaftRawStore implements DTGRawStore {
     }
 
     @Override
-    public Iterator localIterator() {
-        return null;
-    }
-
-    @Override
     public void saveLog(LogStoreClosure closure) {
 
     }
 
     @Override
     public void setLock(final DTGOperation op, final DTGLockClosure closure, DTGRegion region) {
-
-    }
-
-    @Override
-    public void sendLock(DTGOperation op, EntityStoreClosure closure) {
 
     }
 
@@ -81,6 +70,11 @@ public class DTGRaftRawStore implements DTGRawStore {
 
     @Override
     public void readOnlyEntityEntries(DTGOperation op, EntityStoreClosure closure) {
+
+    }
+
+    @Override
+    public void secondRead(DTGOperation op, EntityStoreClosure closure, DTGRegion region) {
 
     }
 

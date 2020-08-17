@@ -61,9 +61,6 @@ public class KVCommandProcessor<T extends BaseRequest> extends AsyncUserProcesso
             return;
         }
         switch (request.magic()) {
-            case BaseRequest.KEY_LOCK:
-                regionService.HandleLockRequest((LockRequest) request, closure);
-                break;
             case BaseRequest.MERGE:
                 regionService.handleMergeRequest((MergeRequest) request, closure);
                 break;
@@ -75,12 +72,6 @@ public class KVCommandProcessor<T extends BaseRequest> extends AsyncUserProcesso
                 break;
             case BaseRequest.RANGE_SPLIT:
                 regionService.handleRangeSplitRequest((RangeSplitRequest) request, closure);
-                break;
-            case BaseRequest.TRANSACTION_REQUEST:
-                regionService.handleTransactionRequest((TransactionRequest) request, closure);
-                break;
-            case BaseRequest.COMMIT_REQUEST:
-                regionService.handleCommitRequest((CommitRequest) request, closure);
                 break;
             case DTGConstants.FIRST_PHASE_SUCCESS_REQUEST:
                 regionService.handleFirstPhaseSuccessRequest((FirstPhaseSuccessRequest) request, closure);

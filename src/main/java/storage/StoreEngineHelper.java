@@ -76,29 +76,10 @@ public final class StoreEngineHelper {
     }
 
     public static void addKvStoreRequestProcessor(final RpcServer rpcServer, final DTGStoreEngine engine) {
-//        rpcServer.registerUserProcessor(new KVCommandProcessor<>(GetRequest.class, engine));
-//        rpcServer.registerUserProcessor(new KVCommandProcessor<>(MultiGetRequest.class, engine));
-//        rpcServer.registerUserProcessor(new KVCommandProcessor<>(GetSequenceRequest.class, engine));
-//        rpcServer.registerUserProcessor(new KVCommandProcessor<>(ResetSequenceRequest.class, engine));
-//        rpcServer.registerUserProcessor(new KVCommandProcessor<>(ScanRequest.class, engine));
-//        rpcServer.registerUserProcessor(new KVCommandProcessor<>(PutRequest.class, engine));
-//        rpcServer.registerUserProcessor(new KVCommandProcessor<>(GetAndPutRequest.class, engine));
-//        rpcServer.registerUserProcessor(new KVCommandProcessor<>(CompareAndPutRequest.class, engine));
         rpcServer.registerUserProcessor(new KVCommandProcessor<>(MergeRequest.class, engine));
-//        rpcServer.registerUserProcessor(new KVCommandProcessor<>(PutIfAbsentRequest.class, engine));
-//        rpcServer.registerUserProcessor(new KVCommandProcessor<>(KeyLockRequest.class, engine));
-//        rpcServer.registerUserProcessor(new KVCommandProcessor<>(KeyUnlockRequest.class, engine));
-//        rpcServer.registerUserProcessor(new KVCommandProcessor<>(BatchPutRequest.class, engine));
-//        rpcServer.registerUserProcessor(new KVCommandProcessor<>(DeleteRequest.class, engine));
-//        rpcServer.registerUserProcessor(new KVCommandProcessor<>(DeleteRangeRequest.class, engine));
-//        rpcServer.registerUserProcessor(new KVCommandProcessor<>(BatchDeleteRequest.class, engine));
-//        rpcServer.registerUserProcessor(new KVCommandProcessor<>(NodeExecuteRequest.class, engine));
         rpcServer.registerUserProcessor(new KVCommandProcessor<>(RangeSplitRequest.class, engine));
-        rpcServer.registerUserProcessor(new KVCommandProcessor<>(TransactionRequest.class, engine));
         rpcServer.registerUserProcessor(new KVCommandProcessor<>(FirstPhaseRequest.class, engine));
         rpcServer.registerUserProcessor(new KVCommandProcessor<>(SecondPhaseRequest.class, engine));
-        rpcServer.registerUserProcessor(new KVCommandProcessor<>(CommitRequest.class, engine));
-        rpcServer.registerUserProcessor(new KVCommandProcessor<>(LockRequest.class, engine));
         rpcServer.registerUserProcessor(new KVCommandProcessor<>(FirstPhaseSuccessRequest.class, engine));
     }
 

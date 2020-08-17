@@ -134,7 +134,6 @@ storage\DTGStateOutputList$1.class
 Communication\RequestAndResponse\FirstPhaseResponse.class
 MQ\codec\MQLogEntryEncoder.class
 Element\RelationshipAgent.class
-Region\DTGRegionService$5.class
 Communication\KVCommandProcessor.class
 Communication\pd\pipeline\handler\DTGLogHandler.class
 config\DTGConstants.class
@@ -163,7 +162,6 @@ Communication\pd\pipeline\event\PongEvent.class
 Region\LockManager$DTGLock.class
 raft\FailoverClosureImpl.class
 PlacementDriver\DTGPlacementDriverService.class
-UserClient\DTGSaveStore$AbstractBatchingHandler.class
 MQ\codec\v2\MQV2Encoder.class
 PlacementDriver\PD\DTGMetadataStoreImpl$2.class
 LocalDBMachine\LocalTransaction.class
@@ -213,7 +211,6 @@ tool\DTGJRaftServiceLoader$LazyIterator.class
 DBExceptions\IdDistributeException.class
 PlacementDriver\PD\StatsCollector.class
 Region\DTGRegionEngine.class
-Region\DTGRegionService$6.class
 PlacementDriver\DTGPlacementDriverRpcService$1.class
 options\LocalDBOption.class
 DBExceptions\TypeDoesnotExistException.class
@@ -238,4 +235,3 @@ Communication\util\pipeline\DTGDefaultHandlerContext.class
 LocalDBMachine\LocalTransactiona.class
 Communication\RpcCaller$1.class
 MQ\MQRocksDBLogStorage$WriteBatchTemplate.class
-UserClient\DTGSaveStore$EntityEvent.class

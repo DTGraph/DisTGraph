@@ -304,7 +304,7 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
 
     @Override
     public int appendEntries(List<TransactionLogEntry> entries) {
-        //System.out.println("save log :" + System.currentTimeMillis());
+        //System.out.println("save batch log :" + System.currentTimeMillis());
         if (entries == null || entries.isEmpty()) {
             return 0;
         }

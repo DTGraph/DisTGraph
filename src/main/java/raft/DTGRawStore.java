@@ -16,13 +16,9 @@ import scala.collection.Iterator;
 
 public interface DTGRawStore {
 
-    Iterator localIterator();
-
     void saveLog(LogStoreClosure closure);
 
     void setLock(final DTGOperation op, final DTGLockClosure closure, DTGRegion region);
-
-    void sendLock(final DTGOperation op, final EntityStoreClosure closure);
 
     void commitSuccess(final long version);
 
@@ -31,6 +27,8 @@ public interface DTGRawStore {
     void ApplyEntityEntries(final DTGOperation op, final EntityStoreClosure closure);
 
     void readOnlyEntityEntries(final DTGOperation op, final EntityStoreClosure closure);
+
+    void secondRead(final DTGOperation op, final EntityStoreClosure closure, DTGRegion region);
 
     void merge();
 

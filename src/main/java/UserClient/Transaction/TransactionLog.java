@@ -17,10 +17,18 @@ public class TransactionLog implements Serializable {
 
     private final String              txId;
     private final List<EntityEntry>   ops;
+    private final boolean             isCommit;
 
     public TransactionLog(String txId, List<EntityEntry> ops){
         this.ops = ops;
         this.txId = txId;
+        this.isCommit = false;
+    }
+
+    public TransactionLog(String txId, boolean isCommit){
+        this.isCommit = isCommit;
+        this.txId = txId;
+        this.ops = null;
     }
 
     public String getTxId() {
@@ -29,5 +37,9 @@ public class TransactionLog implements Serializable {
 
     public List<EntityEntry> getOps() {
         return ops;
+    }
+
+    public boolean isCommit() {
+        return isCommit;
     }
 }

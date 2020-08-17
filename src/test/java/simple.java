@@ -29,18 +29,16 @@ public class simple {
 //        int[] chaos.aa = ccc.get(1);
 //        System.out.println(chaos.aa[0]);
         GraphDatabaseService db= new GraphDatabaseFactory()
-                .newEmbeddedDatabaseBuilder("D:\\garbage\\8085\\DTG_DB" )
+                .newEmbeddedDatabaseBuilder("D:\\garbage\\DTG_DB" )
                 .loadPropertiesFromFile("")
                 .newGraphDatabase();
         //Node node1, node2;
         Transaction tx = db.beginTx();
-        for(int i = 0; i < 100; i++){
-            db.getNodeById(i);
-        }
-        //db.getNodeById(4997);
+//
+        db.getNodeById(2);
 
 //        System.out.println(node1.getProperty("d"));
-//        node1 =  db.createNode();
+        db.createNode();
 //        System.out.println(node1.getId());
 //        node1 =  db.createNode();
 //        System.out.println(node1.getId());
@@ -48,6 +46,8 @@ public class simple {
 //        System.out.println(node1.getId());
 //        node1.setProperty("d",2);
         tx.success();
+        tx.close();
+        tx.failure();
         tx.close();
 //        for(int i = 0; i < 10; i++){
 //            long start = System.currentTimeMillis();

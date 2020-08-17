@@ -23,6 +23,7 @@ public class DTGOperation implements Serializable {
     private long mainRegionId;
     private boolean highA = true;
     private boolean isReadOnly = false;
+    private boolean isolateRead = false;
 
     private byte[] OpData;
 
@@ -133,43 +134,18 @@ public class DTGOperation implements Serializable {
         return isReadOnly;
     }
 
-    //    public void setStartRelationId(long startRelationId) {
-//        this.startRelationId = startRelationId;
-//    }
-//
-//    public void setStartNodeId(long startNodeId) {
-//        this.startNodeId = startNodeId;
-//    }
-//
-//    public void setRegionId(long regionId) {
-//        this.regionId = regionId;
-//    }
-//
-//    public long getStartRelationId() {
-//        return startRelationId;
-//    }
-//
-//    public long getStartNodeId() {
-//        return startNodeId;
-//    }
-//
-//    public long getRegionId() {
-//        return regionId;
-//    }
-//
-//    public void setNewRegionId(long newRegionId) {
-//        this.newRegionId = newRegionId;
-//    }
-//
-//    public long getNewRegionId() {
-//        return newRegionId;
-//    }
-//
-//    public void setStartTempProId(long startTempProId) {
-//        this.startTempProId = startTempProId;
-//    }
-//
-//    public long getStartTempProId() {
-//        return startTempProId;
-//    }
+    public boolean isIsolateRead() {
+        return isolateRead;
+    }
+
+    public void setIsolateRead(boolean isolateRead) {
+        this.isolateRead = true;
+    }
+
+    @Override
+    public String toString(){
+        String s = "op id : " + txId + ", op size : " + size + " op type : " + type;
+        return s;
+    }
+
 }

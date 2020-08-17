@@ -4,7 +4,7 @@ import Element.NodeAgent;
 import UserClient.DTGDatabase;
 import UserClient.Transaction.DTGTransaction;
 import org.junit.Test;
-import performance.tool.OutPutCsv;
+import tool.OutPutCsv;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -20,7 +20,7 @@ public class addTemporalTest {
         for(int i = 0; i < 1; i++){
             long start = System.currentTimeMillis();
             try (DTGTransaction tx = db.CreateTransaction()){
-                for(int j = 0; j < 10; j++){
+                for(int j = 0; j < 100; j++){
                     db.addNode();
                 }
                 tx.start();
@@ -30,10 +30,9 @@ public class addTemporalTest {
 
         long start = System.currentTimeMillis();
         System.out.println(System.currentTimeMillis());
-        for(int i = 0; i < 10; i++){
+        for(int i = 0; i < 1000; i++){
             TxThread2 a = new TxThread2(db, i, start, output);
             a.start();
-
         }
 
         try {
@@ -66,14 +65,14 @@ class TxThread2 extends Thread{
         try (DTGTransaction tx = db.CreateTransaction()){
             for(int j = 0; j < 100; j++){
                 NodeAgent node = db.getNodeById(j);
-                node.setTemporalProperty("a", i, i+1);
+                node.setProperty("a", i);
+                //node.setTemporalProperty("a", i, i+1);
             }
-            System.out.println("start  : " + tx.getTxId() + ", :" + t1.getAndIncrement());
+            //System.out.println("start  : " + tx.getTxId() + ", :" + t1.getAndIncrement());
             tx.start();
-
             Map<Integer, Object> map = tx.start();
             long end = System.currentTimeMillis();
-            System.out.println("end  : " + tx.getTxId() + ", :" + t2.getAndIncrement());
+            //System.out.println("end  : " + tx.getTxId() + ", :" + t2.getAndIncrement());
             output.write(tx.getTxId(), Long.toString(start), Long.toString(end), Long.toString(end - start));
         }
     }

@@ -6,11 +6,9 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/../sofa-jraft/pom.xml" />
+        <option value="$PROJECT_DIR$/../sofa-jraft/pom.xml.bak" />
         <option value="$PROJECT_DIR$/../temporal-neo4j/community/kernel/pom.xml" />
         <option value="$PROJECT_DIR$/../temporal-storage/pom.xml" />
-        <option value="$PROJECT_DIR$/../temporal-neo4j/community/cypher/cypher-compiler-2.3/pom.xml" />
-        <option value="$PROJECT_DIR$/../temporal-neo4j/community/cypher/frontend-2.3/pom.xml" />
-        <option value="$PROJECT_DIR$/../temporal-neo4j/community/cypher/cypher/pom.xml" />
       </list>
     </option>
   </component>

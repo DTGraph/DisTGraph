@@ -68,7 +68,7 @@ public class remoteClient {
 
         long start = System.currentTimeMillis();
         //System.out.println(start);
-        for(int i = 0; i < 250; i++){
+        for(int i = 0; i < 1000; i++){
             //System.out.println("start : " + System.currentTimeMillis());
             TxThread a = new TxThread(db, i, start);
             a.start();

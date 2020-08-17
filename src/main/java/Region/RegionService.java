@@ -21,13 +21,13 @@ public interface RegionService {
 
     RegionEpoch getRegionEpoch();
 
-    void handleTransactionRequest(final TransactionRequest request,
-                                  final RequestProcessClosure<BaseRequest, BaseResponse<?>> closure);
-
     void handleFirstPhase(final FirstPhaseRequest request,
                           final RequestProcessClosure<BaseRequest, BaseResponse<?>> closure);
 
     void handleSecondPhase(final SecondPhaseRequest request,
+                          final RequestProcessClosure<BaseRequest, BaseResponse<?>> closure);
+
+    void handleSecondRead(final SecondReadRequest request,
                           final RequestProcessClosure<BaseRequest, BaseResponse<?>> closure);
 
     void handleMergeRequest(final MergeRequest request,
@@ -35,12 +35,6 @@ public interface RegionService {
 
     void handleRangeSplitRequest(final RangeSplitRequest request,
                                  final RequestProcessClosure<BaseRequest, BaseResponse<?>> closure);
-
-    void handleCommitRequest(final CommitRequest request,
-                                 final RequestProcessClosure<BaseRequest, BaseResponse<?>> closure);
-
-    void HandleLockRequest(final LockRequest request,
-                                   final RequestProcessClosure<BaseRequest, BaseResponse<?>> closure);
 
     void internalFirstPhase(final DTGOperation op, final FailoverClosure closure);
 }

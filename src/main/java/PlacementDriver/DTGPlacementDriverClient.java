@@ -162,6 +162,8 @@ public interface DTGPlacementDriverClient extends Lifecycle<DTGPlacementDriverOp
 
     long getVersion();
 
+    Long[] getVersions(int txNumber);
+
     DTGMetadataRpcClient getDTGMetadataRpcClient();
 
 }

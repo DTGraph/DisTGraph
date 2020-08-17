@@ -41,7 +41,8 @@ public class DTGConstants {
     public static final int DisruptorPublishEventWaitTimeoutSecs = 10;
     public static final int maxAppendBufferSize                  = 256 * 1024;
     public static final int disruptorBufferSize                  = 16384;
-    public static final int applyBatch                           = 32;
+    public static final int applyBatch                           = 100;
+    public static final int MAXRUNNINGTX                         = 200;
 
     //Config
 
@@ -51,4 +52,6 @@ public class DTGConstants {
     public static final int     FAILOVERRETRIES              = 5;
     public static final int     RETRIYRUNNERWAIT             = 500;
     public static final int     MAXWAITTIME                  = 100;
+
+    public static final String NULLSTRING                    = "NONE_NULL";
 }

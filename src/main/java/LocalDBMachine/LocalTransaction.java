@@ -49,23 +49,10 @@ public class LocalTransaction extends Thread {
     List<EntityEntry> newEntries;
     private String errorMessage;
     private boolean laterCommit = false;
-
-//    public LocalTransaction(GraphDatabaseService db, DTGOperation op, Map<Integer, Object> res, TransactionThreadLock lock, DTGRegion region, int version){
-//        this.db = db;
-//        this.txId = op.getTxId();
-//        couldCommit = false;
-//        this.resultMap = res;
-//        this.lock = lock;
-//        this.op = op;
-//        this.region = region;
-//        nodeTransactionAdd = 0;
-//        relationTransactionAdd = 0;
-//        actionType = new int[op.getEntityEntries().size()];
-//        actionId = new long[op.getEntityEntries().size()];
-//        this.version = version;
-//    }
-
-    //static OutPutCsv output = new OutPutCsv("D:\\DTG\\test\\"+ System.currentTimeMillis() +".csv", "txid");
+    private boolean isolateRead = false;
+    public int hasDone = -1;
+    private Map<Integer, Long> requireVersion;
+    private Map<Integer, Long> returnVersion;
 
     public LocalTransaction(GraphDatabaseService db, DTGOperation op, Map<Integer, Object> res, TransactionThreadLock lock, DTGRegion region){
         this.db = db;
@@ -75,11 +62,13 @@ public class LocalTransaction extends Thread {
         this.lock = lock;
         this.op = op;
         this.region = region;
+        this.isolateRead = op.isIsolateRead();
         nodeTransactionAdd = 0;
         relationTransactionAdd = 0;
         actionType = new int[op.getEntityEntries().size()];
         actionId = new long[op.getEntityEntries().size()];
         newEntries = new ArrayList<>();
+        this.returnVersion = new HashMap<>();
         if(op.getVersion() >= 0){
             this.version = op.getVersion();
         }else {
@@ -88,20 +77,25 @@ public class LocalTransaction extends Thread {
 
     }
 
+    public LocalTransaction(GraphDatabaseService db, DTGOperation op, Map<Integer, Object> res, TransactionThreadLock lock,
+                            DTGRegion region, Map<Integer, Long> requireVersion){
+        this(db, op, res, lock, region);
+        this.requireVersion = requireVersion;
+    }
+
     @Override
     public void run() {
         try {
-            //System.out.println("start run : " + System.currentTimeMillis());
             transaction = db.beginTx();
             synchronized (resultMap){
-                if(this.version < 0){
+                if(this.requireVersion != null){
+                    getMVCCReadTransaction();
+                }
+                else if(this.version < 0){
                     getTransaction();
                 }
                 else {
-                    //System.out.println("start mvcc : " + System.currentTimeMillis());
                     getMVCCTransaction(version);
-                    //System.out.println("end mvcc : " + System.currentTimeMillis());
-                    //System.out.println("getMVCCTransaction done!");
                 }
                 resultMap.notify();
             }
@@ -111,7 +105,6 @@ public class LocalTransaction extends Thread {
                         lock.wait();
                     }
                     couldCommit = true;
-                    //System.out.println("Start commit in thread");
                     if(lock.isShouldCommit()){
                         commit();
                     }
@@ -122,44 +115,10 @@ public class LocalTransaction extends Thread {
                         lock.notify();
                     }
                 }
-//                synchronized (lock){
-//                    if(couldCommit == false){
-//                        //System.out.println("aaaaaaaa" + lock.getTxId());
-//                        lock.wait();
-//                        couldCommit = true;
-//                        //System.out.println("Start commit in thread");
-//                        if(lock.isShouldCommit()){
-//                            commit();
-//                        }
-//                        else {
-//                            rollback();
-//                        }
-//                        //System.out.println("end commit in thread");
-//                    }
-//                }
             }
             else{
                 commit();
             }
-            //System.out.println("end run : " + System.currentTimeMillis());
-//            synchronized (lock){
-//                if(couldCommit == false){
-//                    //System.out.println("aaaaaaaa" + lock.getTxId());
-//                    lock.wait();
-//                    couldCommit = true;
-//                    //System.out.println("Start commit in thread");
-//                    if(lock.isShouldCommit()){
-//                        commit();
-//                    }
-//                    else {
-//                        rollback();
-//                    }
-//                    //System.out.println("end commit in thread");
-//                }
-//            }
-//            synchronized (lock.getCommitLock()){
-//                lock.getCommitLock().notify();
-//            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (EntityEntryException | RegionStoreException | TypeDoesnotExistException e) {
@@ -183,7 +142,7 @@ public class LocalTransaction extends Thread {
         return this.op.isHighA();
     }
 
-    public Node addNode(long id, int i) throws RegionStoreException {
+    private Node addNode(long id, int i) throws RegionStoreException {
         region.addNode();
         nodeTransactionAdd++;
         actionId[i] = id;
@@ -197,16 +156,18 @@ public class LocalTransaction extends Thread {
         return db.createNode(id);
     }
 
-    public Node getNodeById(long id){
+    private Node getNodeById(int txNum, long id){
+        this.returnVersion.put(txNum, -1l);
         return db.getNodeById(id);
     }
 
-    public Relationship getRelationshipById(long id){
+    private Relationship getRelationshipById(int txNum, long id){
+        this.returnVersion.put(txNum, -1l);
         return db.getRelationshipById(id);
     }
 
-    public Relationship addRelationship(long startNode, long endNode, long id, int i) throws RegionStoreException {
-        Node start = getNodeById(startNode);
+    private Relationship addRelationship(long startNode, long endNode, long id, int i) throws RegionStoreException {
+        Node start = getNodeById(-1, startNode);
         region.addRelation();
         relationTransactionAdd++;
         actionId[i] = id;
@@ -220,11 +181,11 @@ public class LocalTransaction extends Thread {
         return start.createRelationshipTo(id, endNode, RelType.ROAD_TO);
     }
 
-    public void setNodeProperty(Node node, String key, Object value){
+    private void setNodeProperty(Node node, String key, Object value){
         node.setProperty(key, value);
     }
 
-    public void setNodeProperty(Node node, String key, Object value, long version, boolean highA, List<EntityEntry> newlist){
+    private void setNodeProperty(Node node, String key, Object value, long version, boolean highA, List<EntityEntry> newlist){
         if(!highA){
             setNodePropertyVersion(node, key, version);
         }
@@ -241,7 +202,7 @@ public class LocalTransaction extends Thread {
         node.setProperty(getVersionKey(version, key), value);
     }
 
-    public void setNodePropertyVersion(Node node, String key, long version){
+    private void setNodePropertyVersion(Node node, String key, long version){
         long maxVersion;
         if(!node.hasProperty(key)){
             maxVersion = DTGConstants.DEFAULT_MAX_VERSION;
@@ -254,11 +215,11 @@ public class LocalTransaction extends Thread {
         }
     }
 
-    public void setNodeTemporalProperty(Node node, String key, int start, int end,  Object value){
+    private void setNodeTemporalProperty(Node node, String key, int start, int end,  Object value){
         node.setTemporalProperty(key, start, end, value);
     }
 
-    public void setNodeTemporalProperty(Node node, String key, int start, int end,  Object value,
+    private void setNodeTemporalProperty(Node node, String key, int start, int end,  Object value,
                                         long version, boolean highA, List<EntityEntry> newlist){
         if(!highA){
             setNodeTemporalPropertyVersion(node, key, start, end, version);
@@ -278,7 +239,7 @@ public class LocalTransaction extends Thread {
         node.setTemporalProperty(getVersionKey(version, key), start, end, value);
     }
 
-    public void setNodeTemporalPropertyVersion(Node node, String key, int start, int end, long version){
+    private void setNodeTemporalPropertyVersion(Node node, String key, int start, int end, long version){
         long maxVersion;
         try {
             Object res = node.getTemporalProperty(key, start);
@@ -286,17 +247,16 @@ public class LocalTransaction extends Thread {
         }catch (Exception e){
             maxVersion = DTGConstants.DEFAULT_MAX_VERSION;
         }
-        //long maxVersion = (long)node.getTemporalProperty(key, start);
         if(maxVersion < version){
             node.setTemporalProperty(key,start, end, version);
         }
     }
 
-    public void setNodeTemporalProperty(Node node, String key, int time,  Object value){
+    private void setNodeTemporalProperty(Node node, String key, int time,  Object value){
         node.setTemporalProperty(key, time, value);
     }
 
-    public void setNodeTemporalProperty(Node node, String key, int time,  Object value,
+    private void setNodeTemporalProperty(Node node, String key, int time,  Object value,
                                         long version, boolean highA, List<EntityEntry> newlist){
         if(!highA){
             setNodeTemporalPropertyVersion(node, key, time, version);
@@ -316,7 +276,7 @@ public class LocalTransaction extends Thread {
         node.setTemporalProperty(getVersionKey(version, key), time, value);
     }
 
-    public void setNodeTemporalPropertyVersion(Node node, String key, int time, long version){
+    private void setNodeTemporalPropertyVersion(Node node, String key, int time, long version){
         long maxVersion;
         try {
             Object res = node.getTemporalProperty(key, time);
@@ -329,7 +289,7 @@ public class LocalTransaction extends Thread {
         }
     }
 
-    public void deleteNode(Node node, int i) throws RegionStoreException {
+    private void deleteNode(Node node, int i) throws RegionStoreException {
         region.removeNode();
         nodeTransactionAdd--;
         actionId[i] = node.getId();
@@ -337,16 +297,15 @@ public class LocalTransaction extends Thread {
         node.delete();
     }
 
-    public void deleteNodeProperty(Node node, String key){
-
+    private void deleteNodeProperty(Node node, String key){
         node.removeProperty(key);
     }
 
-    public void deleteNodeTemporalProperty(Node node, String key){
+    private void deleteNodeTemporalProperty(Node node, String key){
         node.removeTemporalProperty(key);
     }
 
-    public Object getNodeProperty(Node node, String key){
+    private Object getNodeProperty(int txNum, Node node, String key){
         long maxVersion;
         if(!node.hasProperty(key)){
             maxVersion = DTGConstants.DEFAULT_MAX_VERSION;
@@ -354,40 +313,35 @@ public class LocalTransaction extends Thread {
             Object res = node.getProperty(key);
             maxVersion = (long)res;
         }
-        //long maxVersion = (long)node.getProperty(key);
-        return getNodeProperty(node, key, maxVersion);
+        return getNodeProperty(txNum, node, key, maxVersion);
     }
 
-    public Object getNodeProperty(Node node, String key, long version){
-        //System.out.println("get property id = " + node.getId() + ", key = " + key);
+    private Object getNodeProperty(int txNum, Node node, String key, long version){
+        this.returnVersion.put(txNum, version);
         return node.getProperty(getVersionKey(version, key));
     }
 
-    public Object getNodeTemporalProperty(Node node, String key, int time){
+    private Object getNodeTemporalProperty(int txNum, Node node, String key, int time){
         long maxVersion;
         try {
             Object res = node.getTemporalProperty(key, time);
             maxVersion = (long)res;
-            //System.out.println("res maxVersion = " + maxVersion);
         }catch (Exception e){
             maxVersion = DTGConstants.DEFAULT_MAX_VERSION;
-            //System.out.println("maxVersion = " + maxVersion);
         }
-        //long maxVersion = (long)node.getTemporalProperty(key, time);
-        //System.out.println("maxVersion =  aaa");
-        return getNodeTemporalProperty(node, key, time, maxVersion);
+        return getNodeTemporalProperty(txNum, node, key, time, maxVersion);
     }
 
-    public Object getNodeTemporalProperty(Node node, String key, int time, long version){
-        //System.out.println("get NodeTemporalProperty id = " + node.getId() + ", key = " + key);
+    private Object getNodeTemporalProperty(int txNum, Node node, String key, int time, long version){
+        this.returnVersion.put(txNum, version);
         return node.getTemporalProperty(getVersionKey(version, key), time);
     }
 
-    public void setRelationProperty(Relationship relationship, String key, Object value){
+    private void setRelationProperty(Relationship relationship, String key, Object value){
         relationship.setProperty(key, value);
     }
 
-    public void setRelationProperty(Relationship relationship, String key, Object value,
+    private void setRelationProperty(Relationship relationship, String key, Object value,
                                     long version, boolean highA, List<EntityEntry> newlist){
         if(!highA){
             setRelationPropertyVersion(relationship, key, version);
@@ -405,7 +359,7 @@ public class LocalTransaction extends Thread {
         relationship.setProperty(getVersionKey(version, key), value);
     }
 
-    public void setRelationPropertyVersion(Relationship relationship, String key, long version){
+    private void setRelationPropertyVersion(Relationship relationship, String key, long version){
         long maxVersion;
         if(!relationship.hasProperty(key)){
             maxVersion = DTGConstants.DEFAULT_MAX_VERSION;
@@ -418,11 +372,11 @@ public class LocalTransaction extends Thread {
         }
     }
 
-    public void setRelationTemporalProperty(Relationship relationship, String key, int start, int end,  Object value){
+    private void setRelationTemporalProperty(Relationship relationship, String key, int start, int end,  Object value){
         relationship.setTemporalProperty(key, start, end, value);
     }
 
-    public void setRelationTemporalProperty(Relationship relationship, String key, int start, int end,
+    private void setRelationTemporalProperty(Relationship relationship, String key, int start, int end,
                                             Object value, long version, boolean highA, List<EntityEntry> newlist){
         if(!highA){
             setRelationTemporalPropertyVersion(relationship, key, start, end, version);
@@ -442,7 +396,7 @@ public class LocalTransaction extends Thread {
         relationship.setTemporalProperty(getVersionKey(version, key), start, end, value);
     }
 
-    public void setRelationTemporalPropertyVersion(Relationship relationship, String key, int start, int end, long version){
+    private void setRelationTemporalPropertyVersion(Relationship relationship, String key, int start, int end, long version){
         long maxVersion;
         try {
             Object res = relationship.getTemporalProperty(key, start);
@@ -455,11 +409,11 @@ public class LocalTransaction extends Thread {
         }
     }
 
-    public void setRelationTemporalProperty(Relationship relationship, String key, int time,  Object value){
+    private void setRelationTemporalProperty(Relationship relationship, String key, int time,  Object value){
         relationship.setTemporalProperty(key, time, value);
     }
 
-    public void setRelationTemporalProperty(Relationship relationship, String key, int time,
+    private void setRelationTemporalProperty(Relationship relationship, String key, int time,
                                             Object value, long version, boolean highA, List<EntityEntry> newlist){
         if(!highA){
             setRelationTemporalPropertyVersion(relationship, key, time, version);
@@ -479,7 +433,7 @@ public class LocalTransaction extends Thread {
         relationship.setTemporalProperty(getVersionKey(version, key), time, value);
     }
 
-    public void setRelationTemporalPropertyVersion(Relationship relationship, String key, int time, long version){
+    private void setRelationTemporalPropertyVersion(Relationship relationship, String key, int time, long version){
         long maxVersion;
         try {
             Object res = relationship.getTemporalProperty(key, time);
@@ -487,13 +441,12 @@ public class LocalTransaction extends Thread {
         }catch (Exception e){
             maxVersion = DTGConstants.DEFAULT_MAX_VERSION;
         }
-        //long maxVersion = (long)relationship.getTemporalProperty(key, time);
         if(maxVersion < version){
             relationship.setTemporalProperty(key, time, version);
         }
     }
 
-    public void deleteRelation(Relationship relationship, int i) throws RegionStoreException {
+    private void deleteRelation(Relationship relationship, int i) throws RegionStoreException {
         region.removeRelation();
         relationTransactionAdd--;
         actionId[i] = relationship.getId();
@@ -501,23 +454,15 @@ public class LocalTransaction extends Thread {
         relationship.delete();
     }
 
-    public void deleteRelationProperty(Relationship relationship, String key){
+    private void deleteRelationProperty(Relationship relationship, String key){
         relationship.removeProperty(key);
     }
 
-    public void deleteRelationTemporalProperty(Relationship relationship, String key){
+    private void deleteRelationTemporalProperty(Relationship relationship, String key){
         relationship.removeTemporalProperty(key);
     }
 
-    public Object getRelationProperty(Relationship relationship, String key){
-//        Object res = relationship.getProperty(key);
-//        long maxVersion;
-//        if(res == null){
-//            maxVersion = 0;
-//        }else {
-//            maxVersion = (long)res;
-//        }
-
+    private Object getRelationProperty(int txNum, Relationship relationship, String key){
         long maxVersion;
         if(!relationship.hasProperty(key)){
             maxVersion = DTGConstants.DEFAULT_MAX_VERSION;
@@ -525,16 +470,15 @@ public class LocalTransaction extends Thread {
             Object res = relationship.getProperty(key);
             maxVersion = (long)res;
         }
-
-        //long maxVersion = (long)relationship.getProperty(key);
-        return getRelationProperty(relationship, key, maxVersion);
+        return getRelationProperty(txNum, relationship, key, maxVersion);
     }
 
-    public Object getRelationProperty(Relationship relationship, String key, long version){
+    private Object getRelationProperty(int txNum, Relationship relationship, String key, long version){
+        this.returnVersion.put(txNum, version);
         return relationship.getProperty(getVersionKey(version, key));
     }
 
-    public Object getRelationTemporalProperty(Relationship relationship, String key, int time){
+    private Object getRelationTemporalProperty(int txNum, Relationship relationship, String key, int time){
         long maxVersion;
         try {
             Object res = relationship.getTemporalProperty(key, time);
@@ -542,15 +486,15 @@ public class LocalTransaction extends Thread {
         }catch (Exception e){
             maxVersion = DTGConstants.DEFAULT_MAX_VERSION;
         }
-        //long maxVersion = (long)relationship.getTemporalProperty(key, time);
-        return getRelationTemporalProperty(relationship, key, time, maxVersion);
+        return getRelationTemporalProperty(txNum, relationship, key, time, maxVersion);
     }
 
-    public Object getRelationTemporalProperty(Relationship relationship, String key, int time, long version){
+    private Object getRelationTemporalProperty(int txNum, Relationship relationship, String key, int time, long version){
+        this.returnVersion.put(txNum, version);
         return relationship.getTemporalProperty(getVersionKey(version, key), time);
     }
 
-    public boolean checkStatus(PropertyContainer object) throws TransactionException {
+    private boolean checkStatus(PropertyContainer object) throws TransactionException {
         boolean res = (boolean)object.getProperty("hasPrepare");
         if(!res){
             errorMessage = "relation or node does not exist";
@@ -568,19 +512,10 @@ public class LocalTransaction extends Thread {
     }
 
     public void commit() throws TypeDoesnotExistException {
-        //System.out.println("commit" + op.getTxId());
-        //long t1 = System.currentTimeMillis();
         transaction.success();
-        //long t2 = System.currentTimeMillis();
         transaction.close();
         couldCommit = true;
-
-//        synchronized (output){
-//            output.write(txId);
-//        }
-        System.out.println("commit" + op.getTxId());
-        //long t3 = System.currentTimeMillis();
-        //System.out.println("t1 = " + (t1 -t2) + ", t2 = " + (t3 - t2));
+        //System.out.println("commit" + op.getTxId());
     }
 
     public void rollback(){
@@ -593,23 +528,22 @@ public class LocalTransaction extends Thread {
 
     public void getTransaction() throws EntityEntryException, RegionStoreException, TypeDoesnotExistException{
         Map<Integer, Object> tempMap = new HashMap<>();
-        List<EntityEntry> Entries = op.getEntityEntries();//System.out.println("Entries size = " + Entries.size());
+        List<EntityEntry> Entries = op.getEntityEntries();
         int i = 0;
         for(EntityEntry entityEntry : Entries){
             switch (entityEntry.getType()){
                 case NODETYPE:{
                     switch (entityEntry.getOperationType()){
                         case EntityEntry.ADD:{
-                            if(entityEntry.getKey() == null){
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING)){
                                 if(entityEntry.getId() < 0)throw new EntityEntryException(entityEntry);
                                 Node node = addNode(entityEntry.getId(), i);
                                 tempMap.put(entityEntry.getTransactionNum(), node);System.out.println("new node id = " + entityEntry.getId());
-                                //resultMap.put(entityEntry.getTransactionNum(), node);
                                 break;
                             }
 
                             Node node = null;
-                            if(entityEntry.getId() >= 0){ node = getNodeById(entityEntry.getId()); }
+                            if(entityEntry.getId() >= 0){ node = getNodeById(entityEntry.getTransactionNum(), entityEntry.getId()); }
                             else if( entityEntry.getId() == -2){ node = (Node) tempMap.get(entityEntry.getParaId());}
                             else throw new EntityEntryException(entityEntry);
 
@@ -624,26 +558,25 @@ public class LocalTransaction extends Thread {
                             break;
                         }
                         case EntityEntry.GET:{
-                            if(entityEntry.getKey() == null){
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING)){
                                 if(entityEntry.getId() < 0)throw new EntityEntryException(entityEntry);
-                                Node node = getNodeById(entityEntry.getId());
+                                Node node = getNodeById(entityEntry.getTransactionNum(), entityEntry.getId());
                                 tempMap.put(entityEntry.getTransactionNum(), node);
-//                                resultMap.put(entityEntry.getTransactionNum(), node);
                                 break;
                             }
 
                             Node node = null;
-                            if(entityEntry.getId() >= 0){ node = getNodeById(entityEntry.getId()); }
+                            if(entityEntry.getId() >= 0){ node = getNodeById(entityEntry.getTransactionNum(), entityEntry.getId()); }
                             else if( entityEntry.getId() == -2){ node = (Node) tempMap.get(entityEntry.getParaId());}
                             else throw new EntityEntryException(entityEntry);
 
                             if(entityEntry.isTemporalProperty()){
-                                Object res = getNodeTemporalProperty(node, entityEntry.getKey(), entityEntry.getStart());
+                                Object res = getNodeTemporalProperty(entityEntry.getTransactionNum(), node, entityEntry.getKey(), entityEntry.getStart());
                                 tempMap.put(entityEntry.getTransactionNum(), res);
                                 resultMap.put(entityEntry.getTransactionNum(), res);
                             }
                             else {
-                                Object res = getNodeProperty(node, entityEntry.getKey());
+                                Object res = getNodeProperty(entityEntry.getTransactionNum(), node, entityEntry.getKey());
                                 tempMap.put(entityEntry.getTransactionNum(), res);
                                 resultMap.put(entityEntry.getTransactionNum(), res);
                             }
@@ -651,11 +584,11 @@ public class LocalTransaction extends Thread {
                         }
                         case EntityEntry.REMOVE:{
                             Node node = null;
-                            if(entityEntry.getId() >= 0){ node = getNodeById(entityEntry.getId()); }
+                            if(entityEntry.getId() >= 0){ node = getNodeById(-1, entityEntry.getId()); }
                             else if( entityEntry.getId() == -2){ node = (Node) tempMap.get(entityEntry.getParaId());}
                             else throw new EntityEntryException(entityEntry);
 
-                            if(entityEntry.getKey() == null){
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING)){
                                 deleteNode(node, i);
                             }
                             else if(entityEntry.isTemporalProperty()){
@@ -666,11 +599,11 @@ public class LocalTransaction extends Thread {
                         }
                         case EntityEntry.SET:{
                             Node node = null;
-                            if(entityEntry.getId() >= 0){ node = getNodeById(entityEntry.getId()); }
+                            if(entityEntry.getId() >= 0){ node = getNodeById(-1, entityEntry.getId()); }
                             else if( entityEntry.getId() == -2){ node = (Node) tempMap.get(entityEntry.getParaId());}
                             else throw new EntityEntryException(entityEntry);
 
-                            if(entityEntry.getKey() == null)throw new EntityEntryException(entityEntry);
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING))throw new EntityEntryException(entityEntry);
                             if(entityEntry.isTemporalProperty()){
                                 if(entityEntry.getOther() != -1){
                                     setNodeTemporalProperty(node, entityEntry.getKey(), entityEntry.getStart(), entityEntry.getOther(), entityEntry.getValue());
@@ -690,16 +623,15 @@ public class LocalTransaction extends Thread {
                 case RELATIONTYPE:{
                     switch (entityEntry.getOperationType()){
                         case EntityEntry.ADD:{
-                            if(entityEntry.getKey() == null){
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING)){
                                 if(entityEntry.getId() < 0)throw new EntityEntryException(entityEntry);
                                 Relationship relationship = addRelationship(entityEntry.getId(), entityEntry.getStart(), entityEntry.getOther(), i);
-//                                resultMap.put(entityEntry.getTransactionNum(), relationship);
                                 tempMap.put(entityEntry.getTransactionNum(), relationship);
                                 break;
                             }
 
                             Relationship relationship = null;
-                            if(entityEntry.getId() >= 0){ relationship = getRelationshipById(entityEntry.getId()); }
+                            if(entityEntry.getId() >= 0){ relationship = getRelationshipById(-1, entityEntry.getId()); }
                             else if( entityEntry.getId() == -2){ relationship = (Relationship) tempMap.get(entityEntry.getParaId());}
                             else throw new EntityEntryException(entityEntry);
 
@@ -714,26 +646,25 @@ public class LocalTransaction extends Thread {
                             break;
                         }
                         case EntityEntry.GET:{
-                            if(entityEntry.getKey() == null){
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING)){
                                 if(entityEntry.getId() < 0)throw new EntityEntryException(entityEntry);
-                                Relationship relationship = getRelationshipById(entityEntry.getId());
-//                                resultMap.put(entityEntry.getTransactionNum(), relationship);
+                                Relationship relationship = getRelationshipById(entityEntry.getTransactionNum(), entityEntry.getId());
                                 tempMap.put(entityEntry.getTransactionNum(), relationship);
                                 break;
                             }
 
                             Relationship relationship = null;
-                            if(entityEntry.getId() >= 0){ relationship = getRelationshipById(entityEntry.getId()); }
+                            if(entityEntry.getId() >= 0){ relationship = getRelationshipById(entityEntry.getTransactionNum(), entityEntry.getId()); }
                             else if( entityEntry.getId() == -2){ relationship = (Relationship) tempMap.get(entityEntry.getParaId());}
                             else throw new EntityEntryException(entityEntry);
 
                             if(entityEntry.isTemporalProperty()){
-                                Object res = getRelationTemporalProperty(relationship, entityEntry.getKey(), entityEntry.getStart());
+                                Object res = getRelationTemporalProperty(entityEntry.getTransactionNum(), relationship, entityEntry.getKey(), entityEntry.getStart());
                                 resultMap.put(entityEntry.getTransactionNum(), res);
                                 tempMap.put(entityEntry.getTransactionNum(), res);
                             }
                             else {
-                                Object res = getRelationProperty(relationship, entityEntry.getKey());
+                                Object res = getRelationProperty(entityEntry.getTransactionNum(), relationship, entityEntry.getKey());
                                 resultMap.put(entityEntry.getTransactionNum(), res);
                                 tempMap.put(entityEntry.getTransactionNum(), res);
                             }
@@ -741,11 +672,11 @@ public class LocalTransaction extends Thread {
                         }
                         case EntityEntry.REMOVE:{
                             Relationship relationship = null;
-                            if(entityEntry.getId() >= 0){ relationship = getRelationshipById(entityEntry.getId()); }
+                            if(entityEntry.getId() >= 0){ relationship = getRelationshipById(entityEntry.getTransactionNum(), entityEntry.getId()); }
                             else if( entityEntry.getId() == -2){ relationship = (Relationship) tempMap.get(entityEntry.getParaId());}
                             else throw new EntityEntryException(entityEntry);
 
-                            if(entityEntry.getKey() == null){
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING)){
                                 deleteRelation(relationship, i);
                             }
                             else if(entityEntry.isTemporalProperty()){
@@ -756,11 +687,11 @@ public class LocalTransaction extends Thread {
                         }
                         case EntityEntry.SET:{
                             Relationship relationship = null;
-                            if(entityEntry.getId() >= 0){ relationship = getRelationshipById(entityEntry.getId()); }
+                            if(entityEntry.getId() >= 0){ relationship = getRelationshipById(-1, entityEntry.getId()); }
                             else if( entityEntry.getId() == -2){ relationship = (Relationship) tempMap.get(entityEntry.getParaId());}
                             else throw new EntityEntryException(entityEntry);
 
-                            if(entityEntry.getKey() == null)throw new EntityEntryException(entityEntry);
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING))throw new EntityEntryException(entityEntry);
                             if(entityEntry.isTemporalProperty()){
                                 if(entityEntry.getOther() != -1){
                                     setRelationTemporalProperty(relationship, entityEntry.getKey(), entityEntry.getStart(), entityEntry.getOther(), entityEntry.getValue());
@@ -783,33 +714,31 @@ public class LocalTransaction extends Thread {
             }
             i++;
         }
-        //System.out.println("success transaction operation");
+        this.resultMap.put(-1, this.returnVersion);
     }
 
     public void getMVCCTransaction(long version) throws EntityEntryException, RegionStoreException, TypeDoesnotExistException, TransactionException {
-        List<EntityEntry> newEntries = new ArrayList<>();
+        //List<EntityEntry> newEntries = new ArrayList<>();
         Map<Integer, Object> tempMap = new HashMap<>();
         List<EntityEntry> Entries = op.getEntityEntries();
         boolean isHighA = op.isHighA();
         int i = 0;
         for(EntityEntry entityEntry : Entries){
-            //System.out.println("getMVCCTransaction " + i);
             switch (entityEntry.getType()){
                 case NODETYPE:{
                     switch (entityEntry.getOperationType()){
                         case EntityEntry.ADD:{
-                            if(entityEntry.getKey() == null){
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING)){
                                 if(entityEntry.getId() < 0)throw new EntityEntryException(entityEntry);
                                 Node node = addNode(entityEntry.getId(), i);
                                 node.setProperty("hasPrepare", false);
-                                tempMap.put(entityEntry.getTransactionNum(), node);//System.out.println("new node id = " + entityEntry.getId());
-                                //resultMap.put(entityEntry.getTransactionNum(), node);
+                                tempMap.put(entityEntry.getTransactionNum(), node);
                                 break;
                             }
 
                             Node node = null;
                             if(entityEntry.getId() >= 0){
-                                node = getNodeById(entityEntry.getId());
+                                node = getNodeById(-1, entityEntry.getId());
                                 checkStatus(node);
                             }
                             else if( entityEntry.getId() == -2){ node = (Node) tempMap.get(entityEntry.getParaId());}
@@ -827,26 +756,25 @@ public class LocalTransaction extends Thread {
                             break;
                         }
                         case EntityEntry.GET:{
-                            if(entityEntry.getKey() == null){
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING)){
                                 if(entityEntry.getId() < 0)throw new EntityEntryException(entityEntry);
-                                Node node = getNodeById(entityEntry.getId());
+                                Node node = getNodeById(entityEntry.getTransactionNum(), entityEntry.getId());
                                 tempMap.put(entityEntry.getTransactionNum(), node);
-//                                resultMap.put(entityEntry.getTransactionNum(), node);
                                 break;
                             }
 
                             Node node = null;
-                            if(entityEntry.getId() >= 0){ node = getNodeById(entityEntry.getId()); }
+                            if(entityEntry.getId() >= 0){ node = getNodeById(entityEntry.getTransactionNum(), entityEntry.getId()); }
                             else if( entityEntry.getId() == -2){ node = (Node) tempMap.get(entityEntry.getParaId());}
                             else throw new EntityEntryException(entityEntry);
 
                             if(entityEntry.isTemporalProperty()){
-                                Object res = getNodeTemporalProperty(node, entityEntry.getKey(), entityEntry.getStart());
+                                Object res = getNodeTemporalProperty(entityEntry.getTransactionNum(), node, entityEntry.getKey(), entityEntry.getStart());
                                 tempMap.put(entityEntry.getTransactionNum(), res);
                                 resultMap.put(entityEntry.getTransactionNum(), res);
                             }
                             else {
-                                Object res = getNodeProperty(node, entityEntry.getKey());
+                                Object res = getNodeProperty(entityEntry.getTransactionNum(), node, entityEntry.getKey());
                                 tempMap.put(entityEntry.getTransactionNum(), res);
                                 resultMap.put(entityEntry.getTransactionNum(), res);
                             }
@@ -854,11 +782,11 @@ public class LocalTransaction extends Thread {
                         }
                         case EntityEntry.REMOVE:{
                             Node node = null;
-                            if(entityEntry.getId() >= 0){ node = getNodeById(entityEntry.getId()); }
+                            if(entityEntry.getId() >= 0){ node = getNodeById(entityEntry.getTransactionNum(), entityEntry.getId()); }
                             else if( entityEntry.getId() == -2){ node = (Node) tempMap.get(entityEntry.getParaId());}
                             else throw new EntityEntryException(entityEntry);
 
-                            if(entityEntry.getKey() == null){
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING)){
                                 deleteNode(node, i);
                             }
                             else if(entityEntry.isTemporalProperty()){
@@ -870,11 +798,11 @@ public class LocalTransaction extends Thread {
                         }
                         case EntityEntry.SET:{
                             Node node = null;
-                            if(entityEntry.getId() >= 0){ node = getNodeById(entityEntry.getId()); }
+                            if(entityEntry.getId() >= 0){ node = getNodeById(entityEntry.getTransactionNum(), entityEntry.getId()); }
                             else if( entityEntry.getId() == -2){ node = (Node) tempMap.get(entityEntry.getParaId());}
                             else throw new EntityEntryException(entityEntry);
 
-                            if(entityEntry.getKey() == null)throw new EntityEntryException(entityEntry);
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING))throw new EntityEntryException(entityEntry);
                             if(entityEntry.isTemporalProperty()){
                                 if(entityEntry.getOther() != -1){
                                     setNodeTemporalProperty(node, entityEntry.getKey(), entityEntry.getStart(), entityEntry.getOther(),
@@ -896,10 +824,9 @@ public class LocalTransaction extends Thread {
                 case RELATIONTYPE:{
                     switch (entityEntry.getOperationType()){
                         case EntityEntry.ADD:{
-                            if(entityEntry.getKey() == null){
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING)){
                                 if(entityEntry.getId() < 0)throw new EntityEntryException(entityEntry);
                                 Relationship relationship = addRelationship(entityEntry.getId(), entityEntry.getStart(), entityEntry.getOther(), i);
-//                                resultMap.put(entityEntry.getTransactionNum(), relationship);
                                 relationship.setProperty("hasPrepare", false);
                                 tempMap.put(entityEntry.getTransactionNum(), relationship);
                                 break;
@@ -907,7 +834,7 @@ public class LocalTransaction extends Thread {
 
                             Relationship relationship = null;
                             if(entityEntry.getId() >= 0){
-                                relationship = getRelationshipById(entityEntry.getId());
+                                relationship = getRelationshipById(-1, entityEntry.getId());
                                 checkStatus(relationship);
                             }
                             else if( entityEntry.getId() == -2){ relationship = (Relationship) tempMap.get(entityEntry.getParaId());}
@@ -926,26 +853,25 @@ public class LocalTransaction extends Thread {
                             break;
                         }
                         case EntityEntry.GET:{
-                            if(entityEntry.getKey() == null){
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING)){
                                 if(entityEntry.getId() < 0)throw new EntityEntryException(entityEntry);
-                                Relationship relationship = getRelationshipById(entityEntry.getId());
-//                                resultMap.put(entityEntry.getTransactionNum(), relationship);
+                                Relationship relationship = getRelationshipById(entityEntry.getTransactionNum(), entityEntry.getId());
                                 tempMap.put(entityEntry.getTransactionNum(), relationship);
                                 break;
                             }
 
                             Relationship relationship = null;
-                            if(entityEntry.getId() >= 0){ relationship = getRelationshipById(entityEntry.getId()); }
+                            if(entityEntry.getId() >= 0){ relationship = getRelationshipById(entityEntry.getTransactionNum(), entityEntry.getId()); }
                             else if( entityEntry.getId() == -2){ relationship = (Relationship) tempMap.get(entityEntry.getParaId());}
                             else throw new EntityEntryException(entityEntry);
 
                             if(entityEntry.isTemporalProperty()){
-                                Object res = getRelationTemporalProperty(relationship, entityEntry.getKey(), entityEntry.getStart());
+                                Object res = getRelationTemporalProperty(entityEntry.getTransactionNum(), relationship, entityEntry.getKey(), entityEntry.getStart());
                                 resultMap.put(entityEntry.getTransactionNum(), res);
                                 tempMap.put(entityEntry.getTransactionNum(), res);
                             }
                             else {
-                                Object res = getRelationProperty(relationship, entityEntry.getKey());
+                                Object res = getRelationProperty(entityEntry.getTransactionNum(), relationship, entityEntry.getKey());
                                 resultMap.put(entityEntry.getTransactionNum(), res);
                                 tempMap.put(entityEntry.getTransactionNum(), res);
                             }
@@ -953,11 +879,11 @@ public class LocalTransaction extends Thread {
                         }
                         case EntityEntry.REMOVE:{
                             Relationship relationship = null;
-                            if(entityEntry.getId() >= 0){ relationship = getRelationshipById(entityEntry.getId()); }
+                            if(entityEntry.getId() >= 0){ relationship = getRelationshipById(entityEntry.getTransactionNum(), entityEntry.getId()); }
                             else if( entityEntry.getId() == -2){ relationship = (Relationship) tempMap.get(entityEntry.getParaId());}
                             else throw new EntityEntryException(entityEntry);
 
-                            if(entityEntry.getKey() == null){
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING)){
                                 deleteRelation(relationship, i);
                             }
                             else if(entityEntry.isTemporalProperty()){
@@ -969,11 +895,11 @@ public class LocalTransaction extends Thread {
                         }
                         case EntityEntry.SET:{
                             Relationship relationship = null;
-                            if(entityEntry.getId() >= 0){ relationship = getRelationshipById(entityEntry.getId()); }
+                            if(entityEntry.getId() >= 0){ relationship = getRelationshipById(-1, entityEntry.getId()); }
                             else if( entityEntry.getId() == -2){ relationship = (Relationship) tempMap.get(entityEntry.getParaId());}
                             else throw new EntityEntryException(entityEntry);
 
-                            if(entityEntry.getKey() == null)throw new EntityEntryException(entityEntry);
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING))throw new EntityEntryException(entityEntry);
                             if(entityEntry.isTemporalProperty()){
                                 if(entityEntry.getOther() != -1){
                                     setRelationTemporalProperty(relationship, entityEntry.getKey(), entityEntry.getStart(), entityEntry.getOther(),
@@ -998,7 +924,88 @@ public class LocalTransaction extends Thread {
             }
             i++;
         }
-        //op.setEntityEntries(newEntries);
+        this.resultMap.put(-1, this.returnVersion);
+    }
+
+    public void getMVCCReadTransaction() throws EntityEntryException, RegionStoreException, TypeDoesnotExistException, TransactionException {
+        //List<EntityEntry> newEntries = new ArrayList<>();
+        Map<Integer, Object> tempMap = new HashMap<>();
+        List<EntityEntry> Entries = op.getEntityEntries();
+        for(EntityEntry entityEntry : Entries){
+            long newversion = this.requireVersion.get(entityEntry.getTransactionNum());
+            switch (entityEntry.getType()){
+                case NODETYPE:{
+                    switch (entityEntry.getOperationType()){
+                        case EntityEntry.GET:{
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING)){
+                                if(entityEntry.getId() < 0)throw new EntityEntryException(entityEntry);
+                                Node node = getNodeById(entityEntry.getTransactionNum(), entityEntry.getId());
+                                tempMap.put(entityEntry.getTransactionNum(), node);
+                                break;
+                            }
+
+                            Node node = null;
+                            if(entityEntry.getId() >= 0){ node = getNodeById(entityEntry.getTransactionNum(), entityEntry.getId()); }
+                            else if( entityEntry.getId() == -2){ node = (Node) tempMap.get(entityEntry.getParaId());}
+                            else throw new EntityEntryException(entityEntry);
+
+                            if(entityEntry.isTemporalProperty()){
+                                Object res = getNodeTemporalProperty(entityEntry.getTransactionNum(), node, entityEntry.getKey(), entityEntry.getStart(), newversion);
+                                tempMap.put(entityEntry.getTransactionNum(), res);
+                                resultMap.put(entityEntry.getTransactionNum(), res);
+                            }
+                            else {
+                                Object res = getNodeProperty(entityEntry.getTransactionNum(), node, entityEntry.getKey(), newversion);
+                                tempMap.put(entityEntry.getTransactionNum(), res);
+                                resultMap.put(entityEntry.getTransactionNum(), res);
+                            }
+                            break;
+                        }
+                        default:{
+                            throw new TypeDoesnotExistException(entityEntry.getType(), "node operation type");
+                        }
+                    }
+                    break;
+                }
+                case RELATIONTYPE:{
+                    switch (entityEntry.getOperationType()){
+                        case EntityEntry.GET:{
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING)){
+                                if(entityEntry.getId() < 0)throw new EntityEntryException(entityEntry);
+                                Relationship relationship = getRelationshipById(entityEntry.getTransactionNum(), entityEntry.getId());
+                                tempMap.put(entityEntry.getTransactionNum(), relationship);
+                                break;
+                            }
+
+                            Relationship relationship = null;
+                            if(entityEntry.getId() >= 0){ relationship = getRelationshipById(entityEntry.getTransactionNum(), entityEntry.getId()); }
+                            else if( entityEntry.getId() == -2){ relationship = (Relationship) tempMap.get(entityEntry.getParaId());}
+                            else throw new EntityEntryException(entityEntry);
+
+                            if(entityEntry.isTemporalProperty()){
+                                Object res = getRelationTemporalProperty(entityEntry.getTransactionNum(), relationship, entityEntry.getKey(), entityEntry.getStart(), newversion);
+                                resultMap.put(entityEntry.getTransactionNum(), res);
+                                tempMap.put(entityEntry.getTransactionNum(), res);
+                            }
+                            else {
+                                Object res = getRelationProperty(entityEntry.getTransactionNum(), relationship, entityEntry.getKey(), newversion);
+                                resultMap.put(entityEntry.getTransactionNum(), res);
+                                tempMap.put(entityEntry.getTransactionNum(), res);
+                            }
+                            break;
+                        }
+                        default:{
+                            throw new TypeDoesnotExistException(entityEntry.getType(), "node operation type");
+                        }
+                    }
+                    break;
+                }
+                default:{
+                    throw new TypeDoesnotExistException(entityEntry.getType(), "entity type");
+                }
+            }
+        }
+        this.resultMap.put(-1, this.returnVersion);
     }
 
     public void rollbackAdd() throws EntityEntryException, InterruptedException {
@@ -1011,9 +1018,9 @@ public class LocalTransaction extends Thread {
             if(entityEntry.getType() == NODETYPE){
                 if(entityEntry.getOperationType() == EntityEntry.ADD){
                     Node node = null;
-                    if(entityEntry.getId() >= 0){ node = getNodeById(entityEntry.getId()); }
+                    if(entityEntry.getId() >= 0){ node = getNodeById(-1, entityEntry.getId()); }
                     else throw new EntityEntryException(entityEntry);
-                    if(entityEntry.getKey() == null){
+                    if(entityEntry.getKey().equals(DTGConstants.NULLSTRING)){
                         node.delete();
                         break;
                     }
@@ -1022,9 +1029,9 @@ public class LocalTransaction extends Thread {
             else if(entityEntry.getType() == RELATIONTYPE){
                 if(entityEntry.getOperationType() == EntityEntry.ADD){
                     Relationship relationship = null;
-                    if(entityEntry.getId() >= 0){ relationship = getRelationshipById(entityEntry.getId()); }
+                    if(entityEntry.getId() >= 0){ relationship = getRelationshipById(-1, entityEntry.getId()); }
                     else throw new EntityEntryException(entityEntry);
-                    if(entityEntry.getKey() == null){
+                    if(entityEntry.getKey().equals(DTGConstants.NULLSTRING)){
                         relationship.delete();
                         break;
                     }
@@ -1036,7 +1043,6 @@ public class LocalTransaction extends Thread {
     }
 
     public void updateVersion() throws TypeDoesnotExistException, EntityEntryException, RegionStoreException {
-        //System.out.println("updateVersion : " + txId);
         while(!couldCommit){
             try {
                 Thread.sleep(10);
@@ -1078,9 +1084,9 @@ public class LocalTransaction extends Thread {
                     switch (entityEntry.getOperationType()){
                         case EntityEntry.ADD:{
                             Node node = null;
-                            if(entityEntry.getId() >= 0){ node = getNodeById(entityEntry.getId()); }
+                            if(entityEntry.getId() >= 0){ node = getNodeById(entityEntry.getTransactionNum(), entityEntry.getId()); }
                             else throw new EntityEntryException(entityEntry);
-                            if(entityEntry.getKey() == null){
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING)){
                                 node.setProperty("hasPrepare", true);
                                 break;
                             }
@@ -1096,9 +1102,9 @@ public class LocalTransaction extends Thread {
                         }
                         case EntityEntry.SET:{
                             Node node = null;
-                            if(entityEntry.getId() >= 0){ node = getNodeById(entityEntry.getId()); }
+                            if(entityEntry.getId() >= 0){ node = getNodeById(-1, entityEntry.getId()); }
                             else throw new EntityEntryException(entityEntry);
-                            if(entityEntry.getKey() == null)throw new EntityEntryException(entityEntry);
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING))throw new EntityEntryException(entityEntry);
                             if(entityEntry.isTemporalProperty()){
                                 if(entityEntry.getOther() != -1){
                                     setNodeTemporalPropertyVersion(node, entityEntry.getKey(), entityEntry.getStart(), entityEntry.getOther(), version);
@@ -1119,9 +1125,9 @@ public class LocalTransaction extends Thread {
                     switch (entityEntry.getOperationType()){
                         case EntityEntry.ADD:{
                             Relationship relationship = null;
-                            if(entityEntry.getId() >= 0){ relationship = getRelationshipById(entityEntry.getId()); }
+                            if(entityEntry.getId() >= 0){ relationship = getRelationshipById(-1, entityEntry.getId()); }
                             else throw new EntityEntryException(entityEntry);
-                            if(entityEntry.getKey() == null){
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING)){
                                 relationship.setProperty("hasPrepare", true);
                                 break;
                             }
@@ -1137,9 +1143,9 @@ public class LocalTransaction extends Thread {
                         }
                         case EntityEntry.SET:{
                             Relationship relationship = null;
-                            if(entityEntry.getId() >= 0){ relationship = getRelationshipById(entityEntry.getId()); }
+                            if(entityEntry.getId() >= 0){ relationship = getRelationshipById(-1, entityEntry.getId()); }
                             else throw new EntityEntryException(entityEntry);
-                            if(entityEntry.getKey() == null)throw new EntityEntryException(entityEntry);
+                            if(entityEntry.getKey().equals(DTGConstants.NULLSTRING))throw new EntityEntryException(entityEntry);
                             if(entityEntry.isTemporalProperty()){
                                 if(entityEntry.getOther() != -1){
                                     setRelationTemporalPropertyVersion(relationship, entityEntry.getKey(), entityEntry.getStart(), entityEntry.getOther(), version);
@@ -1171,5 +1177,9 @@ public class LocalTransaction extends Thread {
 
     private String getVersionKey(long version, String key){
         return key + "/" + version;
+    }
+
+    public DTGOperation getOp(){
+        return this.op;
     }
 }

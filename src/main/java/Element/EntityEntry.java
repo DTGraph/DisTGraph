@@ -17,10 +17,10 @@
 package Element;
 
 import DBExceptions.TypeDoesnotExistException;
+import config.DTGConstants;
 
 import java.io.Serializable;
 
-import static com.alipay.sofa.jraft.util.BytesUtil.readUtf8;
 import static config.MainType.*;
 
 public class EntityEntry implements Serializable, Comparable<EntityEntry> {
@@ -35,15 +35,16 @@ public class EntityEntry implements Serializable, Comparable<EntityEntry> {
     private int               transactionNum;
 
     private byte              operationType;//add, remove, set or get
-    private String            key; //property name
+    private String            key = DTGConstants.NULLSTRING; //property name
     private Object            value; //property value
     private byte              type; //node or relation
-    private int               start;  //temporal property time, if other is not -1, it is end time.
+    private int               start = -1;  //temporal property time, if other is not -1, it is end time.
                                        //if isTemporalProperty = false, it represent start node id
-    private int               other; //end time, if isTemporalProperty = false, it represent end node id
+    private int               other = -1; //end time, if isTemporalProperty = false, it represent end node id
     private long              id; //node or relation id, if id = -2, it represnet real id is paraId
     private int               paraId;
     private boolean           isTemporalProperty;
+    private long              txVersion = -1;
 
     public String getKey() {
         return key;
@@ -115,6 +116,14 @@ public class EntityEntry implements Serializable, Comparable<EntityEntry> {
 
     public void setIsTemporalProperty(boolean temporalProperty) {
         isTemporalProperty = temporalProperty;
+    }
+
+    public long getTxVersion() {
+        return txVersion;
+    }
+
+    public void setTxVersion(long txVersion) {
+        this.txVersion = txVersion;
     }
 
     public String typeString(){

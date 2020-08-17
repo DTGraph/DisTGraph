@@ -2,6 +2,7 @@ package MQ;
 
 import DBExceptions.TxMQError;
 import Element.EntityEntry;
+import LocalDBMachine.LocalDB;
 import MQ.codec.v2.MQV2LogEntryCodecFactory;
 import Region.DTGRegion;
 import UserClient.DTGSaveStore;
@@ -169,9 +170,6 @@ public class DTGMQ implements Lifecycle<MQOptions> {
         if(appiled == tasks.size()){
             for(TransactionLogEntryAndClosure closure : tasks){
                 closure.run(Status.OK());
-//                InternalRunClosure internalRunClosure = new InternalRunClosure();
-//                internalRunClosure.setLog(closure.getEntry());
-//                publishCommit(internalRunClosure);
             }
         }else {
             for(TransactionLogEntryAndClosure closure : tasks){
@@ -216,7 +214,12 @@ public class DTGMQ implements Lifecycle<MQOptions> {
 //        if(!this.stateMachine.init(opts.getSaveStore())){
 //            return false;
 //        }
-        reRunUncommitLog(opts.getSaveStore());
+        if(opts.getSaveStore() != null){
+            reRunUncommitLog(opts.getSaveStore());
+        }
+        else if(opts.getLocalDB() != null){
+            reRunUncommitLog(opts.getLocalDB());
+        }
         return true;
     }
 
@@ -350,7 +353,17 @@ public class DTGMQ implements Lifecycle<MQOptions> {
             List<EntityEntry> entries = ((TransactionLog) ObjectAndByte.toObject(log.getByteData())).getOps();
             long version = log.getVersion();
             String txId = "reRun_" + version;
-            store.applyRequest(entries, txId, false, false, DTGConstants.FAILOVERRETRIES, null, true, version);
+            store.applyRequest(entries, txId, false, false, DTGConstants.FAILOVERRETRIES, true,  version, null );
+        }
+    }
+
+    private void reRunUncommitLog(LocalDB localDB){
+        List<TransactionLogEntry> unCommitLog = this.logStorage.getUnCommitLog();
+        for(TransactionLogEntry log : unCommitLog){
+            List<EntityEntry> entries = ((TransactionLog) ObjectAndByte.toObject(log.getByteData())).getOps();
+            long version = log.getVersion();
+            String txId = "reRun_" + version;
+            //store.applyRequest(entries, txId, false, false, DTGConstants.FAILOVERRETRIES, null, true, version);
         }
     }
 }

@@ -81,6 +81,11 @@ public final class FailoverClosureImpl<T> extends BaseStoreClosure implements Fa
         }
 
         final Errors error = getError();
+        if(error == Errors.REQUEST_REPEATE){
+            LOG.error("Request Rpeate");
+            failure(error);
+            return;
+        }
         if (this.retriesLeft > 0
             && (ErrorsHelper.isInvalidPeer(error) || (this.retryOnInvalidEpoch && ErrorsHelper.isInvalidEpoch(error)) || ErrorsHelper.isTransactionError(error))) {
             LOG.warn("[Failover] status: {}, error: {}, [{}] retries left.", status, error, this.retriesLeft);

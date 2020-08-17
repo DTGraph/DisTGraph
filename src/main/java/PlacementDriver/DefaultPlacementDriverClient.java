@@ -685,6 +685,11 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
     }
 
     @Override
+    public Long[] getVersions(int txNumber) {
+        return this.metadataRpcClient.getVersions(txNumber);
+    }
+
+    @Override
     public DTGMetadataRpcClient getDTGMetadataRpcClient() {
         return this.metadataRpcClient;
     }

@@ -45,6 +45,9 @@ import storage.DTGStoreEngine;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
@@ -54,6 +57,8 @@ import tool.ObjectAndByte;
 
 import static com.alipay.sofa.jraft.rhea.metrics.KVMetricNames.STATE_MACHINE_APPLY_QPS;
 import static com.alipay.sofa.jraft.rhea.metrics.KVMetricNames.STATE_MACHINE_BATCH_WRITE;
+import static config.MainType.NODETYPE;
+import static config.MainType.RELATIONTYPE;
 
 /**
  * Rhea KV store state machine
@@ -69,23 +74,17 @@ public class DTGStateMachine extends StateMachineAdapter implements Serializable
     private final Serializer          serializer = Serializers.getDefault();
     private final DTGRegion           region;
     private final DTGStoreEngine      storeEngine;
-    //private final BatchRawKVStore<?>  rawKVStore;
     private final LocalDB             localDB;
-    //private final KVStoreSnapshotFile storeSnapshotFile;
     private final Meter               applyMeter;
-    private final Histogram           batchWriteHistogram;
+
 
     public DTGStateMachine(DTGRegion region, DTGStoreEngine storeEngine) {
         this.region = region;
         this.storeEngine = storeEngine;
         this.localDB = storeEngine.getlocalDB();
-        //this.rawKVStore = storeEngine.getRawKVStore();
-
-        //this.storeSnapshotFile = KVStoreSnapshotFileFactory.getKVStoreSnapshotFile(this.rawKVStore);
         final String regionStr = String.valueOf(this.region.getId());
         this.applyMeter = KVMetrics.meter(STATE_MACHINE_APPLY_QPS, regionStr);
-        this.batchWriteHistogram = KVMetrics.histogram(STATE_MACHINE_BATCH_WRITE, regionStr);
-    }
+}
 
     @Override
     public void onApply(final Iterator it) {
@@ -112,24 +111,11 @@ public class DTGStateMachine extends StateMachineAdapter implements Serializable
                 switch (op.getType()){
                     case OperationName.COMMITTRANS:
                     case OperationName.ROLLBACK:
-//                    case OperationName.ROLLBACK:{
-//                        this.localDB.runOp(op, done, isLeader(),region);
-//                        break;
-//                    }
                     case OperationName.TRANSACTIONOP:{
-                        //if(!isLeader()){
-                            this.localDB.runOp(op, done, isLeader(),region);
-                            //this.localDB.ApplyEntityEntries(op, done);
-                        //}else {
-                            //System.out.println("main localDB runOp ok");
-                            //done.setData(true);
-                            //done.run(Status.OK());
-                        //}
-                        //this.localDB.runOp(op, done, isLeader(),region);
+                        this.localDB.runOp(op, done, isLeader(),region);
                         break;
                     }
                     case OperationName.ADDREMOVELIST:{
-                        //System.out.println("ADDREMOVELIST!");
                         this.localDB.addRemoveLock(op, done);
                         break;
                     }

@@ -81,6 +81,26 @@ public class IdGenerator {
         return id;
     }
 
+    public synchronized long[] getIds(long count)
+    {
+        long[] res = new long[2];
+        res[0] = highId.get();
+        if ( res[0] == INTEGER_MINUS_ONE )
+        {
+            // Skip the integer -1 (0xFFFFFFFF) because it represents
+            // special values, f.ex. the end of a relationships/property chain.
+            res[0] = highId.incrementAndGet();
+        }
+        assertIdWithinCapacity( res[0] );
+        res[1] = highId.addAndGet(count);
+        if ( res[1] == INTEGER_MINUS_ONE )
+        {
+            res[1] = highId.incrementAndGet();
+        }
+        assertIdWithinCapacity( res[1] );
+        return res;
+    }
+
     // initialize the id generator and performs a simple validation
     private synchronized void initGenerator()
     {

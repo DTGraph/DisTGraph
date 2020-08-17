@@ -542,19 +542,40 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
                 closure.sendResponse(response);
                 return;
             }
-            CompletableFuture<Long> future = CompletableFuture.supplyAsync(() -> {
-                return versionControl.nextId();
-            }).whenComplete((version, e) ->{
-                if(e != null){
-                    LOG.error("Failed to handle: {}, {}.", request, StackTraceUtil.stackTrace(e));
-                    response.setError(Errors.forException(e));
+            if(request.isGetVersions()){
+                CompletableFuture<Long[]> future = CompletableFuture.supplyAsync(() -> {
+                    long[] res = versionControl.getIds(request.getTxNumber());
+                    Long[] ress = new Long[2];
+                    ress[0] = res[0];
+                    ress[1] = res[1];
+                    return ress;
+                }).whenComplete((version, e) ->{
+                    if(e != null){
+                        LOG.error("Failed to handle: {}, {}.", request, StackTraceUtil.stackTrace(e));
+                        response.setError(Errors.forException(e));
+                        closure.sendResponse(response);
+                        return;
+                    }
+                    response.setValue(version);
                     closure.sendResponse(response);
-                    return;
-                }
-                response.setValue(version);
-                closure.sendResponse(response);
-                System.out.println("success get version : " + version);
-            });
+                    System.out.println("success get version : " + version[0] + " - " + version[1]);
+                });
+            }
+            else{
+                CompletableFuture<Long> future = CompletableFuture.supplyAsync(() -> {
+                    return versionControl.nextId();
+                }).whenComplete((version, e) ->{
+                    if(e != null){
+                        LOG.error("Failed to handle: {}, {}.", request, StackTraceUtil.stackTrace(e));
+                        response.setError(Errors.forException(e));
+                        closure.sendResponse(response);
+                        return;
+                    }
+                    response.setValue(version);
+                    closure.sendResponse(response);
+                    System.out.println("success get version : " + version);
+                });
+            }
         }catch (final Throwable t){
             LOG.error("Failed to handle: {}, {}.", request, StackTraceUtil.stackTrace(t));
             response.setError(Errors.forException(t));

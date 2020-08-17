@@ -1,5 +1,6 @@
 package options;
 
+import LocalDBMachine.LocalDB;
 import UserClient.DTGSaveStore;
 import com.alipay.sofa.jraft.util.Utils;
 
@@ -18,6 +19,7 @@ public class MQOptions {
     private String                 suffix;
     private String                 logUri;
     private DTGSaveStore           saveStore;
+    private LocalDB                localDB;
 
 
 
@@ -62,4 +64,11 @@ public class MQOptions {
         this.logUri = logUri;
     }
 
+    public LocalDB getLocalDB() {
+        return localDB;
+    }
+
+    public void setLocalDB(LocalDB localDB) {
+        this.localDB = localDB;
+    }
 }
