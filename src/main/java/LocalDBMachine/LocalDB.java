@@ -6,27 +6,22 @@ import Element.EntityEntry;
 import Element.OperationName;
 import LocalDBMachine.LocalTx.TransactionThreadLock;
 import LocalDBMachine.LocalTx.TxLockManager;
-import MQ.ByteTask;
 import MQ.DTGMQ;
-import MQ.TransactionLogEntry;
 import Region.DTGLockClosure;
 import Region.DTGRegion;
 import Region.FirstPhaseClosure;
 import Region.LockProcess;
-import UserClient.Transaction.TransactionLog;
 import com.alipay.sofa.jraft.Lifecycle;
 import com.alipay.sofa.jraft.Status;
 import com.alipay.sofa.jraft.rhea.client.FutureHelper;
 import com.alipay.sofa.jraft.rhea.errors.Errors;
 import com.alipay.sofa.jraft.util.Utils;
-import config.DTGConstants;
 import options.MQOptions;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import org.neo4j.kernel.impl.util.register.NeoRegister;
 import raft.EntityStoreClosure;
 import raft.DTGRawStore;
 import raft.LogStoreClosure;
@@ -36,7 +31,6 @@ import tool.ObjectAndByte;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static config.DefaultOptions.MVCC;
 import static config.MainType.NODETYPE;
@@ -54,6 +48,7 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
 
     private Map<String, LocalTransaction> waitCommitMap;
     private GraphDatabaseService db;
+    private MemMVCC memMVCC;
 
     private LockProcess lockProcess;
     private final DTGMQ logMQ;
@@ -76,6 +71,7 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
                 .newEmbeddedDatabaseBuilder(opts.getDbPath() )
                 .loadPropertiesFromFile("")
                 .newGraphDatabase();
+        this.memMVCC = new MemMVCC();
         MQOptions mqopts = new MQOptions();
         mqopts.setLogUri(opts.getDbPath() + "\\RegionTxLog");
         mqopts.setRockDBPath(opts.getDbPath() + "\\RegionTxRockDB");
@@ -184,12 +180,19 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
                     if((!isLeader && !this.waitCommitMap.containsKey(key)) || !MVCC){
                         resultMap.put(-1, true);
                         TransactionThreadLock txLock = new TransactionThreadLock(op.getTxId());
-                        LocalTransaction tx = new LocalTransaction(this.db, op, resultMap, txLock, region);
-                        this.lockManager.lock(op);
+                        LocalTransaction tx = new LocalTransaction(this.memMVCC, this.db, op, resultMap, txLock, region);
+
                         tx.start();
-                        synchronized (resultMap){
-                            resultMap.wait(FutureHelper.DEFAULT_TIMEOUT_MILLIS);
+                        synchronized (txLock){
+                            if(!tx.getCouldCommit()){
+                                try {
+                                    txLock.wait();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
                         }
+
                         addToCommitMap(tx, key);
                     }
                     if(closure != null){
@@ -207,7 +210,7 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
             }
             case OperationName.COMMITTRANS:{
                 try {
-                    if(commitTx(key) && closure != null){
+                    if(commitTx(key, op.getVersion()) && closure != null){
                         closure.setData(true);
                         closure.run(Status.OK());
                     }else {
@@ -290,7 +293,7 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
     }
 
     //AtomicInteger count = new AtomicInteger(0);
-    public boolean commitTx(String id) throws InterruptedException, TypeDoesnotExistException, EntityEntryException, RegionStoreException {
+    public boolean commitTx(String id, long endVersion) throws InterruptedException {
 //        System.out.println(System.currentTimeMillis() + "  start commitTx1 : " + id);
         LocalTransaction tx = waitCommitMap.get(id);
         int i = 0;
@@ -303,23 +306,11 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
             Thread.sleep(10);
             tx = waitCommitMap.get(id);
         }
-        if(tx.isLaterCommit()){
-            TransactionThreadLock lock = tx.getLock();
-            TransactionThreadLock newlock = new TransactionThreadLock(id);
-            tx.setLock(newlock);
-            synchronized (lock){
-                newlock.commit();
-                lock.notify();
-            }
-            synchronized (newlock){
-                newlock.wait();
-            }
-        }
-        if(tx.isHighA()){
-            tx.updateVersion();
-        }
-        if(!MVCC){
-            this.lockManager.unlock(tx.getOp());
+        TransactionThreadLock lock = tx.getLock();
+        synchronized (lock){
+            tx.setEndVersion(endVersion);
+            lock.commit();
+            lock.notify();
         }
         setTxDone(tx.getOp());
         waitCommitMap.remove(id);
@@ -338,16 +329,10 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
             Thread.sleep(10);
             tx = waitCommitMap.get(id);
         }
-        if(tx.isLaterCommit()){
-            TransactionThreadLock lock = tx.getLock();
-            synchronized (lock){
-                lock.rollback();
-                lock.notify();
-            }
-        }
-        tx.rollbackAdd();
-        if(!MVCC){
-            this.lockManager.unlock(tx.getOp());
+        TransactionThreadLock lock = tx.getLock();
+        synchronized (lock){
+            lock.rollback();
+            lock.notify();
         }
         waitCommitMap.remove(id);
         System.out.println("rollback tx : " + id);
@@ -396,7 +381,7 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
         }
         DTGOperation newOp = new DTGOperation(newEntries, OperationName.TRANSACTIONOP);
         TransactionThreadLock txLock = new TransactionThreadLock("secR/" + op.getTxId());
-        LocalTransaction tx = new LocalTransaction(this.db, newOp, updateRes, txLock, region);
+        LocalTransaction tx = new LocalTransaction(this.memMVCC, this.db, newOp, updateRes, txLock, region);
 
         tx.start();
         return updateRes;
@@ -477,5 +462,9 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
         }
         key = key + id + "/" + prokey + "/" + time;
         return key;
+    }
+
+    public MemMVCC getMemMVCC() {
+        return memMVCC;
     }
 }

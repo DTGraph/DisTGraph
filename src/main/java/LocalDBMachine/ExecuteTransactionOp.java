@@ -10,9 +10,9 @@ package LocalDBMachine;
 
 public class ExecuteTransactionOp {
 
-//    public LocalTransaction getTransaction(GraphDatabaseService db, DTGOpreration op, Map<Integer, Object> resultMap) throws Throwable{
+//    public LocalTransaction3 getTransaction(GraphDatabaseService db, DTGOpreration op, Map<Integer, Object> resultMap) throws Throwable{
 //        Map<Integer, Object> tempMap = new HashMap<>();
-//        LocalTransaction transaction = new LocalTransaction(db);
+//        LocalTransaction3 transaction = new LocalTransaction3(db);
 //        List<EntityEntry> Entries = op.getEntityEntries();
 //        for(EntityEntry entityEntry : Entries){
 //            switch (entityEntry.getType()){

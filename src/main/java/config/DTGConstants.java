@@ -37,6 +37,8 @@ public class DTGConstants {
     public static final byte    SYNOP                        = 0x26;
     public static final byte    SYNOPFAILED                  = 0x27;
 
+    public static final byte    DELETESELF                   = 0x28;
+
     //RAFT OPTION
     public static final int DisruptorPublishEventWaitTimeoutSecs = 10;
     public static final int maxAppendBufferSize                  = 256 * 1024;

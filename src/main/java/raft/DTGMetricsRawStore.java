@@ -156,7 +156,7 @@ public class DTGMetricsRawStore implements DTGRawStore, Lifecycle<DTGMetricsRawS
 
         try {
             TransactionThreadLock txLock = new TransactionThreadLock(op.getTxId());
-            LocalTransaction tx = new LocalTransaction(localDB.getDb(), op, resultMap, txLock, region);//System.out.println("run op... ：3  " + region.getId());
+            LocalTransaction tx = new LocalTransaction(localDB.getMemMVCC(), localDB.getDb(), op, resultMap, txLock, region);//System.out.println("run op... ：3  " + region.getId());
             tx.start();
             localDB.addToCommitMap(tx, op.getTxId(), region.getId());
             synchronized (resultMap){

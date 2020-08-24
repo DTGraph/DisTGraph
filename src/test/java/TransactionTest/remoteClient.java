@@ -1,12 +1,8 @@
 package TransactionTest;
 
-import Element.NodeAgent;
-import Element.RelationshipAgent;
-import LocalDBMachine.LocalTransaction;
 import UserClient.DTGDatabase;
 import UserClient.Transaction.DTGTransaction;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**

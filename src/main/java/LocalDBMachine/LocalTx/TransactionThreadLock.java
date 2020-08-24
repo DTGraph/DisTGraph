@@ -19,11 +19,11 @@ public class TransactionThreadLock {
         this.txId = txId;
     }
 
-    public void commit() throws InterruptedException {
+    public void commit() {
         this.shouldCommit = true;
     }
 
-    public void rollback() throws InterruptedException {
+    public void rollback() {
         this.shouldCommit = false;
     }
 

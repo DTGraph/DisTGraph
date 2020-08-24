@@ -1,25 +1,32 @@
 package LocalDBMachine;
 
+import DBExceptions.IdNotExistException;
+import DBExceptions.ObjectExistException;
 import DBExceptions.RegionStoreException;
 import Element.EntityEntry;
 import config.DTGConstants;
-import config.RelType;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
+import org.neo4j.kernel.impl.core.NodeProxy;
+import org.neo4j.kernel.impl.core.RelationshipProxy;
+import tool.MemMvcc.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static config.DTGConstants.DELETESELF;
 import static config.MainType.NODETYPE;
 import static config.MainType.RELATIONTYPE;
 
 public class MemMVCC implements AutoCloseable {
 
-    private final ConcurrentHashMap<String, Object> MVCCMap;
+    private final ConcurrentHashMap<String, DTGSortedList> MVCCStaticMap;
+    private final ConcurrentHashMap<String, Object> MVCCNodeTemPropertyMap;
+    private final ConcurrentHashMap<String, Object> MVCCRelTemPropertyMap;
 
     public MemMVCC(){
-        this.MVCCMap = new ConcurrentHashMap<>();
+        this.MVCCStaticMap = new ConcurrentHashMap<>();
+        this.MVCCNodeTemPropertyMap = new ConcurrentHashMap<>();
+        this.MVCCRelTemPropertyMap = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -27,357 +34,311 @@ public class MemMVCC implements AutoCloseable {
 
     }
 
-    private Node addNode(long id, int i) throws RegionStoreException {
-        region.addNode();
-        nodeTransactionAdd++;
-        actionId[i] = id;
-        actionType[i] = 1;
-        EntityEntry entry = new EntityEntry();
-        entry.setId(id);
-        entry.setType(NODETYPE);
-        entry.setOperationType(EntityEntry.ADD);
-        entry.setIsTemporalProperty(false);
-        newEntries.add(entry);
-        return db.createNode(id);
+    private String getStaticKey(byte type, long objectId, String key){
+        return type + "/" + objectId + "/" + key;
     }
 
-    private Node getNodeById(int txNum, long id){
-        this.returnVersion.put(txNum, -1l);
-        return db.getNodeById(id);
+    private String getTempKey(long objectId, String key){
+        return objectId + "/" + key;
     }
 
-    private Relationship getRelationshipById(int txNum, long id){
-        this.returnVersion.put(txNum, -1l);
-        return db.getRelationshipById(id);
+    private String getTempTimeKey(long startTime, long endTime){
+        return startTime + "/" + endTime;
     }
 
-    private Relationship addRelationship(long startNode, long endNode, long id, int i) throws RegionStoreException {
-        Node start = getNodeById(-1, startNode);
-        region.addRelation();
-        relationTransactionAdd++;
-        actionId[i] = id;
-        actionType[i] = 3;
-        EntityEntry entry = new EntityEntry();
-        entry.setId(id);
-        entry.setType(RELATIONTYPE);
-        entry.setOperationType(EntityEntry.ADD);
-        entry.setIsTemporalProperty(false);
-        newEntries.add(entry);
-        return start.createRelationshipTo(id, endNode, RelType.ROAD_TO);
-    }
-
-    private void setNodeProperty(Node node, String key, Object value){
-        node.setProperty(key, value);
-    }
-
-    private void setNodeProperty(Node node, String key, Object value, long version, boolean highA, List<EntityEntry> newlist){
-        if(!highA){
-            setNodePropertyVersion(node, key, version);
+    private TempSortedList getMap(byte type, String key, long version) throws IdNotExistException {
+        Object map;
+        if(type == NODETYPE){
+            map = MVCCNodeTemPropertyMap.get(key);
+        }else if(type == RELATIONTYPE){
+            map = MVCCNodeTemPropertyMap.get(key);
+        }else{
+            return null;
         }
-        else {
-            EntityEntry entry = new EntityEntry();
-            entry.setType(NODETYPE);
-            entry.setOperationType(EntityEntry.SET);
-            entry.setIsTemporalProperty(false);
-            entry.setId(node.getId());
-            entry.setKey(key);
-            entry.setValue(value);
-            newlist.add(entry);
+        TempSortedList returnMap;
+        if(map instanceof DeleteInfo){
+            if(((DeleteInfo) map).isVisible(version)){
+                returnMap = (TempSortedList)((DeleteInfo) map).getOldValue();
+            }else {
+                throw new IdNotExistException();
+            }
+        }else{
+            returnMap = (TempSortedList)map;
         }
-        node.setProperty(getVersionKey(version, key), value);
+        if(map == null){
+            returnMap = new TempSortedList();
+            if(type == NODETYPE){
+                MVCCNodeTemPropertyMap.put(key, returnMap);
+            }else if(type == RELATIONTYPE){
+                MVCCNodeTemPropertyMap.put(key, returnMap);
+            }
+        }
+        return returnMap;
     }
 
-    private void setNodePropertyVersion(Node node, String key, long version){
-        long maxVersion;
-        if(!node.hasProperty(key)){
-            maxVersion = DTGConstants.DEFAULT_MAX_VERSION;
+    public NodeObject addNode(long id, long version) throws ObjectExistException {
+        String key = getStaticKey(NODETYPE, id, "");
+        DTGSortedList list = MVCCStaticMap.get(key);
+        NodeObject node = new NodeObject(id);
+        MVCCObject o;
+        if(list == null){
+            list = new DTGSortedList();
+            o = new MVCCObject(version, node);
+            list.insert(o);
+            this.MVCCStaticMap.put(key, list);
         }else {
-            Object res = node.getProperty(key);
-            maxVersion = (long)res;
+            throw new ObjectExistException();
         }
-        if(maxVersion < version){
-            node.setProperty(key, version);
-        }
+        return (NodeObject) o.getValue();
     }
 
-    private void setNodeTemporalProperty(Node node, String key, int start, int end,  Object value){
-        node.setTemporalProperty(key, start, end, value);
+    public MVCCObject commitNode(long id, long startVersion, long endVersion) {
+        String key = getStaticKey(NODETYPE, id, "");
+        DTGSortedList list = MVCCStaticMap.get(key);
+        return list.commitObject(startVersion, endVersion);
     }
 
-    private void setNodeTemporalProperty(Node node, String key, int start, int end,  Object value,
-                                         long version, boolean highA, List<EntityEntry> newlist){
-        if(!highA){
-            setNodeTemporalPropertyVersion(node, key, start, end, version);
-        }
-        else{
-            EntityEntry entry = new EntityEntry();
-            entry.setType(NODETYPE);
-            entry.setOperationType(EntityEntry.SET);
-            entry.setIsTemporalProperty(true);
-            entry.setId(node.getId());
-            entry.setKey(key);
-            entry.setValue(value);
-            entry.setStart(start);
-            entry.setOther(end);
-            newlist.add(entry);
-        }
-        node.setTemporalProperty(getVersionKey(version, key), start, end, value);
-    }
-
-    private void setNodeTemporalPropertyVersion(Node node, String key, int start, int end, long version){
-        long maxVersion;
-        try {
-            Object res = node.getTemporalProperty(key, start);
-            maxVersion = (long)res;
-        }catch (Exception e){
-            maxVersion = DTGConstants.DEFAULT_MAX_VERSION;
-        }
-        if(maxVersion < version){
-            node.setTemporalProperty(key,start, end, version);
-        }
-    }
-
-    private void setNodeTemporalProperty(Node node, String key, int time,  Object value){
-        node.setTemporalProperty(key, time, value);
-    }
-
-    private void setNodeTemporalProperty(Node node, String key, int time,  Object value,
-                                         long version, boolean highA, List<EntityEntry> newlist){
-        if(!highA){
-            setNodeTemporalPropertyVersion(node, key, time, version);
-        }
-        else {
-            EntityEntry entry = new EntityEntry();
-            entry.setType(NODETYPE);
-            entry.setOperationType(EntityEntry.SET);
-            entry.setIsTemporalProperty(true);
-            entry.setId(node.getId());
-            entry.setKey(key);
-            entry.setValue(value);
-            entry.setStart(time);
-            entry.setOther(-1);
-            newlist.add(entry);
-        }
-        node.setTemporalProperty(getVersionKey(version, key), time, value);
-    }
-
-    private void setNodeTemporalPropertyVersion(Node node, String key, int time, long version){
-        long maxVersion;
-        try {
-            Object res = node.getTemporalProperty(key, time);
-            maxVersion = (long)res;
-        }catch (Exception e){
-            maxVersion = DTGConstants.DEFAULT_MAX_VERSION;
-        }
-        if(maxVersion < version){
-            node.setTemporalProperty(key,time, version);
-        }
-    }
-
-    private void deleteNode(Node node, int i) throws RegionStoreException {
-        region.removeNode();
-        nodeTransactionAdd--;
-        actionId[i] = node.getId();
-        actionType[i] = 2;
-        node.delete();
-    }
-
-    private void deleteNodeProperty(Node node, String key){
-        node.removeProperty(key);
-    }
-
-    private void deleteNodeTemporalProperty(Node node, String key){
-        node.removeTemporalProperty(key);
-    }
-
-    private Object getNodeProperty(int txNum, Node node, String key){
-        long maxVersion;
-        if(!node.hasProperty(key)){
-            maxVersion = DTGConstants.DEFAULT_MAX_VERSION;
+    public NodeObject getNodeById(long id, long version, boolean isCommit) {
+        String key = getStaticKey(NODETYPE, id, "");
+        DTGSortedList list = MVCCStaticMap.get(key);
+        if(list == null){
+            return null;
         }else {
-            Object res = node.getProperty(key);
-            maxVersion = (long)res;
+            Object res;
+            if(isCommit){
+                res = list.find(version).getValue();
+            }else{
+                res = list.findData(version).getValue();
+            }
+
+            if(res == null){
+                return null;
+            }
+            return (NodeObject)res;
         }
-        return getNodeProperty(txNum, node, key, maxVersion);
     }
 
-    private Object getNodeProperty(int txNum, Node node, String key, long version){
-        this.returnVersion.put(txNum, version);
-        return node.getProperty(getVersionKey(version, key));
-    }
-
-    private Object getNodeTemporalProperty(int txNum, Node node, String key, int time){
-        long maxVersion;
-        try {
-            Object res = node.getTemporalProperty(key, time);
-            maxVersion = (long)res;
-        }catch (Exception e){
-            maxVersion = DTGConstants.DEFAULT_MAX_VERSION;
-        }
-        return getNodeTemporalProperty(txNum, node, key, time, maxVersion);
-    }
-
-    private Object getNodeTemporalProperty(int txNum, Node node, String key, int time, long version){
-        this.returnVersion.put(txNum, version);
-        return node.getTemporalProperty(getVersionKey(version, key), time);
-    }
-
-    private void setRelationProperty(Relationship relationship, String key, Object value){
-        relationship.setProperty(key, value);
-    }
-
-    private void setRelationProperty(Relationship relationship, String key, Object value,
-                                     long version, boolean highA, List<EntityEntry> newlist){
-        if(!highA){
-            setRelationPropertyVersion(relationship, key, version);
-        }
-        else {
-            EntityEntry entry = new EntityEntry();
-            entry.setType(RELATIONTYPE);
-            entry.setOperationType(EntityEntry.SET);
-            entry.setIsTemporalProperty(false);
-            entry.setId(relationship.getId());
-            entry.setKey(key);
-            entry.setValue(value);
-            newlist.add(entry);
-        }
-        relationship.setProperty(getVersionKey(version, key), value);
-    }
-
-    private void setRelationPropertyVersion(Relationship relationship, String key, long version){
-        long maxVersion;
-        if(!relationship.hasProperty(key)){
-            maxVersion = DTGConstants.DEFAULT_MAX_VERSION;
+    public RelationObject getRelById(long id, long version, boolean isCommit) {
+        String key = getStaticKey(RELATIONTYPE, id, "");
+        DTGSortedList list = MVCCStaticMap.get(key);
+        if(list == null){
+            return null;
         }else {
-            Object res = relationship.getProperty(key);
-            maxVersion = (long)res;
-        }
-        if(maxVersion < version){
-            relationship.setProperty(key, version);
-        }
-    }
-
-    private void setRelationTemporalProperty(Relationship relationship, String key, int start, int end,  Object value){
-        relationship.setTemporalProperty(key, start, end, value);
-    }
-
-    private void setRelationTemporalProperty(Relationship relationship, String key, int start, int end,
-                                             Object value, long version, boolean highA, List<EntityEntry> newlist){
-        if(!highA){
-            setRelationTemporalPropertyVersion(relationship, key, start, end, version);
-        }
-        else{
-            EntityEntry entry = new EntityEntry();
-            entry.setType(RELATIONTYPE);
-            entry.setOperationType(EntityEntry.SET);
-            entry.setIsTemporalProperty(true);
-            entry.setId(relationship.getId());
-            entry.setKey(key);
-            entry.setValue(value);
-            entry.setStart(start);
-            entry.setOther(end);
-            newlist.add(entry);
-        }
-        relationship.setTemporalProperty(getVersionKey(version, key), start, end, value);
-    }
-
-    private void setRelationTemporalPropertyVersion(Relationship relationship, String key, int start, int end, long version){
-        long maxVersion;
-        try {
-            Object res = relationship.getTemporalProperty(key, start);
-            maxVersion = (long)res;
-        }catch (Exception e){
-            maxVersion = DTGConstants.DEFAULT_MAX_VERSION;
-        }
-        if(maxVersion < version){
-            relationship.setTemporalProperty(key, start, end, version);
+            Object res;
+            if(isCommit){
+                res = list.find(version).getValue();
+            }else{
+                res = list.findData(version).getValue();
+            }
+            if(res == null){
+                return null;
+            }
+            return (RelationObject) res;
         }
     }
 
-    private void setRelationTemporalProperty(Relationship relationship, String key, int time,  Object value){
-        relationship.setTemporalProperty(key, time, value);
-    }
-
-    private void setRelationTemporalProperty(Relationship relationship, String key, int time,
-                                             Object value, long version, boolean highA, List<EntityEntry> newlist){
-        if(!highA){
-            setRelationTemporalPropertyVersion(relationship, key, time, version);
-        }
-        else{
-            EntityEntry entry = new EntityEntry();
-            entry.setType(RELATIONTYPE);
-            entry.setOperationType(EntityEntry.SET);
-            entry.setIsTemporalProperty(true);
-            entry.setId(relationship.getId());
-            entry.setKey(key);
-            entry.setValue(value);
-            entry.setStart(time);
-            entry.setOther(-1);
-            newlist.add(entry);
-        }
-        relationship.setTemporalProperty(getVersionKey(version, key), time, value);
-    }
-
-    private void setRelationTemporalPropertyVersion(Relationship relationship, String key, int time, long version){
-        long maxVersion;
-        try {
-            Object res = relationship.getTemporalProperty(key, time);
-            maxVersion = (long)res;
-        }catch (Exception e){
-            maxVersion = DTGConstants.DEFAULT_MAX_VERSION;
-        }
-        if(maxVersion < version){
-            relationship.setTemporalProperty(key, time, version);
-        }
-    }
-
-    private void deleteRelation(Relationship relationship, int i) throws RegionStoreException {
-        region.removeRelation();
-        relationTransactionAdd--;
-        actionId[i] = relationship.getId();
-        actionType[i] = 4;
-        relationship.delete();
-    }
-
-    private void deleteRelationProperty(Relationship relationship, String key){
-        relationship.removeProperty(key);
-    }
-
-    private void deleteRelationTemporalProperty(Relationship relationship, String key){
-        relationship.removeTemporalProperty(key);
-    }
-
-    private Object getRelationProperty(int txNum, Relationship relationship, String key){
-        long maxVersion;
-        if(!relationship.hasProperty(key)){
-            maxVersion = DTGConstants.DEFAULT_MAX_VERSION;
+    public RelationObject addRelationship(long version, long startNode, long endNode, long id) throws ObjectExistException {
+        String key = getStaticKey(RELATIONTYPE, id, "");
+        DTGSortedList list = MVCCStaticMap.get(key);
+        RelationObject r = new RelationObject(id, startNode,endNode);
+        MVCCObject o;
+        if(list == null){
+            list = new DTGSortedList();
+            o = new MVCCObject(version, r);
+            list.insert(o);
+            this.MVCCStaticMap.put(key, list);
         }else {
-            Object res = relationship.getProperty(key);
-            maxVersion = (long)res;
+            throw new ObjectExistException();
         }
-        return getRelationProperty(txNum, relationship, key, maxVersion);
+        return r;
     }
 
-    private Object getRelationProperty(int txNum, Relationship relationship, String key, long version){
-        this.returnVersion.put(txNum, version);
-        return relationship.getProperty(getVersionKey(version, key));
+    public MVCCObject commitRelation(long id, long startVersion, long endVersion) {
+        String key = getStaticKey(RELATIONTYPE, id, "");
+        DTGSortedList list = MVCCStaticMap.get(key);
+        return list.commitObject(startVersion, endVersion);
     }
 
-    private Object getRelationTemporalProperty(int txNum, Relationship relationship, String key, int time){
-        long maxVersion;
-        try {
-            Object res = relationship.getTemporalProperty(key, time);
-            maxVersion = (long)res;
-        }catch (Exception e){
-            maxVersion = DTGConstants.DEFAULT_MAX_VERSION;
+    public MVCCObject setNodeProperty(long version, NodeObject node, String key, Object value){
+        String mapkey = getStaticKey(NODETYPE, node.getId(), "");
+        DTGSortedList list = MVCCStaticMap.get(mapkey);
+        MVCCObject o;
+        GraphObject newNode = node.copy();
+        newNode.setProperty(key, value);
+        if(list == null) {
+            list = new DTGSortedList();
+            this.MVCCStaticMap.put(mapkey, list);
         }
-        return getRelationTemporalProperty(txNum, relationship, key, time, maxVersion);
+        o = new MVCCObject(version, newNode);
+        list.insert(o);
+        return o;
     }
 
-    private Object getRelationTemporalProperty(int txNum, Relationship relationship, String key, int time, long version){
-        this.returnVersion.put(txNum, version);
-        return relationship.getTemporalProperty(getVersionKey(version, key), time);
+    public void setNodeTemporalProperty(long version, NodeObject node, String key, long start, long end,  Object value) throws IdNotExistException {
+        String listKey = getTempKey(node.getId(), key);
+        TempSortedList map = getMap(NODETYPE, listKey, version);
+        if(map == null)return;
+        map.insert(version, value, start, end);
+    }
+
+    public List<TimeMVCCObject> commitAddNodeTemp(NodeObject node, String key, long startTime, long endTime, long startVersion, long endVersion) throws IdNotExistException {
+        String listKey = getTempKey(node.getId(), key);
+        TempSortedList map = getMap(NODETYPE, listKey, startVersion);
+        if(map == null)return null;
+        return map.commitObject(startVersion, endVersion, startTime, endTime);
+    }
+
+    public void deleteNode(long version, long id) throws IdNotExistException {
+        String key = getStaticKey(NODETYPE, id, "");
+        DTGSortedList list = MVCCStaticMap.get(key);
+        MVCCObject o;
+        if(list == null){
+            list = new DTGSortedList();
+            o = new MVCCObject(version, null);
+            list.insert(o);
+            this.MVCCStaticMap.put(key, list);
+        }else {
+            o = new MVCCObject(version, null);
+            list.insert(o);
+        }
+    }
+
+    public MVCCObject deleteNodeProperty(long version, NodeObject node, String key){
+        String mapkey = getStaticKey(NODETYPE, node.getId(), "");
+        DTGSortedList list = MVCCStaticMap.get(mapkey);
+        MVCCObject o;
+        GraphObject newNode = node.copy();
+        newNode.removeProperty(key);
+        if(list == null) {
+            list = new DTGSortedList();
+            this.MVCCStaticMap.put(mapkey, list);
+        }
+        o = new MVCCObject(version, newNode);
+        list.insert(o);
+        return o;
+    }
+
+    public void deleteNodeTemporalProperty(long version, NodeObject node, String key) throws IdNotExistException {
+        String listKey = getTempKey(node.getId(), key);
+        TempSortedList map = getMap(NODETYPE, listKey, version);
+        if(map == null)throw new IdNotExistException();
+        DeleteInfo deleteInfo = new DeleteInfo(map, version);
+        this.MVCCNodeTemPropertyMap.put(listKey, deleteInfo);
+    }
+
+    public void commitDeleteNodeTemporalProperty(long startVersion, long endVersion, NodeObject node, String key){
+        //need or not ?
+    }
+
+    public Object getNodeProperty(NodeObject node, String key){
+        return node.getProperty(key);
+    }
+
+    public Object getNodeTemporalProperty(long version, NodeObject node, String key, long time) throws IdNotExistException {
+        String listKey = getTempKey(node.getId(), key);
+        TempSortedList map = getMap(NODETYPE, listKey, version);
+        return map.get(version, time);
+    }
+
+    public void setRelationProperty(long version, RelationObject relationship, String key, Object value){
+        String mapkey = getStaticKey(RELATIONTYPE, relationship.getId(), "");
+        DTGSortedList list = MVCCStaticMap.get(mapkey);
+        MVCCObject o;
+        GraphObject newRel = relationship.copy();
+        newRel.setProperty(key, value);
+        if(list == null) {
+            list = new DTGSortedList();
+            this.MVCCStaticMap.put(mapkey, list);
+        }
+        o = new MVCCObject(version, newRel);
+        list.insert(o);
+    }
+
+    public void setRelationTemporalProperty(long version, RelationObject relationship, String key, long start, long end,  Object value) throws IdNotExistException {
+        String listKey = getTempKey(relationship.getId(), key);
+        TempSortedList map = getMap(RELATIONTYPE, listKey, version);
+        if(map == null)return;
+        map.insert(version, value, start, end);
+    }
+
+    public List<TimeMVCCObject> commitAddRelTemp(RelationObject relationship, String key, long startTime, long endTime, long startVersion, long endVersion) throws IdNotExistException {
+        String listKey = getTempKey(relationship.getId(), key);
+        TempSortedList map = getMap(RELATIONTYPE, listKey, startVersion);
+        if(map == null)return null;
+        return map.commitObject(startVersion, endVersion, startTime, endTime);
+    }
+
+    public void deleteRelation(long version, long id){
+        String key = getStaticKey(RELATIONTYPE, id, "");
+        DTGSortedList list = MVCCStaticMap.get(key);
+        MVCCObject o;
+        if(list == null){
+            list = new DTGSortedList();
+            o = new MVCCObject(version, null);
+            list.insert(o);
+            this.MVCCStaticMap.put(key, list);
+        }else {
+            o = new MVCCObject(version, null);
+            list.insert(o);
+        }
+    }
+
+    public Object getRelationProperty(long version, RelationObject relationship, String key) throws IdNotExistException {
+        return relationship.getProperty(key);
+    }
+
+    public Object getRelationTemporalProperty(long version, RelationObject relationship, String key, long time) throws IdNotExistException {
+        String listKey = getTempKey(relationship.getId(), key);
+        TempSortedList map = getMap(RELATIONTYPE, listKey, version);
+        return map.get(version, time);
+    }
+
+    public void deleteRelTemporalProperty(long version, RelationObject relationship, String key) throws IdNotExistException {
+        String listKey = getTempKey(relationship.getId(), key);
+        TempSortedList map = getMap(RELATIONTYPE, listKey, version);
+        if(map == null)throw new IdNotExistException();
+        DeleteInfo deleteInfo = new DeleteInfo(map, version);
+        this.MVCCRelTemPropertyMap.put(listKey, deleteInfo);
+    }
+
+    public void commitDeleteRelTemporalProperty(long startVersion, long endVersion, RelationObject r, String key){
+        //need or not ?
+    }
+
+    public MVCCObject deleteRelProperty(long version, RelationObject relation, String key){
+        String mapkey = getStaticKey(RELATIONTYPE, relation.getId(), "");
+        DTGSortedList list = MVCCStaticMap.get(mapkey);
+        MVCCObject o;
+        GraphObject newR = relation.copy();
+        newR.removeProperty(key);
+        if(list == null) {
+            list = new DTGSortedList();
+            this.MVCCStaticMap.put(mapkey, list);
+        }
+        o = new MVCCObject(version, newR);
+        list.insert(o);
+        return o;
+    }
+
+    private class DeleteInfo{
+        private Object oldValue;
+        private long startVersion;
+        private long endVersionversion;
+
+        public DeleteInfo(Object oldValue, long version){
+            this.startVersion = version;
+            this.oldValue = oldValue;
+        }
+
+        public boolean isVisible(long requestVersion){
+            return this.startVersion > requestVersion;
+        }
+
+        public Object getOldValue(){
+            return this.oldValue;
+        }
     }
 
 
 }
+
