@@ -3,38 +3,49 @@ package performance.tidbtest;
 import org.junit.Test;
 import tool.OutPutCsv;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ConcurrencyTest {
 
+    static int allCount = 100;
+    static int pool_size = 4;
+    static AtomicInteger count = new AtomicInteger(0);
+    static long[][] sta = new long[allCount][3];
+
     @Test
     public void ConCurrTest() throws Exception {
-        String url = "jdbc:mysql://49.233.217.199:4000/test?useUnicode=true&characterEncoding=utf-8&&useOldAliasMetadataBehavior=true";
+        String url = "jdbc:mysql://192.168.1.199:4000/test?useUnicode=true&characterEncoding=utf-8&&useOldAliasMetadataBehavior=true";
         String user = "root";
         String password = "";
         Class.forName("com.mysql.jdbc.Driver");
         Connection conn = DriverManager.getConnection(url, user, password);
-        Statement stmt = conn.createStatement();
-        OutPutCsv output = new OutPutCsv("D:\\DTG\\test\\TidbConcurrency50-80-4.csv", "start,end,cost");
+        conn.setAutoCommit(false);
+        OutPutCsv output = new OutPutCsv("D:\\distribute\\test\\TidbConcurrency5000-100-" + pool_size + ".csv", "start,start2,end,cost");
+
+        ExecutorService pool = Executors.newFixedThreadPool(pool_size);
 
         long start = System.currentTimeMillis();
-        for(int i = 0; i < 50; i++){
-            TxThread4 a = new TxThread4(stmt, conn, i, start, output);
-            a.start();
+        for(int i = 0; i < allCount; i++){
+            TxThread4 a = new TxThread4(conn, i, start);
+//            a.run();
+            pool.execute(a);
         }
 
         try {
-            Thread.sleep(100000);
+            Thread.sleep(800000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        System.out.println("all done");
+        for(int i = 0; i < allCount; i++){
+            output.write(Long.toString(sta[i][0]), Long.toString(sta[i][1]), Long.toString(sta[i][2]), Long.toString(sta[i][2] - sta[i][1]));
+        }
+        System.out.println("all done");
         output.close();
-        stmt.close();
         conn.close();
     }
 }
@@ -43,47 +54,46 @@ class TxThread4 extends Thread{
 
     int i;
     long start;
-    private ExecutorService fixedThreadPool;
-    OutPutCsv output;
     Connection conn;
-    Statement stmt;
 
-    public TxThread4(Statement stmt, Connection conn, int i, long start, OutPutCsv output){
+    public TxThread4(Connection conn, int i, long start){
         this.conn = conn;
         this.i = i;
         this.start = start;
-        fixedThreadPool = Executors.newFixedThreadPool(1);
-        this.output = output;
-        this.stmt = stmt;
     }
 
     @Override
     public void run() {
-        int count = i*80;
-        int max = count + 80;
-        while(count < max){
-            try{
-                conn.setAutoCommit(false);
-                String add = "insert into test_user1 values(" + count + ", 'aaa')";
-                boolean rs1 = stmt.execute(add);
-                conn.commit();
-                long end = System.currentTimeMillis();
-                //System.out.println("end  : " + count);
-                fixedThreadPool.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        output.write(Long.toString(start), Long.toString(end), Long.toString(end - start));
-                    }
-                });
-            }catch (Exception e){
-                System.out.println("rollback" + e);
-                try {
-                    conn.rollback();
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
+        long start2 = System.currentTimeMillis();
+        try{
+
+            PreparedStatement statement = conn.prepareStatement("insert into temp_pro values(?, ?)");
+            for(int j = 0; j < 5000; j++){
+                statement.setString(1, j + "-" + i);
+                statement.setString(2, "aaa");
+                statement.addBatch();
             }
-            count++;
+            statement.executeBatch();
+            statement.close();
+        }catch (Exception e){
+            System.out.println("rollback" + e);
+            try {
+                conn.rollback();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+        }finally {
+            try {
+                conn.commit();
+                //conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            long end = System.currentTimeMillis();
+//            System.out.println(end - start2);
+            ConcurrencyTest.sta[i][0] = start;
+            ConcurrencyTest.sta[i][1] = start2;
+            ConcurrencyTest.sta[i][2] = end;
         }
     }
 }

@@ -10,7 +10,7 @@ import java.util.concurrent.CountDownLatch;
 
 public class VersionRequestClosure implements Closure {
     private long version;
-    private DTGTransaction transaction;
+    //private DTGTransaction transaction;
     private volatile Errors error;
     private CompletableFuture<Object> future;
     private Object result;
@@ -31,27 +31,27 @@ public class VersionRequestClosure implements Closure {
 
     public void setVersion(long version) {
         this.version = version;
-        this.transaction.setVersion(version);
+        //this.transaction.setVersion(version);
     }
 
-    public DTGTransaction getTransaction() {
-        return transaction;
-    }
+//    public DTGTransaction getTransaction() {
+//        return transaction;
+//    }
 
     public void setDone(CompletableFuture<Object> future) {
         this.future = future;
     }
 
-    public void setTransaction(DTGTransaction transaction) {
-        this.transaction = transaction;
-    }
+//    public void setTransaction(DTGTransaction transaction) {
+//        this.transaction = transaction;
+//    }
 
     public void setResult(Object result) {
         this.result = result;
     }
 
     public void reset(){
-        this.transaction = null;
+        //this.transaction = null;
         this.future = null;
         this.result = null;
         this.error = null;

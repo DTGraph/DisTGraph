@@ -109,7 +109,7 @@ public class DTGDatabase {
         DTGTransaction transaction = transactionManage.getTransaction();
         NodeAgent node = new NodeAgent(transactionManage);
         EntityEntry entry = new EntityEntry();
-        entry.setId(pdClient.getId(NODETYPE));//System.out.println("node id = " + entry.getId());
+        entry.setId(pdClient.getId(NODETYPE));System.out.println("node id = " + entry.getId());
         entry.setTransactionNum(transaction.getEntityNum());
         entry.setType(NODETYPE);
         entry.setOperationType(EntityEntry.ADD);

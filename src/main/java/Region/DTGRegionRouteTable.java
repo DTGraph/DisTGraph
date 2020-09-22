@@ -34,6 +34,7 @@ import tool.ObjectAndByte;
 import java.util.*;
 import java.util.concurrent.locks.StampedLock;
 
+import static config.DefaultOptions.INITREGIONNUMBER;
 import static config.MainType.*;
 
 /**
@@ -95,12 +96,16 @@ public class DTGRegionRouteTable {
                     region = getRegionById(transactionNumRegion.get(entityEntry.getParaId()));
                 }
                 else {
-                    region = findRegionByKeyWithoutLock(entityEntry.getId());
+//                    region = findRegionByKeyWithoutLock(entityEntry.getId());
+                    long regionId = entityEntry.getId() % (INITREGIONNUMBER - 1) + 1;
+                    region = getRegionById(regionId);
                 }
                 //checkRegion(entityEntry, region);
                 final DTGRegion region1;
                 if(region == null){
-                    region1 = findRegionByKeyWithoutLock(entityEntry.getId());
+                    long regionId = entityEntry.getId() % (INITREGIONNUMBER - 1) + 1;
+                    region1 = getRegionById(regionId);
+//                    region1 = findRegionByKeyWithoutLock(entityEntry.getId());
                 }
                 else {
                     region1 = region;

@@ -87,12 +87,12 @@ public class TransactionManager implements AutoCloseable {
         }
     }
 
-    public void applyRequestVersion(DTGTransaction transaction, CompletableFuture future){
+    public void applyRequestVersion(CompletableFuture future){
         try {
             final EventTranslator<VersionRequestClosure> translator = (event, sequence) -> {
                 event.reset();
                 event.setDone(future);
-                event.setTransaction(transaction);
+                //event.setTransaction(transaction);
             };
             int retryTimes = 0;
             while (true) {

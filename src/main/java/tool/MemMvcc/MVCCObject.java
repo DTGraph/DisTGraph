@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 public class MVCCObject implements Comparable<MVCCObject>{
 
     private long version;
-    private long commitVersion;
+    private long commitVersion = -1;
     private Object value;
     private boolean isMaxVerion = false;
 

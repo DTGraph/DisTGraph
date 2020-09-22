@@ -5,6 +5,7 @@ import Element.EntityEntry;
 import LocalDBMachine.LocalDB;
 import MQ.codec.v2.MQV2LogEntryCodecFactory;
 import Region.DTGRegion;
+import Region.DTGRegionEngine;
 import UserClient.DTGSaveStore;
 import UserClient.Transaction.TransactionLog;
 import com.alipay.sofa.jraft.Closure;
@@ -25,6 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
+
+import static com.alipay.sofa.jraft.entity.EnumOutter.EntryType.ENTRY_TYPE_DATA;
+import static com.alipay.sofa.jraft.entity.EnumOutter.EntryType.ENTRY_TYPE_NO_OP;
 
 /**
  * @author :jinkai
@@ -47,14 +51,6 @@ public class DTGMQ implements Lifecycle<MQOptions> {
 //    private RingBuffer<RunClosure>                    commitQueue;
 
     private volatile CountDownLatch                   shutdownLatch;
-    //private ClosureQueue                              closureQueue;
-    //private final MQStateMachine                      stateMachine;
-//    private List<Long>                                waitCommitList;
-//    private long                                      commitIndex;
-
-//    public DTGMQ(){
-//        this.stateMachine = new MQStateMachine();
-//    }
 
     private static class LogEntryAndClosureFactory implements EventFactory<TransactionLogEntryAndClosure> {
 
@@ -120,47 +116,6 @@ public class DTGMQ implements Lifecycle<MQOptions> {
         }
     }
 
-//    public class InternalRunClosure implements Closure{
-//        TransactionLogEntry log;
-//
-//        public void setLog(TransactionLogEntry log) {
-//            this.log = log;
-//        }
-//
-//        public TransactionLogEntry getLog() {
-//            return log;
-//        }
-//
-//        @Override
-//        public void run(Status status) {
-//            addToWaitCommit(this.log.getVersion());
-//            //System.out.println("success : " + log.getId() + ", time : " + System.currentTimeMillis() );
-//        }
-//    }
-
-//    private class RunClosureHandler implements EventHandler<RunClosure> {
-//        // task list for batch
-//        private final List<RunClosure> tasks = new ArrayList<>(DTGConstants.applyBatch);
-//
-//        @Override
-//        public void onEvent(final RunClosure event, final long sequence, final boolean endOfBatch)
-//                throws Exception {
-//
-//            if (event.shutdownLatch != null) {
-//                if (!this.tasks.isEmpty()) {
-//                    stateMachine.onApply(tasks);
-//                }
-//                event.shutdownLatch.countDown();
-//                return;
-//            }
-//            this.tasks.add(event);
-//            if (this.tasks.size() >= DTGConstants.applyBatch || endOfBatch) {
-//                stateMachine.onApply(tasks);
-//                this.tasks.clear();
-//            }
-//        }
-//    }
-
     public void executeApplyingTasks(final List<TransactionLogEntryAndClosure> tasks){
         List<TransactionLogEntry> logEntries = new ArrayList<>();
         for(TransactionLogEntryAndClosure closure : tasks){
@@ -198,28 +153,17 @@ public class DTGMQ implements Lifecycle<MQOptions> {
         this.applyDisruptor.setDefaultExceptionHandler(new LogExceptionHandler<Object>(getClass().getSimpleName()));
         this.applyQueue = this.applyDisruptor.start();
 
-//        this.commitDisruptor = DisruptorBuilder.<RunClosure> newInstance() //
-//                .setRingBufferSize(DTGConstants.disruptorBufferSize) //
-//                .setEventFactory(new RunClosureFactory()) //
-//                .setThreadFactory(new NamedThreadFactory("DTG-MQ-Disruptor-", true)) //
-//                .setProducerType(ProducerType.MULTI) //
-//                .setWaitStrategy(new BlockingWaitStrategy()) //
-//                .build();
-//        this.commitDisruptor.handleEventsWith(new RunClosureHandler());
-//        this.commitDisruptor.setDefaultExceptionHandler(new LogExceptionHandler<Object>(getClass().getSimpleName()));
-//        this.commitQueue = this.commitDisruptor.start();
-        //this.closureQueue = new ClosureQueueImpl();
-//        this.commitIndex = this.logStorage.getCommitLogIndex(true);
-//        this.waitCommitList = new ArrayList<>();
-//        if(!this.stateMachine.init(opts.getSaveStore())){
-//            return false;
-//        }
         if(opts.getSaveStore() != null){
-            reRunUncommitLog(opts.getSaveStore());
+            List<DTGRegionEngine> list = opts.getSaveStore().getStoreEngine().getAllRegionEngines();
+            List<Long> regionIds = new ArrayList<>() ;
+            for(DTGRegionEngine r : list){
+                regionIds.add(r.getRegion().getId());
+            }
+            //reRunUncommitLog(opts.getSaveStore());
         }
-        else if(opts.getLocalDB() != null){
-            reRunUncommitLog(opts.getLocalDB());
-        }
+//        else if(opts.getLocalDB() != null){
+//            reRunUncommitLog(opts.getLocalDB());
+//        }
         return true;
     }
 
@@ -237,7 +181,16 @@ public class DTGMQ implements Lifecycle<MQOptions> {
 
         //long index = getTxLogId();
         final TransactionLogEntry entry = new TransactionLogEntry(task.getVersion());
-        entry.setData(task.getByteData());
+        if(task.getByteData() != null){
+            entry.setData(task.getByteData());
+            entry.setType(ENTRY_TYPE_DATA);
+        }else{
+            entry.setType(ENTRY_TYPE_NO_OP);
+        }
+        if(task.getMainRegion() >= 0){
+            entry.setMainRegion(task.getMainRegion());
+        }
+        entry.setStatus(task.getTxStatus());
 
         int retryTimes = 0;
         try {
@@ -269,9 +222,14 @@ public class DTGMQ implements Lifecycle<MQOptions> {
             Utils.runClosureInThread(task.getDone(), new Status( TxMQError.ENODESHUTDOWN.getNumber(), "MQ is shutting down."));
             throw new IllegalStateException("Node is shutting down");
         }
-        if(this.logStorage.removeEntry(task.getVersion())){
+        if(this.logStorage.removeEntry(task.getVersion()) && this.logStorage.removeStatusEntry(task.getVersion())){
             task.getDone().run(Status.OK());
         }
+    }
+
+    public byte getStatus(long version){
+        TransactionLogEntry entry = this.logStorage.getStatusEntry(version);
+        return entry.getStatus();
     }
 
 //    private void publishCommit(InternalRunClosure closure){
@@ -347,23 +305,91 @@ public class DTGMQ implements Lifecycle<MQOptions> {
 //        this.logStorage.setMaxVersion(maxVersion);
 //    }
 
-    private void reRunUncommitLog(DTGSaveStore store){
+
+//    private void reRunUncommitLog(DTGSaveStore store, List<Long> regionIds){
+//        List<TransactionLogEntry> unCommitLog = this.logStorage.getUnCommitLog();
+//        System.out.println("uncommit log size = " + unCommitLog.size());
+//        for(TransactionLogEntry log : unCommitLog){
+//            if(log.getStatus() == DTGConstants.TXSUCCESS){System.out.println("tx success = " + log.getVersion());
+//                continue;
+//            }else{
+//                long version = log.getVersion();
+//                TransactionLogEntry fullLog = this.logStorage.getEntry(version);
+//                String txId = "reRun_" + version;
+//                List<EntityEntry> entries = ((TransactionLog) ObjectAndByte.toObject(fullLog.getByteData())).getOps();
+//                processRedoLog(store, fullLog, regionIds, txId, log.getStatus());
+//            }
+//
+//            //store.applyRequest(entries, txId, false, false, DTGConstants.FAILOVERRETRIES, true,  version, null );
+//        }
+//    }
+
+    public void reRunUncommitLog(DTGSaveStore store){
         List<TransactionLogEntry> unCommitLog = this.logStorage.getUnCommitLog();
         for(TransactionLogEntry log : unCommitLog){
             List<EntityEntry> entries = ((TransactionLog) ObjectAndByte.toObject(log.getByteData())).getOps();
             long version = log.getVersion();
             String txId = "reRun_" + version;
-            store.applyRequest(entries, txId, false, false, DTGConstants.FAILOVERRETRIES, true,  version, null );
+            store.applyRequest(entries, txId, false, false, DTGConstants.FAILOVERRETRIES, true, version, null);
         }
     }
 
-    private void reRunUncommitLog(LocalDB localDB){
-        List<TransactionLogEntry> unCommitLog = this.logStorage.getUnCommitLog();
-        for(TransactionLogEntry log : unCommitLog){
-            List<EntityEntry> entries = ((TransactionLog) ObjectAndByte.toObject(log.getByteData())).getOps();
-            long version = log.getVersion();
-            String txId = "reRun_" + version;
-            //store.applyRequest(entries, txId, false, false, DTGConstants.FAILOVERRETRIES, null, true, version);
+    private void processRedoLog(DTGSaveStore store, TransactionLogEntry log, List<Long> regionIds, String txId, byte status){
+        List<EntityEntry> entries = ((TransactionLog) ObjectAndByte.toObject(log.getByteData())).getOps();
+        System.out.println("log " + txId + " status :" + status);
+        switch (status){
+            case DTGConstants.TXFAILEDFIRST:
+                if(regionIds.contains(log.getMainRegion())){
+                    rollbackTxInSecond(store, entries, txId, log.getVersion(), log.getMainRegion());
+                }
+                break;
+            case DTGConstants.TXRECEIVED:{
+                if(regionIds.contains(log.getMainRegion())){
+                    rollbackTxInSecond(store, entries, txId, log.getVersion(), log.getMainRegion());
+                }else{
+                    TransactionLogEntry entry = new TransactionLogEntry(ENTRY_TYPE_NO_OP, log.getVersion());
+                    entry.setStatus(DTGConstants.TXFAILEDFIRST);
+                    this.logStorage.appendEntry(entry);
+                }
+                break;
+            }
+            case DTGConstants.TXDONEFIRST:{
+                if(regionIds.contains(log.getMainRegion())){
+                    reAskFirstResult(store, entries, txId, log.getVersion());
+                }
+                break;
+            }
+            case DTGConstants.TXSECONDSTART:{
+                System.out.println(regionIds + "---------" + log.getMainRegion());
+                if(regionIds.contains(log.getMainRegion())) {
+                    reCommitAll(store, entries, txId, log.getVersion(), log.getMainRegion());
+                }else {
+                    commitSelf();
+                }
+                break;
+            }
+            case DTGConstants.TXSUCCESS:{
+                break;
+            }
+
         }
     }
+
+    private void rollbackTxInSecond(DTGSaveStore store, List<EntityEntry> entries, String txId, long startVersion, long mainRegionId){
+        store.applySecondPhase(entries, txId, startVersion, false, mainRegionId, 3, true);
+    }
+
+    private void reCommitAll(DTGSaveStore store, List<EntityEntry> entries, String txId, long startVersion, long mainRegionId){
+        store.applySecondPhase(entries, txId, startVersion, true, mainRegionId, 3, true);
+    }
+
+    private void commitSelf(){
+
+    }
+
+    private void reAskFirstResult(DTGSaveStore store, List<EntityEntry> entries, String txId, long startVersion){System.out.println("reAskFirstResult");
+        store.applyRequest(entries, txId, false, false, 3, true, startVersion, null);
+    }
+
+
 }

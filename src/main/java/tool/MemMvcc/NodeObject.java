@@ -8,8 +8,8 @@ import static config.MainType.NODETYPE;
 
 public class NodeObject extends GraphObject {
 
-    public NodeObject(long id) {
-        super(id);
+    public NodeObject(long id, long version) {
+        super(id, version);
         setType(NODETYPE);
     }
 
@@ -20,7 +20,7 @@ public class NodeObject extends GraphObject {
 
     @Override
     public GraphObject copy() {
-        NodeObject newobj = new NodeObject(getId());
+        NodeObject newobj = new NodeObject(getId(), -1);
         newobj.setType(getType());
         for(Map.Entry entry : properties.entrySet()){
             this.properties.put((String)entry.getKey(), entry.getValue());
@@ -28,6 +28,6 @@ public class NodeObject extends GraphObject {
         for(Map.Entry entry : needUpdate.entrySet()){
             this.needUpdate.put((String)entry.getKey(), entry.getValue());
         }
-        return null;
+        return newobj;
     }
 }

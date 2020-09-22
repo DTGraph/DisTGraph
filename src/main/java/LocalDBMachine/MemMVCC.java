@@ -79,7 +79,7 @@ public class MemMVCC implements AutoCloseable {
     public NodeObject addNode(long id, long version) throws ObjectExistException {
         String key = getStaticKey(NODETYPE, id, "");
         DTGSortedList list = MVCCStaticMap.get(key);
-        NodeObject node = new NodeObject(id);
+        NodeObject node = new NodeObject(id, version);
         MVCCObject o;
         if(list == null){
             list = new DTGSortedList();
@@ -104,9 +104,14 @@ public class MemMVCC implements AutoCloseable {
         if(list == null){
             return null;
         }else {
-            Object res;
+            Object res;//list.printList();list.printCommitList();//System.out.println(version);System.out.println(id);
             if(isCommit){
-                res = list.find(version).getValue();
+                MVCCObject o = list.find(version);
+                if(o == null){
+                    res = list.findData(version).getValue();
+                }else{
+                    res = o.getValue();
+                }
             }else{
                 res = list.findData(version).getValue();
             }
@@ -140,7 +145,7 @@ public class MemMVCC implements AutoCloseable {
     public RelationObject addRelationship(long version, long startNode, long endNode, long id) throws ObjectExistException {
         String key = getStaticKey(RELATIONTYPE, id, "");
         DTGSortedList list = MVCCStaticMap.get(key);
-        RelationObject r = new RelationObject(id, startNode,endNode);
+        RelationObject r = new RelationObject(id, version, startNode,endNode);
         MVCCObject o;
         if(list == null){
             list = new DTGSortedList();
@@ -159,19 +164,24 @@ public class MemMVCC implements AutoCloseable {
         return list.commitObject(startVersion, endVersion);
     }
 
-    public MVCCObject setNodeProperty(long version, NodeObject node, String key, Object value){
+    public void setNodeProperty(long version, NodeObject node, String key, Object value){
         String mapkey = getStaticKey(NODETYPE, node.getId(), "");
         DTGSortedList list = MVCCStaticMap.get(mapkey);
-        MVCCObject o;
-        GraphObject newNode = node.copy();
+        GraphObject newNode;
+        if(node.getVersion() != version){
+            newNode = node.copy();
+        }else{
+            newNode = node;
+        }
         newNode.setProperty(key, value);
         if(list == null) {
             list = new DTGSortedList();
             this.MVCCStaticMap.put(mapkey, list);
         }
-        o = new MVCCObject(version, newNode);
-        list.insert(o);
-        return o;
+        if(newNode != node){
+            MVCCObject o = new MVCCObject(version, newNode);
+            list.insert(o);
+        }
     }
 
     public void setNodeTemporalProperty(long version, NodeObject node, String key, long start, long end,  Object value) throws IdNotExistException {
@@ -203,19 +213,25 @@ public class MemMVCC implements AutoCloseable {
         }
     }
 
-    public MVCCObject deleteNodeProperty(long version, NodeObject node, String key){
+    public void deleteNodeProperty(long version, NodeObject node, String key){
         String mapkey = getStaticKey(NODETYPE, node.getId(), "");
         DTGSortedList list = MVCCStaticMap.get(mapkey);
         MVCCObject o;
-        GraphObject newNode = node.copy();
+        GraphObject newNode;
+        if(node.getVersion() != version){
+            newNode = node.copy();
+        }else{
+            newNode = node;
+        }
         newNode.removeProperty(key);
         if(list == null) {
             list = new DTGSortedList();
             this.MVCCStaticMap.put(mapkey, list);
         }
-        o = new MVCCObject(version, newNode);
-        list.insert(o);
-        return o;
+        if(newNode != node){
+            o = new MVCCObject(version, newNode);
+            list.insert(o);
+        }
     }
 
     public void deleteNodeTemporalProperty(long version, NodeObject node, String key) throws IdNotExistException {
@@ -243,15 +259,21 @@ public class MemMVCC implements AutoCloseable {
     public void setRelationProperty(long version, RelationObject relationship, String key, Object value){
         String mapkey = getStaticKey(RELATIONTYPE, relationship.getId(), "");
         DTGSortedList list = MVCCStaticMap.get(mapkey);
-        MVCCObject o;
-        GraphObject newRel = relationship.copy();
+        GraphObject newRel;
+        if(relationship.getVersion() != version){
+            newRel = relationship.copy();
+        }else{
+            newRel = relationship;
+        }
         newRel.setProperty(key, value);
         if(list == null) {
             list = new DTGSortedList();
             this.MVCCStaticMap.put(mapkey, list);
         }
-        o = new MVCCObject(version, newRel);
-        list.insert(o);
+        if(newRel != relationship){
+            MVCCObject o = new MVCCObject(version, newRel);
+            list.insert(o);
+        }
     }
 
     public void setRelationTemporalProperty(long version, RelationObject relationship, String key, long start, long end,  Object value) throws IdNotExistException {
@@ -305,19 +327,28 @@ public class MemMVCC implements AutoCloseable {
         //need or not ?
     }
 
-    public MVCCObject deleteRelProperty(long version, RelationObject relation, String key){
+    public void deleteRelProperty(long version, RelationObject relation, String key){
         String mapkey = getStaticKey(RELATIONTYPE, relation.getId(), "");
         DTGSortedList list = MVCCStaticMap.get(mapkey);
-        MVCCObject o;
-        GraphObject newR = relation.copy();
-        newR.removeProperty(key);
+        GraphObject newRel;
+        if(relation.getVersion() != version){
+            newRel = relation.copy();
+        }else{
+            newRel = relation;
+        }
+        newRel.removeProperty(key);
         if(list == null) {
             list = new DTGSortedList();
             this.MVCCStaticMap.put(mapkey, list);
         }
-        o = new MVCCObject(version, newR);
-        list.insert(o);
-        return o;
+        if(newRel != relation){
+            MVCCObject o = new MVCCObject(version, newRel);
+            list.insert(o);
+        }
+    }
+
+    public void clean(long version){
+        //this.MVCCStaticMap.c
     }
 
     private class DeleteInfo{

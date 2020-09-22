@@ -16,6 +16,7 @@ public class SecondPhaseRequest extends DTGBaseRequest {
     private static final long serialVersionUID = 7400456690465502908L;
 
     private long version;
+    private long startVersion;
     private String txId;
     private boolean isSuccess;
     private boolean requireTxNotNull;
@@ -42,6 +43,14 @@ public class SecondPhaseRequest extends DTGBaseRequest {
 
     public void setVersion(long version) {
         this.version = version;
+    }
+
+    public long getStartVersion() {
+        return startVersion;
+    }
+
+    public void setStartVersion(long startVersion) {
+        this.startVersion = startVersion;
     }
 
     public void setSuccess(boolean success) {

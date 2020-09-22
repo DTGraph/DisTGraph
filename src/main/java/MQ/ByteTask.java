@@ -17,6 +17,8 @@ public class ByteTask extends Task {
 
     private byte[] byteData;
     private long version;
+    private byte txStatus;
+    private long mainRegion = -1;
 
     public ByteTask(){
         super();
@@ -47,5 +49,21 @@ public class ByteTask extends Task {
 
     public void setVersion(long version) {
         this.version = version;
+    }
+
+    public byte getTxStatus() {
+        return txStatus;
+    }
+
+    public void setTxStatus(byte txStatus) {
+        this.txStatus = txStatus;
+    }
+
+    public long getMainRegion() {
+        return mainRegion;
+    }
+
+    public void setMainRegion(long mainRegion) {
+        this.mainRegion = mainRegion;
     }
 }

@@ -11,9 +11,11 @@ public abstract class GraphObject {
     Map<String, Object> needUpdate = new HashMap<>();
     private byte type;
     Object realObjectInDB;
+    private long version;
 
-    public GraphObject(long id){
+    public GraphObject(long id, long version){
         this.id = id;
+        this.version = version;
     }
 
     public long getId(){
@@ -62,6 +64,14 @@ public abstract class GraphObject {
 
     public void setRealObjectInDB(Object o){
         this.realObjectInDB = o;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
     }
 
     public abstract Object getRealObjectInDB();

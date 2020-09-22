@@ -191,6 +191,9 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
             long storeId = request.getStoreId();
 
             //DTGStore store = this.metadataStore.getStoreInfo(clusterId, storeId);
+            DTGCluster cluster = this.metadataStore.getClusterInfo(clusterId);
+            //System.out.println(cluster.getStores());
+
             List<Pair<DTGRegion, DTGRegionStats>> pairList = request.getRegionStatsList();
             System.out.println( "store id = "+ storeId + "， pair list size = " + pairList.size());
             if(lazyStore == null || pairList.size() < lazyStoreLeaderRegionNum){
@@ -202,53 +205,76 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
                 lazyStoreLeaderRegionNum = pairList.size();
             }
 
-
+            //System.out.println( "lazyStore id = "+ lazyStore.getId() + "， pair list size = " + lazyStoreLeaderRegionNum);
 
             for(Pair pair : pairList){
                 DTGRegion region = (DTGRegion) pair.getKey();
-                if(region.getId() == Constants.DEFAULT_REGION_ID){
+                long transferStroeId = region.getId() % cluster.getStores().size();
+                DTGStore transferStore = this.metadataStore.getStoreInfo(clusterId, transferStroeId);
+                if(transferStroeId != storeId){
                     DTGInstruction instruction;
-                    if(instructionList.size() == 0 && this.metadataStore.getNeedUpdateDefaultRegionLeader()){
-                        DTGStore[] lazyStores = this.metadataStore.findLazyWorkStores(clusterId);
-                        DTGStore lazyStore = lazyStores[0];
-                        final DTGInstruction.TransferLeader transferLeader = new DTGInstruction.TransferLeader();
-                        //this.lazyStoreId = lazyStore.getId();
-                        transferLeader.setMoveToStoreId(lazyStore.getId());
-                        transferLeader.setMoveToEndpoint(lazyStore.getEndpoint());
-                        instruction = new DTGInstruction();
-                        instruction.setRegion(region);
-                        instruction.setTransferLeader(transferLeader);
-                        regionPingEvent1.addInstruction(instruction);
-                        this.metadataStore.updateNeedUpdateDefaultRegionLeader(false);
-                        //this.lazyStoreEndPoint = lazyStore.getEndpoint();
-                        System.out.println("transferLeader!");
-                        //if(lazyStore.getEndpoint() == null){System.out.println("null endpoint");}
-                    }
-                    while (instructionList.size() > 0 && (instruction = instructionList.get(0)) != null){
-                        AddRegionInfo add = instruction.getAddRegion();
-                        Peer lazyPeer = new Peer(add.getNewRegionId(), storeId, lazyStore.getEndpoint());
-                        List<Peer> peers = add.getPeers();
-                        int i = 0;
-                        for(i = 0; i < Constants.REGION_COPY_NUMBER && lazyPeer.getEndpoint() != null ; i++){
-                            Peer peer = peers.get(i);
-                            if(peer.getEndpoint().toString().equals(lazyPeer.getEndpoint().toString())){//System.out.println("same peer!!!!!!!!!!!!!");
-                                break;
-                            }
-                        }
-                        if(i == Constants.REGION_COPY_NUMBER && lazyPeer.getEndpoint() != null){
-                            peers.set(Constants.REGION_COPY_NUMBER - 1, lazyPeer);
-                        }
-                        //System.out.println("new region id = " + add.getNewRegionId() + ", peer size : " + add.getPeers().size());
-                        add.setFullRegionId(region.getId());
-                        instruction.setRegion(region);
-                        instruction.setStoreId(storeId);
-                        regionPingEvent1.addInstruction(instruction);
-                        instructionList.remove(0);
-                        System.out.println("add instruction, add new region id = " + add.getNewRegionId());
-                        this.metadataStore.updateNeedUpdateDefaultRegionLeader(true);
-                    }
+                    final DTGInstruction.TransferLeader transferLeader = new DTGInstruction.TransferLeader();
+                    transferLeader.setMoveToStoreId(transferStroeId);
+                    transferLeader.setMoveToEndpoint(transferStore.getEndpoint());
+                    instruction = new DTGInstruction();
+                    instruction.setRegion(region);
+                    instruction.setTransferLeader(transferLeader);
+                    regionPingEvent1.addInstruction(instruction);
+                    this.metadataStore.updateNeedUpdateDefaultRegionLeader(false);
+                    //this.lazyStoreEndPoint = lazyStore.getEndpoint();
+                    System.out.println("transferLeader!");
+                    //if(lazyStore.getEndpoint() == null){System.out.println("null endpoint");}
                 }
+
+
             }
+
+
+//            for(Pair pair : pairList){
+//                DTGRegion region = (DTGRegion) pair.getKey();//System.out.println( "aaaaaaaaaaaa");
+//                if(region.getId() == Constants.DEFAULT_REGION_ID){
+//                    DTGInstruction instruction;//System.out.println( "bbbb");
+//                    if(instructionList.size() == 0 && this.metadataStore.getNeedUpdateDefaultRegionLeader()){
+//                        DTGStore[] lazyStores = this.metadataStore.findLazyWorkStores(clusterId);//System.out.println( "ccccccccc");
+//                        DTGStore lazyStore = lazyStores[0];
+//                        final DTGInstruction.TransferLeader transferLeader = new DTGInstruction.TransferLeader();
+//                        //this.lazyStoreId = lazyStore.getId();
+//                        transferLeader.setMoveToStoreId(lazyStore.getId());
+//                        transferLeader.setMoveToEndpoint(lazyStore.getEndpoint());
+//                        instruction = new DTGInstruction();
+//                        instruction.setRegion(region);
+//                        instruction.setTransferLeader(transferLeader);
+//                        regionPingEvent1.addInstruction(instruction);
+//                        this.metadataStore.updateNeedUpdateDefaultRegionLeader(false);
+//                        //this.lazyStoreEndPoint = lazyStore.getEndpoint();
+//                        System.out.println("transferLeader!");
+//                        //if(lazyStore.getEndpoint() == null){System.out.println("null endpoint");}
+//                    }
+//                    while (instructionList.size() > 0 && (instruction = instructionList.get(0)) != null){
+//                        AddRegionInfo add = instruction.getAddRegion();
+//                        Peer lazyPeer = new Peer(add.getNewRegionId(), storeId, lazyStore.getEndpoint());
+//                        List<Peer> peers = add.getPeers();
+//                        int i = 0;
+//                        for(i = 0; i < Constants.REGION_COPY_NUMBER && lazyPeer.getEndpoint() != null ; i++){
+//                            Peer peer = peers.get(i);
+//                            if(peer.getEndpoint().toString().equals(lazyPeer.getEndpoint().toString())){//System.out.println("same peer!!!!!!!!!!!!!");
+//                                break;
+//                            }
+//                        }
+//                        if(i == Constants.REGION_COPY_NUMBER && lazyPeer.getEndpoint() != null){
+//                            peers.set(Constants.REGION_COPY_NUMBER - 1, lazyPeer);
+//                        }
+//                        //System.out.println("new region id = " + add.getNewRegionId() + ", peer size : " + add.getPeers().size());
+//                        add.setFullRegionId(region.getId());
+//                        instruction.setRegion(region);
+//                        instruction.setStoreId(storeId);
+//                        regionPingEvent1.addInstruction(instruction);
+//                        instructionList.remove(0);
+//                        System.out.println("add instruction, add new region id = " + add.getNewRegionId());
+//                        this.metadataStore.updateNeedUpdateDefaultRegionLeader(true);
+//                    }
+//                }
+//            }
 
 
 //            DTGRegion initRegion = store.getRegions().get(0);

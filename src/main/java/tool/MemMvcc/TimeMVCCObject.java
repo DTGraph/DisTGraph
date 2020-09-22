@@ -4,6 +4,7 @@ public class TimeMVCCObject extends MVCCObject {
 
     private long startTime;
     private long endTime;
+    private boolean isMaxVersion;
     public TimeMVCCObject(long version, Object value, long startTime, long endTime) {
         super(version, value);
         this.startTime = startTime;

@@ -33,7 +33,7 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
     private static final Logger LOG = LoggerFactory.getLogger(MQRocksDBLogStorage.class);
 
     public static final byte[] FIRST_LOG_IDX_KEY  = Utils.getBytes("meta/0firstLogIndex");
-//    public static final byte[] COMMIT_LOG_IDX_KEY = Utils.getBytes("meta/1commitLogIndex");
+    public static final byte[] LOG_STATUS_IDX_KEY = Utils.getBytes("meta/1statusLogIndex");
 //    public static final byte[] MAX_VERSION        = Utils.getBytes("meta/2maxVersion");
 
     static {
@@ -54,15 +54,18 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
     private final List<ColumnFamilyOptions> cfOptions     = new ArrayList<>();
     private ColumnFamilyHandle              defaultHandle;
     private ColumnFamilyHandle              confHandle;
+    private ColumnFamilyHandle              statusHandle;
     private ReadOptions                     totalOrderReadOptions;
     private final ReadWriteLock             readWriteLock = new ReentrantReadWriteLock();
     private final Lock                      readLock      = this.readWriteLock.readLock();
     private final Lock                      writeLock     = this.readWriteLock.writeLock();
 
-    private volatile long                   firstLogIndex  = 1;
+    private volatile long                   firstLogIndex  = 0;
+    private volatile long                   firstLogStatusIndex  = 0;
     private volatile long                   commitLogIndex = 0;
 
-    private volatile boolean                hasLoadFirstLogIndex;
+    private volatile boolean                hasLoadFirstLogIndex = false;
+    private volatile boolean                hasLoadFirstStatusLogIndex = false;
 
     public MQRocksDBLogStorage(final String path) {
         super();
@@ -122,7 +125,32 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
             it.seekToFirst();
             if (it.isValid()) {
                 final long ret = Bits.getLong(it.key(), 0);
-                saveFirstLogIndex(ret);
+                saveFirstLogIndex(ret, FIRST_LOG_IDX_KEY);
+                setFirstLogIndex(ret);
+                return ret;
+            }
+            return 0L;
+        } finally {
+            if (it != null) {
+                it.close();
+            }
+            this.readLock.unlock();
+        }
+    }
+
+    public long getFirstLogStatusIndex() {
+        this.readLock.lock();
+        RocksIterator it = null;
+        try {
+            if (this.hasLoadFirstStatusLogIndex) {
+                return this.firstLogStatusIndex;
+            }
+            checkState();
+            it = this.db.newIterator(this.statusHandle, this.totalOrderReadOptions);
+            it.seekToFirst();
+            if (it.isValid()) {
+                final long ret = Bits.getLong(it.key(), 0);
+                saveFirstLogIndex(ret, LOG_STATUS_IDX_KEY);
                 setFirstLogIndex(ret);
                 return ret;
             }
@@ -140,6 +168,20 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
         this.readLock.lock();
         checkState();
         try (final RocksIterator it = this.db.newIterator(this.defaultHandle, this.totalOrderReadOptions)) {
+            it.seekToLast();
+            if (it.isValid()) {
+                return Bits.getLong(it.key(), 0);
+            }
+            return 0L;
+        } finally {
+            this.readLock.unlock();
+        }
+    }
+
+    public long getLastLogStatusIndex() {
+        this.readLock.lock();
+        checkState();
+        try (final RocksIterator it = this.db.newIterator(this.statusHandle, this.totalOrderReadOptions)) {
             it.seekToLast();
             if (it.isValid()) {
                 return Bits.getLong(it.key(), 0);
@@ -196,7 +238,7 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
                 return null;
             }
             final byte[] keyBytes = getKeyBytes(version);
-            final byte[] bs = onDataGet(getValueFromRocksDB(keyBytes));
+            final byte[] bs = onDataGet(getValueFromRocksDB(keyBytes, this.defaultHandle));
             if (bs != null) {
                 final TransactionLogEntry entry = (TransactionLogEntry)ObjectAndByte.toObject(bs);
                 if (entry != null) {
@@ -206,6 +248,27 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
                     // invalid data remove? TODO
                     return null;
                 }
+            }
+        } catch (final RocksDBException | IOException e) {
+            LOG.error("Fail to get log entry at version {}.", version, e);
+        } finally {
+            this.readLock.unlock();
+        }
+        return null;
+    }
+
+    @Override
+    public TransactionLogEntry getStatusEntry(long version) {
+        this.readLock.lock();
+        try {
+            if (this.hasLoadFirstLogIndex && version < this.firstLogIndex) {
+                return null;
+            }
+            final byte[] keyBytes = getKeyBytes(version);
+            final byte[] bs = onDataGet(getValueFromRocksDB(keyBytes, this.statusHandle));
+            if (bs != null) {
+                TransactionLogEntry entry = new TransactionLogEntry(version);
+                entry.setStatus(bs[0]);
             }
         } catch (final RocksDBException | IOException e) {
             LOG.error("Fail to get log entry at version {}.", version, e);
@@ -230,6 +293,33 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
                     long index = Bits.getLong(it.key(), 0);
                     if(index >= start && index <= end){
                         TransactionLogEntry entry = (TransactionLogEntry)ObjectAndByte.toObject(it.value());
+                        list.add(entry);
+                    }
+                }
+                it.next();
+            }
+            return list;
+        }finally {
+            this.readLock.unlock();
+        }
+    }
+
+    @Override
+    public List<TransactionLogEntry> getStatusEntries(long start, long end){
+        List<TransactionLogEntry> list = new ArrayList<>();
+        this.readLock.lock();
+        try{
+            if(start > end){
+                return null;
+            }
+            RocksIterator it = this.db.newIterator(this.statusHandle, this.totalOrderReadOptions);
+            it.seekToFirst();
+            while (it.isValid()){
+                if(it.key().length == 8){
+                    long index = Bits.getLong(it.key(), 0);
+                    if(index >= start && index <= end){
+                        TransactionLogEntry entry = new TransactionLogEntry(index);
+                        entry.setStatus(it.value()[0]);
                         list.add(entry);
                     }
                 }
@@ -289,10 +379,20 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
                 return false;
             }
             final long logIndex = entry.getVersion();
-            final byte[] valueBytes = ObjectAndByte.toByteArray(entry);
-            final byte[] newValueBytes = onDataAppend(logIndex, valueBytes);
-            this.db.put(this.defaultHandle, this.writeOptions, getKeyBytes(logIndex), newValueBytes);
-            System.out.println("end save log :" + System.currentTimeMillis());
+
+            switch (entry.getType()){
+                case ENTRY_TYPE_DATA:{
+                    final byte[] valueBytes = ObjectAndByte.toByteArray(entry);
+                    final byte[] newValueBytes = onDataAppend(logIndex, valueBytes);
+                    this.db.put(this.defaultHandle, this.writeOptions, getKeyBytes(logIndex), newValueBytes);//do not break
+                }
+                case ENTRY_TYPE_NO_OP:{
+                    byte[] content = new byte[1];
+                    content[0] = entry.getStatus();//System.out.println(logIndex + " - " + entry.getStatus());
+                    this.db.put(this.statusHandle, this.writeOptions, getKeyBytes(logIndex), content);
+                    break;
+                }
+            }
             return true;
         } catch (final RocksDBException | IOException e) {
             LOG.error("Fail to append entry.", e);
@@ -323,6 +423,7 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
         }
     }
 
+
     public boolean removeEntry(long version){
         this.readLock.lock();
         try{
@@ -336,22 +437,51 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
     }
 
     @Override
+    public boolean removeStatusEntry(long version){
+        this.readLock.lock();
+        try{
+            this.db.delete(this.statusHandle, getKeyBytes(version));
+        } catch (RocksDBException e) {
+            e.printStackTrace();
+        } finally {
+            this.readLock.unlock();
+        }
+        return true;
+    }
+
+    @Override
     public boolean truncatePrefix(long firstIndexKept) {
         this.readLock.lock();
         try {
             final long startIndex = getFirstLogIndex();
-            final boolean ret = saveFirstLogIndex(firstIndexKept);
+            final boolean ret = saveFirstLogIndex(firstIndexKept, FIRST_LOG_IDX_KEY);
             if (ret) {
                 setFirstLogIndex(firstIndexKept);
             }
-            truncatePrefixInBackground(startIndex, firstIndexKept);
+            truncatePrefixInBackground(startIndex, firstIndexKept, this.defaultHandle);
             return ret;
         } finally {
             this.readLock.unlock();
         }
     }
 
-    private void truncatePrefixInBackground(final long startIndex, final long firstIndexKept) {
+    @Override
+    public boolean truncateStatusPrefix(long firstIndexKept) {
+        this.readLock.lock();
+        try {
+            final long startIndex = getFirstLogIndex();
+            final boolean ret = saveFirstLogIndex(firstIndexKept, LOG_STATUS_IDX_KEY);
+            if (ret) {
+                setFirstLogStatusIndex(firstIndexKept);
+            }
+            truncatePrefixInBackground(startIndex, firstIndexKept, this.statusHandle);
+            return ret;
+        } finally {
+            this.readLock.unlock();
+        }
+    }
+
+    private void truncatePrefixInBackground(final long startIndex, final long firstIndexKept, ColumnFamilyHandle handle) {
         // delete logs in background.
         Utils.runInThread(() -> {
             this.readLock.lock();
@@ -359,8 +489,7 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
                 if (this.db == null) {
                     return;
                 }
-                this.db.deleteRange(this.defaultHandle, getKeyBytes(startIndex), getKeyBytes(firstIndexKept));
-                this.db.deleteRange(this.confHandle, getKeyBytes(startIndex), getKeyBytes(firstIndexKept));
+                this.db.deleteRange(handle, getKeyBytes(startIndex), getKeyBytes(firstIndexKept));
             } catch (RocksDBException e) {
                 e.printStackTrace();
             } finally {
@@ -379,6 +508,25 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
                 this.db.deleteRange(this.defaultHandle, this.writeOptions, getKeyBytes(lastIndexKept + 1),
                         getKeyBytes(getLastLogIndex() + 1));
                 this.db.deleteRange(this.confHandle, this.writeOptions, getKeyBytes(lastIndexKept + 1),
+                        getKeyBytes(getLastLogIndex() + 1));
+            }
+            return true;
+        } catch (final RocksDBException | IOException e) {
+            LOG.error("Fail to truncateSuffix {}.", lastIndexKept, e);
+        } finally {
+            this.readLock.unlock();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean truncateStatusSuffix(long lastIndexKept) {
+        this.readLock.lock();
+        try {
+            try {
+                onTruncateSuffix(lastIndexKept);
+            } finally {
+                this.db.deleteRange(this.statusHandle, this.writeOptions, getKeyBytes(lastIndexKept + 1),
                         getKeyBytes(getLastLogIndex() + 1));
             }
             return true;
@@ -446,6 +594,7 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
             this.writeOptions = null;
             this.totalOrderReadOptions = null;
             this.defaultHandle = null;
+            this.statusHandle = null;
             this.confHandle = null;
             this.db = null;
             LOG.info("DB destroyed, the db path is: {}.", this.path);
@@ -480,6 +629,8 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
         // Default column family to store user data log entry.
         columnFamilyDescriptors.add(new ColumnFamilyDescriptor(RocksDB.DEFAULT_COLUMN_FAMILY, cfOption));
 
+        columnFamilyDescriptors.add(new ColumnFamilyDescriptor("tx_status".getBytes(), cfOption));
+
         openDB(columnFamilyDescriptors);
         load();
         return onInitLoaded();
@@ -497,6 +648,7 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
         assert (columnFamilyHandles.size() == 2);
         this.confHandle = columnFamilyHandles.get(0);
         this.defaultHandle = columnFamilyHandles.get(1);
+        this.statusHandle = columnFamilyHandles.get(2);
     }
 
     private void load() {
@@ -508,7 +660,8 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
                 final byte[] bs = it.value();
                 if (Arrays.equals(FIRST_LOG_IDX_KEY, ks)) {
                     setFirstLogIndex(Bits.getLong(bs, 0));
-                    truncatePrefixInBackground(0L, this.firstLogIndex);
+                    truncatePrefixInBackground(0L, this.firstLogIndex, this.defaultHandle);
+                    truncatePrefixInBackground(0L, this.firstLogStatusIndex, this.statusHandle);
                 } else {
                     LOG.warn("Unknown entry in configuration storage key={}, value={}.", BytesUtil.toHex(ks),
                             BytesUtil.toHex(bs));
@@ -532,6 +685,9 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
                     long index = Bits.getLong(it.key(), 0);
                     TransactionLogEntry entry = (TransactionLogEntry)ObjectAndByte.toObject(it.value());
                     list.add(entry);
+//                    TransactionLogEntry entry = new TransactionLogEntry(index);
+//                    entry.setStatus(it.value()[0]);
+//                    list.add(entry);
                 }
                 it.next();
             }
@@ -554,13 +710,18 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
         this.hasLoadFirstLogIndex = true;
     }
 
-    private boolean saveFirstLogIndex(final long firstLogIndex) {
+    private void setFirstLogStatusIndex(final long index) {
+        this.firstLogStatusIndex = index;
+        this.hasLoadFirstStatusLogIndex = true;
+    }
+
+    private boolean saveFirstLogIndex(final long firstLogIndex, final byte[] key) {
         this.readLock.lock();
         try {
             final byte[] vs = new byte[8];
             Bits.putLong(vs, 0, firstLogIndex);
             checkState();
-            this.db.put(this.confHandle, this.writeOptions, FIRST_LOG_IDX_KEY, vs);
+            this.db.put(this.confHandle, this.writeOptions, key, vs);
             return true;
         } catch (final RocksDBException e) {
             LOG.error("Fail to save first log index {}.", firstLogIndex, e);
@@ -620,6 +781,7 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
     private void closeDB() {
         this.confHandle.close();
         this.defaultHandle.close();
+        this.statusHandle.close();
         this.db.close();
     }
 
@@ -633,9 +795,9 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
         return value;
     }
 
-    protected byte[] getValueFromRocksDB(final byte[] keyBytes) throws RocksDBException {
+    protected byte[] getValueFromRocksDB(final byte[] keyBytes, ColumnFamilyHandle handle) throws RocksDBException {
         checkState();
-        return this.db.get(this.defaultHandle, keyBytes);
+        return this.db.get(handle, keyBytes);
     }
 
 //    private void addConfBatch(final TransactionLogEntry entry, final WriteBatch batch) throws RocksDBException {
@@ -647,12 +809,27 @@ public class MQRocksDBLogStorage implements MQLogStorage, Describer {
 
     private void addDataBatch(final TransactionLogEntry entry, final WriteBatch batch) throws RocksDBException, IOException {
         final long logIndex = entry.getVersion();
-        //final byte[] s = ObjectAndByte.toByteArray(new TransactionLogEntry(1));
 
-        byte[] content = ObjectAndByte.toByteArray(entry);
-        //final byte[] content = this.logEntryEncoder.encode(entry);
-        batch.put(this.defaultHandle, getKeyBytes(logIndex), onDataAppend(logIndex, content));
-        //System.out.println("add entry " + logIndex);
+        switch (entry.getType()){
+            case ENTRY_TYPE_DATA:{
+                final byte[] valueBytes = ObjectAndByte.toByteArray(entry);
+                batch.put(this.defaultHandle, getKeyBytes(logIndex), onDataAppend(logIndex, valueBytes));
+            }
+            case ENTRY_TYPE_NO_OP:{
+                byte[] content = new byte[1];
+                content[0] = entry.getStatus();//System.out.println(logIndex + " - " + entry.getStatus());
+                batch.put(this.statusHandle, getKeyBytes(logIndex), onDataAppend(logIndex, content));
+                break;
+            }
+        }
+    }
+
+    private void setStatusBatch(final TransactionLogEntry entry, final WriteBatch batch) throws RocksDBException, IOException {
+        final long logIndex = entry.getVersion();
+
+        byte[] content = new byte[1];
+        content[0] = entry.getStatus();
+        batch.put(this.statusHandle, getKeyBytes(logIndex), onDataAppend(logIndex, content));
     }
 
     /**

@@ -28,6 +28,10 @@ public class TransactionLogEntry implements Checksum, Serializable {
     /** true when the log has checksum **/
     private boolean              hasChecksum;
 
+    private long mainRegion;
+
+    private byte status;
+
     public TransactionLogEntry(long version) {
         super();
        this.version = version;
@@ -48,7 +52,23 @@ public class TransactionLogEntry implements Checksum, Serializable {
         return c;
     }
 
-//    @SuppressWarnings("DeprecatedIsStillUsed")
+    public byte getStatus() {
+        return status;
+    }
+
+    public void setStatus(byte status) {
+        this.status = status;
+    }
+
+    public long getMainRegion() {
+        return mainRegion;
+    }
+
+    public void setMainRegion(long mainRegion) {
+        this.mainRegion = mainRegion;
+    }
+
+    //    @SuppressWarnings("DeprecatedIsStillUsed")
 //    @Deprecated
 //    public byte[] encode() {
 //        return MQV1Encoder.INSTANCE.encode(this);

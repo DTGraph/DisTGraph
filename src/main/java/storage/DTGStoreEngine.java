@@ -28,6 +28,7 @@ import LocalDBMachine.LocalDB;
 import PlacementDriver.DTGPlacementDriverClient;
 import PlacementDriver.DefaultPlacementDriverClient;
 import UserClient.DTGSaveStore;
+import UserClient.TransactionManager;
 import com.alipay.remoting.rpc.RpcServer;
 import com.alipay.sofa.jraft.Lifecycle;
 import com.alipay.sofa.jraft.RouteTable;
@@ -129,6 +130,7 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
     protected ScheduledExecutorService                   metricsScheduler;
     protected ScheduledReporter                          kvMetricsReporter;
     protected ScheduledReporter                          threadPoolMetricsReporter;
+    private TransactionManager                           transactionManager;
 
     private   Endpoint                                   endpoint;
 
@@ -213,6 +215,7 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
         }
         // init store
         store = this.pdClient.getStoreMetadata(opts);
+        this.transactionManager = new TransactionManager(this.pdClient);
         if (store == null || store.getRegions() == null || store.getRegions().isEmpty()) {
             LOG.error("Empty store metadata: {}.", store);
             return false;
@@ -358,6 +361,10 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
 //    }
     public LocalDB getlocalDB(){
         return this.localDB;
+    }
+
+    public TransactionManager getTransactionManager() {
+        return transactionManager;
     }
 
     public DTGRegionService getRegionKVService(final long regionId) {
@@ -825,7 +832,7 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
         // read 'pRegion', because that a write to a ConcurrentMap happens-before every
         // subsequent read of that ConcurrentMap.
         this.regionEngineTable.put(region.getId(), engine);
-        registerRegionService(new DTGRegionService(engine));
+        registerRegionService(new DTGRegionService(engine, this.transactionManager));
 
         // update local regionRouteTable
 
@@ -883,7 +890,7 @@ public class DTGStoreEngine implements Lifecycle<DTGStoreEngineOptions> {
             Requires.requireNonNull(region.getRegionEpoch(), "regionEpoch");
             final DTGRegionEngine engine = new DTGRegionEngine(region, this);
             if (engine.init(rOpts)) {
-                final DTGRegionService regionService = new DTGRegionService(engine);
+                final DTGRegionService regionService = new DTGRegionService(engine, this.transactionManager);
                 registerRegionService(regionService);
                 this.regionEngineTable.put(region.getId(), engine);
             } else {

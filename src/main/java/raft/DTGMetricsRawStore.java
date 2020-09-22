@@ -1,6 +1,7 @@
 package raft;
 
 import DBExceptions.DTGLockError;
+import DBExceptions.TxMQException;
 import Element.DTGOperation;
 import Element.OperationName;
 import LocalDBMachine.LocalDB;
@@ -13,6 +14,7 @@ import MQ.DTGMQ;
 import Region.DTGLockClosure;
 import Region.DTGRegion;
 import Region.FirstPhaseClosure;
+import UserClient.DTGSaveStore;
 import UserClient.Transaction.TransactionLog;
 import com.alipay.sofa.jraft.Lifecycle;
 import com.alipay.sofa.jraft.Status;
@@ -85,13 +87,18 @@ public class DTGMetricsRawStore implements DTGRawStore, Lifecycle<DTGMetricsRawS
         return true;
     }
 
-    @Override
-    public void saveLog(LogStoreClosure closure) {
+    public void startOther(DTGSaveStore store){
+        this.mq.reRunUncommitLog(store);
+    }
+
+    public void saveLog(LogStoreClosure closure, long mainRegion) {
         Object data = closure.getLog();
         ByteTask task = new ByteTask();
+        task.setMainRegion(mainRegion);
         task.setDone(closure);
         task.setData(ObjectAndByte.toByteArray(data));
         task.setVersion(closure.getVersion());
+        task.setTxStatus(DTGConstants.TXRECEIVED);//System.out.println("save log");
         this.mq.apply(task);
     }
 
@@ -173,14 +180,28 @@ public class DTGMetricsRawStore implements DTGRawStore, Lifecycle<DTGMetricsRawS
     }
 
     @Override
-    public void commitSuccess(long version) {
-        internalCommitSuccess(version, new CompletableFuture<>(), DTGConstants.FAILOVERRETRIES, null);
+    public void clean(long version) {
+        internalClean(version, new CompletableFuture<>(), DTGConstants.FAILOVERRETRIES, null);
         this.TxVersionMap.remove(version);
     }
 
-    private void internalCommitSuccess( long version, final CompletableFuture<Boolean> future,
+    @Override
+    public void commitSuccess(final DTGOperation op, final EntityStoreClosure closure, final DTGRegion region) {
+        this.localDB.runOp(op, closure, true, region);
+    }
+
+    public void changeStatus(LogStoreClosure closure, byte txStatus, long mainRegion){
+        ByteTask task = new ByteTask();
+        task.setDone(closure);
+        task.setMainRegion(mainRegion);
+        task.setVersion(closure.getVersion());
+        task.setTxStatus(txStatus);
+        this.mq.apply(task);
+    }
+
+    private void internalClean( long version, final CompletableFuture<Boolean> future,
                                         int retriesLeft, final Errors lastCause){
-        final RetryRunner retryRunner = retryCause -> internalCommitSuccess(version, future, retriesLeft - 1, retryCause);
+        final RetryRunner retryRunner = retryCause -> internalClean(version, future, retriesLeft - 1, retryCause);
         final FailoverClosureImpl<Boolean> closure = new FailoverClosureImpl<>(future, false, retriesLeft, retryRunner, DTGConstants.RETRIYRUNNERWAIT);
         LogStoreClosure logClosure = new LogStoreClosure() {
             @Override
@@ -196,7 +217,6 @@ public class DTGMetricsRawStore implements DTGRawStore, Lifecycle<DTGMetricsRawS
             }
         };
         logClosure.setVersion(version);
-        saveLog(logClosure);
         ByteTask task = new ByteTask();
         task.setDone(logClosure);
         task.setVersion(version);
@@ -205,45 +225,113 @@ public class DTGMetricsRawStore implements DTGRawStore, Lifecycle<DTGMetricsRawS
 
     @Override
     public void firstPhaseProcessor(DTGOperation op, final FirstPhaseClosure closure, DTGRegion region) {
+        //System.out.println(System.currentTimeMillis() + "  firstPhaseProcessor 1: " + op.getTxId() + ",   " + region.getId());
         if(op.getAllEntityEntries() != null){
-            LogStoreClosure logClosure = new LogStoreClosure() {
+            LogStoreClosure logClosure1 = new LogStoreClosure() {
                 @Override
                 public void run(Status status) {
                     if(!status.isOk()){
                         System.out.println("save log error");
-                        closure.setError(Errors.TRANSACTION_FIRSTPHASE_ERROR);
+                         closure.setError(Errors.TRANSACTION_FIRSTPHASE_ERROR);
                         closure.run(status);
                     }
                 }
             };
-            logClosure.setLog(new TransactionLog(op.getTxId(), op.getAllEntityEntries()));
-            logClosure.setVersion(op.getVersion());
-            saveLog(logClosure);
+            logClosure1.setLog(new TransactionLog(op.getTxId(), op.getAllEntityEntries()));
+            logClosure1.setVersion(op.getVersion());
+            saveLog(logClosure1, op.getMainRegionId());
         }
-        DTGLockClosure lockClosure = new DTGLockClosure() {
-            @Override
-            public void run(Status status) {
-                if(hasSendRes()){
-                    return;
-                }
-                sendResult();
-                if(status.isOk()){
-                    closure.setData(getData());
-                    closure.run(Status.OK());
-                }else {
-                    commitSuccess(op.getVersion());//just remove log
-                    System.out.println("failed request lock!" + op.getTxId());
-                    closure.setError(Errors.TRANSACTION_LOCK_ERROR);
-                    closure.run(new Status(DTGLockError.FAILED.getNumber(), "request lock failed!"));
+        //System.out.println(System.currentTimeMillis() + "  firstPhaseProcessor 2: " + op.getTxId() + ",   " + region.getId());
+//        DTGLockClosure lockClosure = new DTGLockClosure() {
+//            @Override
+//            public void run(Status status) {
+//                if(hasSendRes()){
+//                    return;
+//                }
+//                sendResult();
+//                if(status.isOk()){
+//                    closure.setData(getData());
+//                    closure.run(Status.OK());
+//                }else {
+//                    clean(op.getVersion());//just remove log
+//                    System.out.println("failed request lock!" + op.getTxId());
+//                    closure.setError(Errors.TRANSACTION_LOCK_ERROR);
+//                    closure.run(new Status(DTGLockError.FAILED.getNumber(), "request lock failed!"));
+//                }
+//            }
+//        };
+//        if(MVCC){
+//            this.setLock(op, lockClosure, region);
+//        }else{
+//            lockClosure.run(Status.OK());
+//        }、
+
+
+        Map<Integer, Object> resultMap = new HashMap<>();
+        resultMap.put(-1, true);
+
+        try {
+            TransactionThreadLock txLock = new TransactionThreadLock(op.getTxId());
+            LocalTransaction tx = new LocalTransaction(localDB.getMemMVCC(), localDB.getDb(), op, resultMap, txLock, region);//System.out.println("run op... ： " + region.getId());
+
+            tx.start();
+            synchronized (txLock){
+                if(!tx.getCouldCommit()){
+                    try {
+                        txLock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-        };
-        if(MVCC){
-            this.setLock(op, lockClosure, region);
-        }else{
-            lockClosure.run(Status.OK());
+            //System.out.println(System.currentTimeMillis() + "  firstPhaseProcessor 3: " + op.getTxId() + ",   " + region.getId());
+
+            localDB.addToCommitMap(tx, op.getTxId(), region.getId());
+            closure.setData(resultMap);
+            closure.run(Status.OK());
+           // System.out.println(System.currentTimeMillis() + "  firstPhaseProcessor 4: " + op.getTxId() + ",   " + region.getId());
+
+//            if(op.getAllEntityEntries() != null){
+//                LogStoreClosure logClosure = new LogStoreClosure() {
+//                    @Override
+//                    public void run(Status status) {
+//                        if(status.isOk()){
+//                            localDB.addToCommitMap(tx, op.getTxId(), region.getId());
+//                            closure.setData(resultMap);
+//                            closure.run(Status.OK());
+//                            System.out.println(System.currentTimeMillis() + "  firstPhaseProcessor 4: " + op.getTxId() + ",   " + region.getId());
+//                        }else{
+//                            closure.run(new Status(DTGLockError.FAILED.getNumber(), "transaction excute failed!"));
+//                        }
+//                    }
+//                };
+//                logClosure.setLog(new TransactionLog(op.getTxId(), false));
+//                logClosure.setVersion(op.getVersion());
+//                changeStatus(logClosure, DTGConstants.TXDONEFIRST, op.getMainRegionId());
+//            }else{
+//                localDB.addToCommitMap(tx, op.getTxId(), region.getId());
+//                closure.setData(resultMap);
+//                closure.run(Status.OK());
+//            }
+        } catch (Exception e) {
+            System.out.println(op.getTxId() + "  error!： " + e);
+            closure.run(new Status(DTGLockError.FAILED.getNumber(), "transaction excute failed!"));
+            LogStoreClosure logClosure = new LogStoreClosure() {
+                @Override
+                public void run(Status status) {
+
+                }
+            };
+            logClosure.setLog(new TransactionLog(op.getTxId(), false));
+            logClosure.setVersion(op.getVersion());
+            changeStatus(logClosure, DTGConstants.TXFAILEDFIRST, op.getMainRegionId());
         }
 
+        this.TxVersionMap.put(op.getTxId(), op.getVersion());
+    }
+
+    public byte getTxStatus(long version){
+        return this.mq.getStatus(version);
     }
 
     @Override

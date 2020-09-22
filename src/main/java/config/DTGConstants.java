@@ -36,8 +36,9 @@ public class DTGConstants {
     public static final byte    TXSUCCESS                    = 0x25;
     public static final byte    SYNOP                        = 0x26;
     public static final byte    SYNOPFAILED                  = 0x27;
+    public static final byte    TXSECONDSTART                = 0x28;
 
-    public static final byte    DELETESELF                   = 0x28;
+    public static final byte    DELETESELF                   = 0x29;
 
     //RAFT OPTION
     public static final int DisruptorPublishEventWaitTimeoutSecs = 10;

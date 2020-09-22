@@ -42,6 +42,9 @@ public class DTGSortedList {
     public MVCCObject commitObject(long startVersion, long endVersion) {
         MVCCObject obj = find(startVersion);
         if(obj == null) return null;
+        if(obj.getCommitVersion() > 0){
+            return obj;
+        }
         obj.setCommitVersion(endVersion);
 
         Data data = new Data(obj);
@@ -119,6 +122,10 @@ public class DTGSortedList {
     public MVCCObject findData(long version){
         if(first == null)
             return null;
+        MVCCObject o = find(version);
+        if(o != null){
+            return o;
+        }
         Data node = commitFirst;
         MVCCObject nearestObj = null;
         while(node != null && node.obj.getCommitVersion() > version){
@@ -169,7 +176,7 @@ public class DTGSortedList {
     public void printList(){
         Data node = first;
         while(node != null){
-            System.out.print(node.obj.getVersion() + ", ");
+            System.out.print(node.obj.getVersion() + " " + node.obj.getValue() + ", ");
             node = node.next;
         }
         System.out.println();
@@ -178,7 +185,7 @@ public class DTGSortedList {
     public void printCommitList(){
         Data node = commitFirst;
         while(node != null){
-            System.out.print(node.obj.getCommitVersion() + ", ");
+            System.out.print(node.obj.getCommitVersion() + " " + node.obj.getValue() + ", ");
             node = node.next;
         }
         System.out.println();

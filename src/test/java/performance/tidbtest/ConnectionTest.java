@@ -1,19 +1,18 @@
 package performance.tidbtest;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 
 public class ConnectionTest {
 
     public static void main(String[] args) throws Exception{
-        String url = "jdbc:mysql://49.233.217.199:4000/test?useUnicode=true&characterEncoding=utf-8&&useOldAliasMetadataBehavior=true";
+        String url = "jdbc:mysql://192.168.1.199:4000/test?useUnicode=true&characterEncoding=utf-8&&useOldAliasMetadataBehavior=true";
         String user = "root";
         String password = "";
         Class.forName("com.mysql.jdbc.Driver");
         Connection conn = DriverManager.getConnection(url, user, password);
-        Statement stmt = conn.createStatement();
+
         long start = System.currentTimeMillis();
 //        try{
             conn.setAutoCommit(false);
@@ -25,34 +24,46 @@ public class ConnectionTest {
 //            System.out.println("rollback");
 //            conn.rollback();
 //        }
-//        String add = " CREATE TABLE `test_user1` (`id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id', `name` varchar(32) NOT NULL COMMENT 'name', " +
-//                "PRIMARY KEY (`id`)) ENGINE=InnoDB";
-//        boolean rs1 = stmt.execute(add);
 
-        for(int i=0;i<100;i++){
+//        Statement stmt = conn.createStatement();
+//        String add = " CREATE TABLE `test_user1` (Tkey1 varchar(32) NOT NULL COMMENT 'key', `val` varchar(32) NOT NULL COMMENT 'val'," +
+//                "PRIMARY KEY (Tkey1)) ENGINE=RocksDB";
+//        boolean rs1 = stmt.execute(add);
+//        String add2 = " CREATE TABLE `temp_pro` (Tkey varchar(32) NOT NULL COMMENT 'key', `val` varchar(32) NOT NULL COMMENT 'val'," +
+//        "PRIMARY KEY (Tkey)) ENGINE=RocksDB";
+//        boolean rs2 = stmt.execute(add2);
+//        conn.commit();
+//        conn.setAutoCommit(true);
+//        long end = System.currentTimeMillis();
+//        System.out.println("cost : " + (end - start));
+//        stmt.close();
+//        conn.close();
+
+        for(int j = 0; j < 1; j++){
             try{
-                String add = "insert into test_user1 values("+i+", 'aaa')";
-                boolean rs1 = stmt.execute(add);
-                System.out.println(i);
+                PreparedStatement statement = conn.prepareStatement("insert into test_user1 values(?, ?)");
+                for(int i = 0; i < 5000; i++){//System.out.println(i);
+                    statement.setString(1, i + "-i-" + j);
+                    statement.setString(2, "aaaa");
+                    statement.addBatch();
+                }
+                statement.executeBatch();
+                statement.close();
             }catch (Exception e){
                 //conn.rollback();
                 System.out.println(e);
+            }finally {
+                conn.commit();
+                //conn.setAutoCommit(true);
+                long end = System.currentTimeMillis();
+                System.out.println("cost : " + (end - start));
+                //stmt.close();
             }
-
         }
 
-        //System.out.println(rs1);
-
-//        String add = "select * from test_user1";
-//        ResultSet rs = stmt.executeQuery(add);
-//        while (rs.next()){
-//            System.out.println("id : " + rs.getInt(1) + ", name : " + rs.getString(2));
-//        }
-        conn.commit();
-
-        long end = System.currentTimeMillis();
-        System.out.println("cost : " + (end - start));
-        stmt.close();
         conn.close();
+
+
+
     }
 }

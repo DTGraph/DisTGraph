@@ -28,12 +28,12 @@ public class TransactionTest {
         MemMVCC memMVCC = new MemMVCC();
         for(int i = 0; i < 1; i++){
             LinkedList<EntityEntry> entityEntryList = new LinkedList<>();
-            for(int j = 3; j < 4; j++){
+            for(int j = 0; j < 5; j++){
                 EntityEntry entry = new EntityEntry();
                 entry.setId(i*10 +j);System.out.println("node id = " + entry.getId());
                 entry.setTransactionNum(j);
                 entry.setType(NODETYPE);
-                entry.setOperationType(EntityEntry.REMOVE);
+                entry.setOperationType(EntityEntry.ADD);
                 entry.setIsTemporalProperty(false);
                 entityEntryList.add(entry);
             }

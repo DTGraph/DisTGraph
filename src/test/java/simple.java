@@ -11,6 +11,8 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class simple {
@@ -29,29 +31,50 @@ public class simple {
 //        int[] chaos.aa = ccc.get(1);
 //        System.out.println(chaos.aa[0]);
         GraphDatabaseService db= new GraphDatabaseFactory()
-                .newEmbeddedDatabaseBuilder("D:\\garbage\\8087\\DTG_DB" )
+                .newEmbeddedDatabaseBuilder("D:\\garbage\\8084\\DTG_DB" )
                 .loadPropertiesFromFile("")
                 .newGraphDatabase();
         //Node node1, node2;
-        Transaction tx = db.beginTx();
-//
-        db.getNodeById(0);
-        db.getNodeById(1);
-        db.getNodeById(2);
-        db.getNodeById(3);
-        db.getNodeById(4);
-        db.getNodeById(5);
 
+//        Transaction tx = db.beginTx();
+//        for(int i = 0; i < 5000; i++){
+//            db.createNode(i);
+//        }
+//        tx.success();
+//        tx.close();
+
+        ExecutorService pool = Executors.newFixedThreadPool(1);
+        for(int j = 0; j < 30; j++){
+            final int t = j;
+            pool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    long start = System.currentTimeMillis();
+                    Transaction tx = db.beginTx();
+                    for(int i = 0; i < 2500; i++){
+                        //db.createNode(i);
+                        Node node = db.getNodeById(i);
+                        node.setTemporalProperty("a", t, t+1, "aaaaaaa");
+                        //System.out.println(node.getTemporalProperty("a", 3));
+//                      System.out.println(node.getProperty("sss"));
+                    }
+                    tx.success();
+                    tx.close();
+
+                    long end = System.currentTimeMillis();
+                    System.out.println(end + "    " + start);
+                }
+            });
 //        System.out.println(node1.getProperty("d"));
-        //db.createNode();
+            //db.createNode();
 //        System.out.println(node1.getId());
 //        node1 =  db.createNode();
 //        System.out.println(node1.getId());
 //        node2 =  db.createNode();
 //        System.out.println(node1.getId());
 //        node1.setProperty("d",2);
-        tx.success();
-        tx.close();
+        }
+
 //        for(int i = 0; i < 10; i++){
 //            long start = System.currentTimeMillis();
 //            //Transaction tx = db.beginTx();

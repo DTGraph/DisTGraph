@@ -86,7 +86,7 @@ public class DTGTransaction implements AutoCloseable {
     public Map<Integer, Object> start(){
         if(!readOnly){
             CompletableFuture<Long> future = new CompletableFuture();
-            transactionManager.applyRequestVersion(this, future);
+            transactionManager.applyRequestVersion(future);
             this.version = FutureHelper.get(future);System.out.println("GET VERSION :" + version);
             if(version == -1){
                 try {
@@ -98,8 +98,10 @@ public class DTGTransaction implements AutoCloseable {
             }
         }
         this.isClose = false;
+        System.out.println(System.currentTimeMillis() + "   " + txId);
         Map<Integer, Object> result =  store.applyRequest(this.entityEntryList, this.txId, this.readOnly, true,
-                this.failoverRetries, true, version, null);
+                this.failoverRetries, false, version, null);
+
         Map<Integer, Long> firstGetList = new HashMap<>();
         if(this.isolateRead){
             LinkedList<EntityEntry> readList = new LinkedList<>();

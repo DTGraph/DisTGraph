@@ -32,7 +32,7 @@ public class pdServerAll {
 
     public static void main(String[] args) throws IOException {
         GroupPd server = new GroupPd("D:\\garbage","127.0.0.1:8181,127.0.0.1:8182,127.0.0.1:8183");
-        //GroupPd server = new GroupPd("D:\\garbage","182.129.214.222:8181,182.129.214.222:8182,182.129.214.222:8183");
+        //GroupPd server = new GroupPd("/data/DTG","192.168.1.212:8181,192.168.1.212:8182,192.168.1.212:8183");
         server.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

@@ -16,11 +16,11 @@ import scala.collection.Iterator;
 
 public interface DTGRawStore {
 
-    void saveLog(LogStoreClosure closure);
-
     void setLock(final DTGOperation op, final DTGLockClosure closure, DTGRegion region);
 
-    void commitSuccess(final long version);
+    void clean(final long version);
+
+    void commitSuccess(final DTGOperation op, final EntityStoreClosure closure, final DTGRegion region);
 
     void firstPhaseProcessor(final DTGOperation op, final FirstPhaseClosure closure, DTGRegion region);
 

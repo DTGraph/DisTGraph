@@ -36,17 +36,17 @@ public class DTGRaftRawStore implements DTGRawStore {
     }
 
     @Override
-    public void saveLog(LogStoreClosure closure) {
-
-    }
-
-    @Override
     public void setLock(final DTGOperation op, final DTGLockClosure closure, DTGRegion region) {
 
     }
 
     @Override
-    public void commitSuccess(long version) {
+    public void clean(long version) {
+
+    }
+
+    @Override
+    public void commitSuccess(DTGOperation op, final EntityStoreClosure closure, final DTGRegion region) {
 
     }
 

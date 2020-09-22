@@ -71,17 +71,17 @@ public class LocalTransaction extends Thread {
     @Override
     public void run() {
         try {
-            synchronized (resultMap){System.out.println("11111111");
-                saveToMvcc(this.startVersion);System.out.println("222222222");
+            synchronized (resultMap){//System.out.println("11111111");
+                saveToMvcc(this.startVersion);//System.out.println("222222222");
             }
-            if(couldCommit == false){System.out.println("33333333");
+            if(couldCommit == false){//System.out.println("33333333");
                 synchronized (lock){
                     lock.notify();
-                    couldCommit = true;System.out.println("4444444444");
+                    couldCommit = true;//System.out.println("4444444444");
                     lock.wait();
-                }System.out.println("55555555");
-                if(lock.isShouldCommit()){System.out.println("6666666     " + this.endVersion);
-                    commitMVCC(this.startVersion, this.endVersion);System.out.println("7777777");
+                }//System.out.println("55555555");
+                if(lock.isShouldCommit()){//System.out.println("6666666     " + this.endVersion);
+                    commitMVCC(this.startVersion, this.endVersion);//System.out.println("7777777");
                 }
                 else {
                     //rollback();
@@ -106,7 +106,7 @@ public class LocalTransaction extends Thread {
             try{
                 node = db.getNodeById(id);
             }catch (Exception e){
-                node = db.createNode(id);
+                node = db.createNode(id);//System.out.println("ADD NODE : " + id);
             }
             NodeObject memNode = (NodeObject) resO.getValue();
             if(memNode == null){
@@ -188,6 +188,7 @@ public class LocalTransaction extends Thread {
         }
         for(TimeMVCCObject o : listO){
             if(o.isMaxVerion()){
+                System.out.println("update db time :" + o.getStartTime() + " - " + o.getEndTime());
                 n.setTemporalProperty(key, o.getStartTime(), o.getEndTime(), o.getValue());
             }
         }
@@ -223,7 +224,7 @@ public class LocalTransaction extends Thread {
         else throw new EntityEntryException(entityEntry);
         if(node == null){
             Node dbNode = db.getNodeById(entityEntry.getId());
-            node = new NodeObject(entityEntry.getId());
+            node = new NodeObject(entityEntry.getId(), version);
             node.setRealObjectInDB(dbNode);
             node.initAllProperty(dbNode.getAllProperties());
         }
@@ -242,7 +243,7 @@ public class LocalTransaction extends Thread {
         else throw new EntityEntryException(entityEntry);
         if(relation == null){
             Relationship rel = db.getRelationshipById(entityEntry.getId());
-            relation = new RelationObject(entityEntry.getId(), rel.getStartNode().getId(), rel.getEndNode().getId());
+            relation = new RelationObject(entityEntry.getId(), version, rel.getStartNode().getId(), rel.getEndNode().getId());
             relation.initAllProperty(rel.getAllProperties());
             relation.setRealObjectInDB(rel);
         }
@@ -285,7 +286,7 @@ public class LocalTransaction extends Thread {
                                 NodeObject node = this.memMVCC.getNodeById(entityEntry.getId(), version, false);
                                 if(node == null){
                                     Node dbNode = db.getNodeById(entityEntry.getId());
-                                    node = new NodeObject(entityEntry.getId());
+                                    node = new NodeObject(entityEntry.getId(), version);
                                     node.setRealObjectInDB(dbNode);
                                     node.initAllProperty(dbNode.getAllProperties());
                                 }
@@ -304,7 +305,7 @@ public class LocalTransaction extends Thread {
                                 resultMap.put(entityEntry.getTransactionNum(), res);
                             }
                             else {
-                                Object res = this.memMVCC.getNodeProperty(node, entityEntry.getKey());
+                                Object res = node.getProperty(entityEntry.getKey());
                                 if(res == null){
                                     res = node.getRealObjectInDB().getProperty(entityEntry.getKey());
                                 }
@@ -355,7 +356,7 @@ public class LocalTransaction extends Thread {
                                 RelationObject relation = this.memMVCC.addRelationship(version, entityEntry.getStart(), entityEntry.getOther(), entityEntry.getId());
                                 if(relation == null){
                                     Relationship rel = db.getRelationshipById(entityEntry.getId());
-                                    relation = new RelationObject(entityEntry.getId(), rel.getStartNode().getId(), rel.getEndNode().getId());
+                                    relation = new RelationObject(entityEntry.getId(), version, rel.getStartNode().getId(), rel.getEndNode().getId());
                                     relation.initAllProperty(rel.getAllProperties());
                                     relation.setRealObjectInDB(rel);
                                 }
@@ -383,7 +384,7 @@ public class LocalTransaction extends Thread {
                                 RelationObject relationship = this.memMVCC.getRelById(entityEntry.getId(), version, false);
                                 if(relationship == null){
                                     Relationship rel = db.getRelationshipById(entityEntry.getId());
-                                    relationship = new RelationObject(entityEntry.getId(), rel.getStartNode().getId(), rel.getEndNode().getId());
+                                    relationship = new RelationObject(entityEntry.getId(), version, rel.getStartNode().getId(), rel.getEndNode().getId());
                                     relationship.initAllProperty(rel.getAllProperties());
                                     relationship.setRealObjectInDB(rel);
                                 }
@@ -482,7 +483,7 @@ public class LocalTransaction extends Thread {
                                 break;
                             }
                             else
-                                commitNode(entityEntry.getId(), startVersion, endVersion);
+                                commitNode(node.getId(), startVersion, endVersion);
                             break;
                         }
                         case EntityEntry.GET:{
@@ -497,6 +498,8 @@ public class LocalTransaction extends Thread {
                             if(entityEntry.isTemporalProperty()){
                                 Object res = this.memMVCC.getNodeTemporalProperty(startVersion, node, entityEntry.getKey(), entityEntry.getStart());
                                 if(res == null){
+                                    //if(node == null)System.out.println("node is null");
+                                    System.out.println("get temp pro:" + entityEntry.getKey() + ", time :" + entityEntry.getStart());
                                     res = node.getRealObjectInDB().getTemporalProperty(entityEntry.getKey(), entityEntry.getStart());
                                 }
                                 tempMap.put(entityEntry.getTransactionNum(), res);
@@ -535,7 +538,7 @@ public class LocalTransaction extends Thread {
                                 break;
                             }
                             else
-                                commitNode(entityEntry.getId(), startVersion, endVersion);
+                                commitNode(node.getId(), startVersion, endVersion);
                             break;
                         }
                         default:{
@@ -565,7 +568,7 @@ public class LocalTransaction extends Thread {
                                 break;
                             }
                             else{
-                                commitRelation(entityEntry.getId(), startVersion, endVersion, relationship.getStartNode(), relationship.getEndNode());
+                                commitRelation(relationship.getId(), startVersion, endVersion, relationship.getStartNode(), relationship.getEndNode());
                             }
                             break;
                         }
@@ -621,7 +624,7 @@ public class LocalTransaction extends Thread {
                                 break;
                             }
                             else{
-                                commitRelation(entityEntry.getId(), startVersion, endVersion, relationship.getStartNode(), relationship.getEndNode());
+                                commitRelation(relationship.getId(), startVersion, endVersion, relationship.getStartNode(), relationship.getEndNode());
                             }
                             break;
                         }

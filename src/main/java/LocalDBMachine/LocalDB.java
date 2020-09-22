@@ -91,11 +91,6 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
     }
 
     @Override
-    public void saveLog(LogStoreClosure closure) {
-
-    }
-
-    @Override
     public void setLock(final DTGOperation op, final DTGLockClosure closure, DTGRegion region) {
         List<EntityEntry> entityEntries= op.getEntityEntries();
         List<EntityEntry> removeList = new ArrayList<>();
@@ -120,7 +115,12 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
     }
 
     @Override
-    public void commitSuccess(long version) {
+    public void clean(long version) {
+
+    }
+
+    @Override
+    public void commitSuccess(DTGOperation op, final EntityStoreClosure closure, final DTGRegion region) {
 
     }
 
@@ -168,7 +168,7 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
         }
     }
 
-    private void localRun(DTGOperation op, EntityStoreClosure closure, boolean isLeader, DTGRegion region){
+    private void localRun(DTGOperation op, EntityStoreClosure closure, boolean isLeader, DTGRegion region){//System.out.println("run tx :" + op.getTxId() + ", " + region.getId());
         String key = getkey(op.getTxId(), region.getId());
         switch (op.getType()){
             case OperationName.TRANSACTIONOP:{

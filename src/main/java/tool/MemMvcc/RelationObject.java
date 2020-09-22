@@ -11,8 +11,8 @@ public class RelationObject extends GraphObject {
     private long startNode;
     private long endNode;
 
-    public RelationObject(long id, long startNode, long endNode) {
-        super(id);
+    public RelationObject(long id, long version, long startNode, long endNode) {
+        super(id, version);
         this.startNode = startNode;
         this.endNode = endNode;
         setType(RELATIONTYPE);
@@ -33,7 +33,7 @@ public class RelationObject extends GraphObject {
 
     @Override
     public GraphObject copy() {
-        RelationObject newobj = new RelationObject(getId(), startNode, endNode);
+        RelationObject newobj = new RelationObject(getId(), -1, startNode, endNode);
         newobj.setType(getType());
         for(Map.Entry entry : properties.entrySet()){
             this.properties.put((String)entry.getKey(), entry.getValue());
@@ -41,6 +41,6 @@ public class RelationObject extends GraphObject {
         for(Map.Entry entry : needUpdate.entrySet()){
             this.needUpdate.put((String)entry.getKey(), entry.getValue());
         }
-        return null;
+        return newobj;
     }
 }

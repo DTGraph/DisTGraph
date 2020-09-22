@@ -36,5 +36,5 @@ public interface RegionService {
     void handleRangeSplitRequest(final RangeSplitRequest request,
                                  final RequestProcessClosure<BaseRequest, BaseResponse<?>> closure);
 
-    void internalFirstPhase(final DTGOperation op, final FailoverClosure closure);
+    //void internalFirstPhase(final DTGOperation op, final FailoverClosure closure);
 }

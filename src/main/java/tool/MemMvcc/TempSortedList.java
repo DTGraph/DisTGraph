@@ -106,7 +106,7 @@ public class TempSortedList{
         }
 
         if(cur != null){
-            return cur.obj.findData(version);
+            return cur.obj.findData(version).getValue();
         }else{
             return null;
         }
@@ -124,15 +124,18 @@ public class TempSortedList{
         }
         long time1 = endTime, time2 = endTime;
         MVCCObject o = null;
-        o = cur.obj.commitObject(startVersion, endVersion);
-        time1 = cur.time;
-        pre = cur;
-        cur = cur.next;
-        while(cur.getTime() >= startTime){
+        if(cur != null){
+            o = cur.obj.commitObject(startVersion, endVersion);
+            time1 = cur.time;
+            pre = cur;
+            cur = cur.next;
+        }
+        while(cur != null && cur.getTime() >= startTime){
             time2 = cur.time;
             if(o != null){
                 TimeMVCCObject to = new TimeMVCCObject(o.getVersion(), o.getValue(), time2, time1);
-                list.add(to);
+                to.setMaxVerion(o.isMaxVerion());
+                list.add(0, to);
             }
             time1 = cur.time;
             o = cur.obj.commitObject(startVersion, endVersion);
@@ -140,9 +143,12 @@ public class TempSortedList{
             cur = cur.next;
         }
         if(o != null){
-            time2 = cur.time;
+            if(cur != null){
+                time2 = cur.time;
+            }
             TimeMVCCObject to = new TimeMVCCObject(o.getVersion(), o.getValue(), time2, time1);
-            list.add(to);
+            to.setMaxVerion(o.isMaxVerion());
+            list.add(0, to);
         }
         return list;
     }

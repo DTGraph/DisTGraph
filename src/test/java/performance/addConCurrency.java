@@ -1,5 +1,6 @@
 package performance;
 
+import Element.NodeAgent;
 import UserClient.DTGDatabase;
 import UserClient.Transaction.DTGTransaction;
 import com.alipay.sofa.jraft.entity.LocalStorageOutter;
@@ -10,51 +11,74 @@ import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class addConCurrency {
+
+    static int allCount = 10;
+    static int pool_size = 2;
+    static AtomicInteger count = new AtomicInteger(0);
+    static long[][] sta = new long[allCount][3];
 
     @Test
     public void addTests(){
         DTGDatabase db = new DTGDatabase();
-        db.init("127.0.0.1", 10086, "D:\\garbage");
+        db.init("192.168.1.178", 10086, "D:\\garbage");
         File file = new File("D:\\garbage\\txId");
         if(file.exists()){
             file.delete();
         }
-        file = null;
-        OutPutCsv output = new OutPutCsv("D:\\DTG\\test\\addInConcurrency50-80-6.csv", "start,end,cost");
+        OutPutCsv output = new OutPutCsv("D:\\distribute\\test\\addInConcurrency5000-10-00000000-" + pool_size + ".csv", "start,start2,end,cost");
 
-//        try (DTGTransaction tx = db.CreateTransaction()){
-//            db.addNode();
-//            tx.start();
-//        }
         try (DTGTransaction tx = db.CreateTransaction()){
-            db.addNode();
-            db.addNode();
-            db.addNode();
-            db.addNode();
-            db.addNode();
+            //NodeAgent node = db.getNodeById(0);
+            for(int i = 0; i < 1000; i++){
+                db.addNode();
+                db.addNode();
+                db.addNode();
+                db.addNode();
+                db.addNode();
+            }
+
+//            NodeAgent node = db.addNode();
+//            node.setProperty("sss", "111");
+//            node.setTemporalProperty("aaa", 1, 6,"222");
+////            int s1 = node.getProperty("sss");
+//            int s2 = node.getNodeTemporalProperty("aaa", 3);
             Thread.sleep(30);
             Map<Integer, Object> map = tx.start();
-            map.get(0);
+
+//            System.out.println(map.get(s1));
+//            System.out.println(map.get(s2));
+//            map.get(0);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        ExecutorService pool = Executors.newFixedThreadPool(pool_size);
 
         long start = System.currentTimeMillis();
         System.out.println(System.currentTimeMillis());
-        for(int i = 0; i < 1; i++){
+        for(int i = 0; i < allCount; i++){
             TxThread a = new TxThread(db, i, start, output);
-            a.start();
+            pool.execute(a);
         }
 
+
         try {
-            Thread.sleep(100000);
+            Thread.sleep(60000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        output.close();
+
+        System.out.println("all done");
+        for(int i = 0; i < allCount; i++){
+            output.write(Long.toString(sta[i][0]), Long.toString(sta[i][1]), Long.toString(sta[i][2]), Long.toString(sta[i][2] - sta[i][1]));
+        }
+        System.out.println("all done");
+
     }
+
 }
 
 class TxThread extends Thread{
@@ -62,44 +86,38 @@ class TxThread extends Thread{
     DTGDatabase db;
     int i;
     long start;
-    private ExecutorService fixedThreadPool;
     OutPutCsv output;
 
     public TxThread(DTGDatabase db, int i, long start, OutPutCsv output){
         this.db = db;
         this.i = i;
         this.start = start;
-        fixedThreadPool = Executors.newFixedThreadPool(1);
         this.output = output;
     }
 
     @Override
     public void run() {
-        int count = 0;
-        while(count < 1){
-            //System.out.println("start : " + count);
-            try (DTGTransaction tx = db.CreateTransaction()){
-                db.addNode();
-                db.addNode();
-                db.addNode();
-                db.addNode();
-                db.addNode();
-                Thread.sleep(30);
-                Map<Integer, Object> map = tx.start();
-                map.get(0);
-                long end = System.currentTimeMillis();
-                //System.out.println("end  : " + count);
-                fixedThreadPool.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        output.write(Long.toString(start), Long.toString(end), Long.toString(end - start));
-                    }
-                });
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        //System.out.println("start : " + count);
+        long start2 = System.currentTimeMillis();
+        try (DTGTransaction tx = db.CreateTransaction()){
+            for(int j = 0; j < 5000; j++){
+                NodeAgent n = db.getNodeById(j);
+                n.setTemporalProperty("a", i, i+1, "aaaa");
             }
 
-            count++;
+            Map<Integer, Object> map = tx.start();
+            map.get(0);
+            long end = System.currentTimeMillis();
+
+            addConCurrency.sta[i][0] = start;
+            addConCurrency.sta[i][1] = start2;
+            addConCurrency.sta[i][2] = end;
+        }finally {
+            return;
         }
     }
 }
+
+
+
+

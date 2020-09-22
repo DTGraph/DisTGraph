@@ -19,6 +19,7 @@ package Region;
 import Communication.DTGRpcService;
 import Communication.RpcCaller;
 import LocalDBMachine.DTGStateMachine;
+import UserClient.DTGSaveStore;
 import com.alipay.remoting.rpc.RpcServer;
 import com.alipay.sofa.jraft.*;
 import com.alipay.sofa.jraft.conf.Configuration;
@@ -172,6 +173,10 @@ public class  DTGRegionEngine implements Lifecycle<DTGRegionEngineOptions> {
             LOG.info("[RegionEngine] start successfully: {}.", this);
         }
         return this.started;
+    }
+
+    public void startOther(DTGSaveStore store){
+        this.metricsRawStore.startOther(store);
     }
 
     private boolean initDTGMetricsRawStore(DTGRegionEngineOptions opts){

@@ -50,6 +50,14 @@ public interface MQLogStorage extends Lifecycle<MQLogStorageOptions>, Storage {
      */
     TransactionLogEntry getEntry(final long version);
 
+    public TransactionLogEntry getStatusEntry(long version);
+
+    public List<TransactionLogEntry> getStatusEntries(long start, long end);
+
+    public boolean truncateStatusSuffix(long lastIndexKept);
+
+    public boolean truncateStatusPrefix(long firstIndexKept);
+
     /**
      * Append entries to log.
      */
@@ -87,5 +95,7 @@ public interface MQLogStorage extends Lifecycle<MQLogStorageOptions>, Storage {
     List<TransactionLogEntry> getUnCommitLog();
 
     boolean removeEntry(long version);
+
+    boolean removeStatusEntry(long version);
 
 }
