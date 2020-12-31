@@ -1,6 +1,7 @@
 package raft;
 
 import DBExceptions.DTGLockError;
+import DBExceptions.TransactionException;
 import DBExceptions.TxMQException;
 import Element.DTGOperation;
 import Element.OperationName;
@@ -169,8 +170,12 @@ public class DTGMetricsRawStore implements DTGRawStore, Lifecycle<DTGMetricsRawS
             synchronized (resultMap){
                 resultMap.wait(FutureHelper.DEFAULT_TIMEOUT_MILLIS);
             }
-            closure.setData(resultMap);
-            closure.run(Status.OK());
+            if((boolean)resultMap.get(-1)) {
+                closure.setData(resultMap);
+                closure.run(Status.OK());
+            }else throw new TransactionException();
+//            closure.setData(resultMap);
+//            closure.run(Status.OK());
         } catch (Throwable throwable) {
             System.out.println(op.getTxId() + "  error!： " + throwable);
             closure.run(new Status(DTGLockError.FAILED.getNumber(), "transaction excute failed!"));
@@ -286,9 +291,12 @@ public class DTGMetricsRawStore implements DTGRawStore, Lifecycle<DTGMetricsRawS
             }
             //System.out.println(System.currentTimeMillis() + "  firstPhaseProcessor 3: " + op.getTxId() + ",   " + region.getId());
 
-            localDB.addToCommitMap(tx, op.getTxId(), region.getId());
-            closure.setData(resultMap);
-            closure.run(Status.OK());
+            if((boolean)resultMap.get(-1)) {
+                localDB.addToCommitMap(tx, op.getTxId(), region.getId());
+                closure.setData(resultMap);
+                closure.run(Status.OK());
+            }else throw new TransactionException();
+
            // System.out.println(System.currentTimeMillis() + "  firstPhaseProcessor 4: " + op.getTxId() + ",   " + region.getId());
 
 //            if(op.getAllEntityEntries() != null){

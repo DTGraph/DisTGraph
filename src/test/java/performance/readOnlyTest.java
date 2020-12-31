@@ -107,7 +107,7 @@ class TxThread6 extends Thread{
 //                NodeAgent n = db.getNodeById(i);
 //                n.setTemporalProperty("a", 1, 6,"222");
                 NodeAgent n = db.getNodeById(ra.nextInt(5000));
-                s1 = n.getNodeTemporalProperty("a", ra.nextInt(10));
+                s1 = n.getTemporalProperty("a", ra.nextInt(10));
             }
 
             Map<Integer, Object> map = tx.start();

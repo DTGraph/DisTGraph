@@ -653,7 +653,7 @@ public class DefaultPlacementDriverClient implements DTGPlacementDriverClient{
     public void getIds(byte type) {
         if(type == TEMPORALPROPERTYTYPE)return;
         List<Long> list = this.metadataRpcClient.getIds(type);
-        System.out.println("get id from pd, the size is : " + list.size());
+        //System.out.println("get id from pd, the size is : " + list.size());
         getIdList(type).addAll(list);
     }
 

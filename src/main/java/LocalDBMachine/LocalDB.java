@@ -182,25 +182,28 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
                         TransactionThreadLock txLock = new TransactionThreadLock(op.getTxId());
                         LocalTransaction tx = new LocalTransaction(this.memMVCC, this.db, op, resultMap, txLock, region);
 
-                        tx.start();
+                        tx.start();//System.out.println("aaaaaaaaaaaaa");
                         synchronized (txLock){
                             if(!tx.getCouldCommit()){
                                 try {
                                     txLock.wait();
                                 } catch (InterruptedException e) {
-                                    e.printStackTrace();
+                                    System.out.println(e);
+                                    throw new TransactionException();
                                 }
                             }
                         }
-
+                        //System.out.println("bbbbbbbbbbbbbb");
                         addToCommitMap(tx, key);
                     }
                     if(closure != null){
-                        closure.setData(resultMap);
-                        closure.run(Status.OK());
-                    }
+                        if((boolean)resultMap.get(-1)) {
+                            closure.setData(resultMap);//System.out.println("ddddddddddddd");
+                            closure.run(Status.OK());
+                        }else throw new TransactionException();
+                    }//System.out.println("cccccccccc");
                 } catch (Throwable e) {
-                    if(closure != null){
+                    if(closure != null){//System.out.println("eeeeeee");
                         System.out.println("local transaction error" + op.getTxId());
                         closure.setError(Errors.forException(e));
                         closure.run(new Status(-1, "local transaction failed, transaction op id: %s", op.getTxId()));
@@ -314,7 +317,7 @@ public class LocalDB implements DTGRawStore, Lifecycle<LocalDBOption> {
         }
         setTxDone(tx.getOp());
         waitCommitMap.remove(id);
-        System.out.println(System.currentTimeMillis() + "  end commitTx : " + id);// + "   " + count.getAndIncrement());
+        System.out.println("time :" + System.currentTimeMillis() + ", end commitTx : " + id);// + "   " + count.getAndIncrement());
         return true;
     }
 

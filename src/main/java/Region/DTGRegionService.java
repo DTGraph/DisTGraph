@@ -2,19 +2,18 @@ package Region;
 
 import Communication.DTGRpcService;
 import Communication.RequestAndResponse.*;
+import DBExceptions.EntityEntryException;
 import DBExceptions.TransactionException;
 import DBExceptions.TxError;
 import DBExceptions.TypeDoesnotExistException;
 import Element.DTGOperation;
 import Element.EntityEntry;
 import Element.OperationName;
-import LocalDBMachine.LocalDB;
 import PlacementDriver.DTGPlacementDriverClient;
 import UserClient.DTGSaveStore;
 import UserClient.Transaction.TransactionLog;
 import UserClient.TransactionManager;
 import com.alipay.sofa.jraft.Status;
-import com.alipay.sofa.jraft.error.RaftError;
 import com.alipay.sofa.jraft.rhea.RequestProcessClosure;
 import com.alipay.sofa.jraft.rhea.client.FutureGroup;
 import com.alipay.sofa.jraft.rhea.client.FutureHelper;
@@ -36,7 +35,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static config.DefaultOptions.MVCC;
 import static config.MainType.NODETYPE;
 import static config.MainType.RELATIONTYPE;
 import static config.MainType.TEMPORALPROPERTYTYPE;
@@ -68,6 +66,7 @@ public class DTGRegionService implements RegionService {
     private TransactionManager versionManager;
 
 
+    private RegionSet r;
     public DTGRegionService(DTGRegionEngine regionEngine, TransactionManager versionManager){
         this.regionEngine = regionEngine;
         this.rawStore = regionEngine.getMetricsRawStore();
@@ -81,6 +80,7 @@ public class DTGRegionService implements RegionService {
         this.txResult = new ConcurrentHashMap<>();
         this.versionManager = versionManager;
         //this.failedCommitList = new LinkedList<>();
+        r = new RegionSet(this.regionEngine.getStoreEngine().getStoreOpts().getRaftDataPath()  + "aaaa" + region.getId(), this.regionEngine.getStoreEngine().getStoreId(), versionManager);
     }
 
 
@@ -95,6 +95,7 @@ public class DTGRegionService implements RegionService {
     }
 
 
+
     //单副本
     @Override
     public void handleFirstPhase(FirstPhaseRequest request, RequestProcessClosure<BaseRequest, BaseResponse<?>> closure) {
@@ -103,6 +104,7 @@ public class DTGRegionService implements RegionService {
         response.setSelfRegionId(getRegionId());
 
         if(this.region.getTransactionCount() > DTGConstants.MAXRUNNINGTX){
+            System.out.println(this.region.getTransactionCount() + "       " + DTGConstants.MAXRUNNINGTX);
             response.setError(Errors.TRANSACTION_FULL);
             closure.sendResponse(response);
             return;
@@ -114,6 +116,22 @@ public class DTGRegionService implements RegionService {
         final DTGOperation op = KVParameterRequires
                 .requireNonNull(request.getDTGOpreration(), "put.DTGOperation");
         String txId = op.getTxId();
+        //System.out.println("time :" + System.currentTimeMillis() + ", handle tx " + txId);
+        try {
+            Map<Integer, Object> rmap = r.processTx(op);
+            if(rmap != null){
+                response.setValue(toByteArray(rmap));
+                closure.sendResponse(response);
+                //System.out.println("Transaction Done " + txId);
+                return;
+            }
+        } catch (TypeDoesnotExistException | EntityEntryException e) {
+            response.setError(Errors.TRANSACTION_FIRSTPHASE_ERROR);
+            closure.sendResponse(response);
+            //System.out.println("time :" + System.currentTimeMillis() + "  transaction error " + txId);
+            return;
+        }
+
 
 //        if(txId.substring(0,5).equals("reRun")){
 //            byte status = ((DTGMetricsRawStore)this.rawStore).getTxStatus(op.getVersion());
@@ -162,7 +180,14 @@ public class DTGRegionService implements RegionService {
                             return;
                         }
                         txStatus.put(txId, DTGConstants.TXDONEFIRST);
-                        //System.out.println(System.currentTimeMillis() + "  handleFirstPhase done: " + request.getDTGOpreration().getTxId() + ",   " + region.getId());
+                        System.out.println("time :" + System.currentTimeMillis() + ", finish first phase " + txId);
+//                        if(txId.equals("E8-6A-64-04-DF-455000")){
+//                            try {
+//                                Thread.sleep(1000000);
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
                         callMainRegion(thisRepeate, op.getMainRegionId(), true, new CompletableFuture<Boolean>(), DTGConstants.FAILOVERRETRIES, null, false);
                     } else {
                         closeTx();
@@ -791,7 +816,7 @@ public class DTGRegionService implements RegionService {
 //
 //        System.out.println("CLOSE NOW!!!!!");
 //        try {
-//            Thread.sleep(10000);
+//            Thread.sleep(100000);
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
@@ -811,6 +836,9 @@ public class DTGRegionService implements RegionService {
         if(txStatus.get(txId) == DTGConstants.TXROLLBACK){
             isSuccess = false;
             changeStatus(this.region.getId(), DTGConstants.TXROLLBACK, startVersion, txId);
+            //**************************
+            return true;
+            //delete this to rollback
         }else{
             isSuccess = true;
             changeStatus(this.region.getId(), DTGConstants.TXSECONDSTART, startVersion, txId);

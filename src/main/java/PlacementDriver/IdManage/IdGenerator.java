@@ -44,6 +44,9 @@ public class IdGenerator {
     // ids freed in this session that haven't been flushed to disk yet
     private final LinkedList<Long> releasedIdList = new LinkedList<Long>();
 
+    private static final long batchSize = 5000;
+    private long countIdRequest = 0;
+
 
 
 
@@ -61,9 +64,23 @@ public class IdGenerator {
         this.highId.set( max( this.highId.get(), highId ) );
     }
 
+    private synchronized void increaseId(long count){
+        countIdRequest = countIdRequest + count;
+        if(countIdRequest >= batchSize){
+            ByteBuffer buffer = ByteBuffer.allocate( HEADER_SIZE );
+            try {
+                writeHeader(buffer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            countIdRequest = 0;
+        }
+    }
+
     public synchronized long nextId()
     {
         assertStillOpen();
+        increaseId(1);
         long nextDefragId = nextIdFromDefragList();
         if ( nextDefragId != -1 )
         {
@@ -83,6 +100,7 @@ public class IdGenerator {
 
     public synchronized long[] getIds(long count)
     {
+        increaseId(count);
         long[] res = new long[2];
         res[0] = highId.get();
         if ( res[0] == INTEGER_MINUS_ONE )
@@ -358,11 +376,20 @@ public class IdGenerator {
         }
         buffer.flip();
         byte storageStatus = buffer.get();
-        if ( storageStatus != CLEAN_GENERATOR )
-        {
-            throw new InvalidIdGeneratorException( "Sticky generator[ " +
-                    fileName + "] delete this id file and build a new one" );
+        if(storageStatus != CLEAN_GENERATOR){
+            System.out.println("Sticky generator[ \" +\n" +
+                    "//                    fileName + \"] delete this id file and build a new one");
+            ByteBuffer buffer2 = ByteBuffer.allocate( HEADER_SIZE );
+            buffer2.put( STICKY_GENERATOR ).putLong( buffer.getLong() + batchSize );
+            buffer = buffer2;
+            buffer.flip();
+            storageStatus = buffer.get();
         }
+//        if ( storageStatus != CLEAN_GENERATOR )
+//        {
+//            throw new InvalidIdGeneratorException( "Sticky generator[ " +
+//                    fileName + "] delete this id file and build a new one" );
+//        }
         return buffer;
     }
 

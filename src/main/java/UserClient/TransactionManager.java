@@ -73,7 +73,7 @@ public class TransactionManager implements AutoCloseable {
     private void executeVersionTasks(List<VersionRequestClosure> tasks){
         int txNumber = tasks.size();
         Long[] res = this.pdClient.getVersions(txNumber);
-        if(res[1] - res[0] != txNumber){
+        if(res == null || res[1] - res[0] != txNumber){
             for(int i = 0; i < txNumber; i++){
                 VersionRequestClosure closure = tasks.get(i);
                 closure.setError(Errors.TRANSACTION_SECOND_ERROR);

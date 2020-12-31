@@ -39,6 +39,8 @@ import org.slf4j.LoggerFactory;
 import tool.GetSystem;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 
 import static config.DefaultOptions.*;
 import static config.MainType.*;
@@ -85,6 +87,10 @@ public class DTGDatabase {
         return true;
     }
 
+    public Map<String, List<Integer>> getStoreInfo(){
+        return this.store.getStoreInfo();
+    }
+
     public void shutdown(){
         this.TxIdGenerator.close();
         this.pdClient.shutdown();
@@ -109,7 +115,7 @@ public class DTGDatabase {
         DTGTransaction transaction = transactionManage.getTransaction();
         NodeAgent node = new NodeAgent(transactionManage);
         EntityEntry entry = new EntityEntry();
-        entry.setId(pdClient.getId(NODETYPE));System.out.println("node id = " + entry.getId());
+        entry.setId(pdClient.getId(NODETYPE));//System.out.println("add new node id = " + entry.getId());
         entry.setTransactionNum(transaction.getEntityNum());
         entry.setType(NODETYPE);
         entry.setOperationType(EntityEntry.ADD);
@@ -124,7 +130,7 @@ public class DTGDatabase {
         DTGTransaction transaction = transactionManage.getTransaction();
         RelationshipAgent relationship = new RelationshipAgent(transactionManage);
         EntityEntry entry = new EntityEntry();
-        entry.setId(pdClient.getId(RELATIONTYPE));
+        entry.setId(pdClient.getId(RELATIONTYPE));//System.out.println("add new relation id = " + entry.getId());
         entry.setTransactionNum(transaction.getEntityNum());
         entry.setType(RELATIONTYPE);
         entry.setOperationType(EntityEntry.ADD);

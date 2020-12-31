@@ -40,6 +40,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static com.alipay.sofa.jraft.rhea.client.FutureHelper.DEFAULT_TIMEOUT_MILLIS;
+
 /**
  *
  * @author jiachun.fjc
@@ -77,7 +79,17 @@ public class DTGMetadataRpcClient {
     public Long[] getVersions(int txNumber){
         final CompletableFuture<Long[]> future = new CompletableFuture<>();
         internalGetVersions(future, txNumber, this.failoverRetries, null);
-        return FutureHelper.get(future);
+        try {
+            return future.get(DEFAULT_TIMEOUT_MILLIS, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
+        return null;
+//        return FutureHelper.get(future);
     }
 
     public void internalGetVersion(final CompletableFuture<Long> future, final int retriesLeft, final Errors lastCause){

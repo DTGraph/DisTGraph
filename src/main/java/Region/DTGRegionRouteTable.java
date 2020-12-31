@@ -27,6 +27,8 @@ import com.alipay.sofa.jraft.util.BytesUtil;
 import com.alipay.sofa.jraft.util.Requires;
 import com.alipay.sofa.jraft.rhea.util.Maps;
 import com.alipay.sofa.jraft.rhea.util.Lists;
+import config.DTGConstants;
+import config.DefaultOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tool.ObjectAndByte;
@@ -97,13 +99,13 @@ public class DTGRegionRouteTable {
                 }
                 else {
 //                    region = findRegionByKeyWithoutLock(entityEntry.getId());
-                    long regionId = entityEntry.getId() % (INITREGIONNUMBER - 1) + 1;
+                    long regionId = entityEntry.getId() % (DefaultOptions.CLUSTERSIZE) + 1;
                     region = getRegionById(regionId);
                 }
                 //checkRegion(entityEntry, region);
                 final DTGRegion region1;
                 if(region == null){
-                    long regionId = entityEntry.getId() % (INITREGIONNUMBER - 1) + 1;
+                    long regionId = entityEntry.getId() % (DefaultOptions.CLUSTERSIZE) + 1;
                     region1 = getRegionById(regionId);
 //                    region1 = findRegionByKeyWithoutLock(entityEntry.getId());
                 }
@@ -434,7 +436,7 @@ public class DTGRegionRouteTable {
     }
 
     public void updataTop(long top){
-        System.out.println("top bound :" + top);
+        //System.out.println("top bound :" + top);
         if(rangeTable.containsKey(topRestrict) && (long)rangeTable.get(topRestrict) == TOPBOUND){
             rangeTable.remove(topRestrict);System.out.println("remove top bound :" + topRestrict);
         }

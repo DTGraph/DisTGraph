@@ -30,7 +30,6 @@ public class TempSortedListTest {
         list.printList();
 
         List<TimeMVCCObject> res =  list.commitObject(4, 5, 2, 11);
-        System.out.println(res.size());
         for(TimeMVCCObject o : res){
             System.out.println(o.getStartTime() + " " + o.getEndTime());
         }

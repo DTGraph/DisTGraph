@@ -33,17 +33,16 @@ public class DefaultOptions {
     //public static final String ALL_NODE_ADDRESSES          = "127.0.0.1:8184,127.0.0.1:8185,127.0.0.1:8186";
     public static final String CLUSTER_NAME                = "DTG_DEFAULT";
     public static final String PDGROUPID                   = "METADATA_SAVE";
-    //public static final String INITIALSERVERLIST           = "127.0.0.1:8184,127.0.0.1:8185,127.0.0.1:8186" ;
-    public static final String INITIALSERVERLIST           = "192.168.1.107:8184,192.168.1.144:8184,192.168.1.199:8184" ;
-    //public static final String INITIALSERVERLIST           = "182.129.214.222:8184,182.129.214.222:8185,182.129.214.222:8186";
-    //public static final String INITIALSERVERLIST           = "127.0.0.1:8184,139.198.0.201:8184,182.32.203.173:8184";
-    //public static final String INITIALSERVERLIST           = "139.198.19.46:8184,127.0.0.1:8184,182.32.203.173:8184" ;
-    //public static final String INITIALSERVERLIST           = "139.198.19.46:8184,139.198.0.201:8184,127.0.0.1:8184";
+//    public static final String INITIALSERVERLIST           = "127.0.0.1:8184,127.0.0.1:8185,127.0.0.1:8186,127.0.0.1:8187" ;
+//    public static final String INITIALSERVERLIST           = "127.0.0.1:8184,127.0.0.1:8185,127.0.0.1:8186" ;
+//    public static final String INITIALPDSERVERLIST         = "127.0.0.1:8181,127.0.0.1:8182,127.0.0.1:8183";
+    public static final String INITIALSERVERLIST           = "192.168.1.151:8184,192.168.1.144:8184,192.168.1.199:8184" ;
     public static final String INITIALPDSERVERLIST         = "192.168.1.212:8181,192.168.1.212:8182,192.168.1.212:8183";
-    //public static final String INITIALPDSERVERLIST         = "127.0.0.1:8181,127.0.0.1:8182,127.0.0.1:8183";
+
     public static final int    MINIDBATCHSIZE              = 50;
     public static final int    IDBATCHSIZE                 = 10000;
     public static final int    CLUSTERID                   = 1;
+    public static final int    CLUSTERSIZE                 = 3;
     public static final int    PDCLUSTERID                 = 0;
     public static final int    GRABSIZE                    = 50000;
     public static final int    BATCHSIZE                   = 100;
@@ -59,6 +58,7 @@ public class DefaultOptions {
     private static final int   MaxKvRpcCoreThreads         = 1001;
 
     public static final boolean MVCC                      = false;
+    public static final int     LOSTSTOREWAIT             = 2;
 
     public static CliOptions defaultCliOptios(){
         CliOptions opts = new CliOptions();

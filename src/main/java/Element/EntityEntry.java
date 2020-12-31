@@ -27,10 +27,11 @@ public class EntityEntry implements Serializable, Comparable<EntityEntry> {
 
     private static final long serialVersionUID = 1304171229405186819L;
 
-    public static final byte  ADD     = 0x04;
-    public static final byte  SET     = 0x05;
-    public static final byte  REMOVE  = 0x06;
-    public static final byte  GET     = 0x07;
+    public static final byte  ADD          = 0x04;
+    public static final byte  SET          = 0x05;
+    public static final byte  REMOVE       = 0x06;
+    public static final byte  GET          = 0x07;
+    public static final byte  GETLIMIT     = 0x08;
 
     private int               transactionNum;
 
@@ -43,7 +44,7 @@ public class EntityEntry implements Serializable, Comparable<EntityEntry> {
     private int               other = -1; //end time, if isTemporalProperty = false, it represent end node id
     private long              id; //node or relation id, if id = -2, it represnet real id is paraId
     private int               paraId;
-    private boolean           isTemporalProperty;
+    private boolean           isTemporalProperty = false;
     private long              txVersion = -1;
 
     public String getKey() {

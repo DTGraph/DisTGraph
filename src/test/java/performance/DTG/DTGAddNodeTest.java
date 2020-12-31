@@ -4,6 +4,7 @@ import Element.NodeAgent;
 import UserClient.DTGDatabase;
 import UserClient.Transaction.DTGTransaction;
 import org.junit.Test;
+import sun.nio.cs.ext.MacArabic;
 import tool.OutPutCsv;
 
 import java.io.File;
@@ -28,20 +29,35 @@ public class DTGAddNodeTest {
         ExecutorService threadPool = Executors.newFixedThreadPool(threadPoolNum);
 
         try (DTGTransaction tx = db.CreateTransaction()){
-            for(int i = 0; i < 5; i++){
-                NodeAgent node = db.addNode();
-                node.setProperty("name", "1");
-            }
+            NodeAgent node = db.addNode();
+            //NodeAgent node = db.getNodeById(0);
+            node.deleteself();
+            node.setProperty("name", "1");
+            int t = node.getProperty("name");
+            node.setTemporalProperty("te", 1, 5, "1-5");
+            int t2 = node.getTemporalProperty("te", 3);
+            node.setTemporalProperty("te", 2, 7, "2-7");
+            int t3 = node.getTemporalProperty("te", 3);
+            int t4 = node.getTemporalProperty("te", 6);
+            node.setTemporalProperty("te2", 2,  "te2");
+            //node.deleteself();
+            int t5 = node.getTemporalProperty("te2", 3);
             Thread.sleep(30);
             Map<Integer, Object> map = tx.start();
             map.get(0);
+            System.out.println(node.getTransactionObjectId());
+            System.out.println(map.get(t));
+            System.out.println(map.get(t2));
+            System.out.println(map.get(t3));
+            System.out.println(map.get(t4));
+            System.out.println(map.get(t5));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
         long start = System.currentTimeMillis();
         System.out.println(System.currentTimeMillis());
-        for(int i = 0; i < 50; i++){
+        for(int i = 0; i < 0; i++){
             DTGThread thread = new DTGThread(db, i, start, fixedThreadPool, output);
             threadPool.submit(thread);
         }
@@ -82,7 +98,9 @@ class DTGThread extends Thread{
     public void run() {
         long runtime = System.currentTimeMillis();
         try (DTGTransaction tx = db.CreateTransaction()){
-            db.addNode();
+            NodeAgent n = db.addNode();
+            n.setProperty("aaaa", "bbbbb");
+            int t = n.getProperty("aaaa");
             db.addNode();
             db.addNode();
             db.addNode();
@@ -90,6 +108,7 @@ class DTGThread extends Thread{
             Thread.sleep(30);
             Map<Integer, Object> map = tx.start();
             map.get(0);
+            System.out.println(map.get(t));
             long end = System.currentTimeMillis();
             fixedThreadPool.execute(new Runnable() {
                 @Override

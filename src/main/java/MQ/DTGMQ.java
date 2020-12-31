@@ -325,6 +325,7 @@ public class DTGMQ implements Lifecycle<MQOptions> {
 //    }
 
     public void reRunUncommitLog(DTGSaveStore store){
+        if(true)return;
         List<TransactionLogEntry> unCommitLog = this.logStorage.getUnCommitLog();
         for(TransactionLogEntry log : unCommitLog){
             List<EntityEntry> entries = ((TransactionLog) ObjectAndByte.toObject(log.getByteData())).getOps();

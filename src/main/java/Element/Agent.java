@@ -139,7 +139,24 @@ public abstract class Agent {
         return entry.getTransactionNum();
     }
 
-    public int getNodeTemporalProperty(String key, int time){
+    public int getPropertyBetweenAAndB(String key, int max, int min){
+        DTGTransaction transaction = transactionManage.getTransaction();
+        EntityEntry entry = new EntityEntry();
+        entry.setTransactionNum(transaction.getEntityNum());
+        entry.setType(getType());
+        entry.setOperationType(EntityEntry.GETLIMIT);
+        entry.setIsTemporalProperty(false);
+        entry.setId(-2);
+        entry.setKey(key);
+        entry.setOther(max);
+        entry.setValue(min);//save min value
+        Requires.requireNonNull(TransactionObjectId, "Transaction error");
+        entry.setParaId(getTransactionObjectId());
+        transaction.addEntityEntries(entry);
+        return entry.getTransactionNum();
+    }
+
+    public int getTemporalProperty(String key, int time){
         DTGTransaction transaction = transactionManage.getTransaction();
         EntityEntry entry = new EntityEntry();
         entry.setTransactionNum(transaction.getEntityNum());
@@ -150,6 +167,25 @@ public abstract class Agent {
         entry.setKey(key);
         entry.setStart(time);
         entry.setOther(-1);
+        Requires.requireNonNull(TransactionObjectId, "Transaction error");
+        entry.setParaId(getTransactionObjectId());
+        transaction.addEntityEntries(entry);
+        transaction.NotReadOnly();
+        return entry.getTransactionNum();
+    }
+
+    public int getTemporalPropertyBetweenAAndB(String key, int time, int max, int min){
+        DTGTransaction transaction = transactionManage.getTransaction();
+        EntityEntry entry = new EntityEntry();
+        entry.setTransactionNum(transaction.getEntityNum());
+        entry.setType(getType());
+        entry.setOperationType(EntityEntry.GETLIMIT);
+        entry.setIsTemporalProperty(true);
+        entry.setId(-2);
+        entry.setKey(key);
+        entry.setStart(time);
+        entry.setOther(max);
+        entry.setValue(min);//save min value
         Requires.requireNonNull(TransactionObjectId, "Transaction error");
         entry.setParaId(getTransactionObjectId());
         transaction.addEntityEntries(entry);

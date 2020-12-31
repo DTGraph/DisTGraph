@@ -72,7 +72,8 @@ public class LocalTransaction extends Thread {
     public void run() {
         try {
             synchronized (resultMap){//System.out.println("11111111");
-                saveToMvcc(this.startVersion);//System.out.println("222222222");
+                saveToMvcc(this.startVersion);
+                resultMap.put(-1, true);
             }
             if(couldCommit == false){//System.out.println("33333333");
                 synchronized (lock){
@@ -91,7 +92,11 @@ public class LocalTransaction extends Thread {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("eee" + e);
+            resultMap.put(-1, false);
+            synchronized (lock){//System.out.println("1111111111");
+                lock.notify();//System.out.println("2222222222");
+            }//System.out.println("333333333333");
         }
     }
 
@@ -188,7 +193,7 @@ public class LocalTransaction extends Thread {
         }
         for(TimeMVCCObject o : listO){
             if(o.isMaxVerion()){
-                System.out.println("update db time :" + o.getStartTime() + " - " + o.getEndTime());
+                //System.out.println("update db time :" + o.getStartTime() + " - " + o.getEndTime());
                 n.setTemporalProperty(key, o.getStartTime(), o.getEndTime(), o.getValue());
             }
         }
@@ -224,6 +229,7 @@ public class LocalTransaction extends Thread {
         else throw new EntityEntryException(entityEntry);
         if(node == null){
             Node dbNode = db.getNodeById(entityEntry.getId());
+            if(dbNode == null)throw new EntityEntryException(entityEntry);
             node = new NodeObject(entityEntry.getId(), version);
             node.setRealObjectInDB(dbNode);
             node.initAllProperty(dbNode.getAllProperties());
@@ -255,6 +261,7 @@ public class LocalTransaction extends Thread {
         Transaction transaction = db.beginTx();
         Map<Integer, Object> tempMap = new HashMap<>();
         List<EntityEntry> Entries = op.getEntityEntries();
+        int i = 0;
         for(EntityEntry entityEntry : Entries){
             switch (entityEntry.getType()){
                 case NODETYPE:{
@@ -286,6 +293,7 @@ public class LocalTransaction extends Thread {
                                 NodeObject node = this.memMVCC.getNodeById(entityEntry.getId(), version, false);
                                 if(node == null){
                                     Node dbNode = db.getNodeById(entityEntry.getId());
+                                    if(dbNode == null)throw new EntityEntryException(entityEntry);
                                     node = new NodeObject(entityEntry.getId(), version);
                                     node.setRealObjectInDB(dbNode);
                                     node.initAllProperty(dbNode.getAllProperties());
@@ -300,7 +308,7 @@ public class LocalTransaction extends Thread {
                                 Object res = this.memMVCC.getNodeTemporalProperty(version, node, entityEntry.getKey(), entityEntry.getStart());
                                 if(res == null){
                                     res = node.getRealObjectInDB().getTemporalProperty(entityEntry.getKey(), entityEntry.getStart());
-                                }
+                                }System.out.println("time :" + System.currentTimeMillis() + ", get result :" + res.toString());
                                 tempMap.put(entityEntry.getTransactionNum(), res);
                                 resultMap.put(entityEntry.getTransactionNum(), res);
                             }
@@ -308,7 +316,7 @@ public class LocalTransaction extends Thread {
                                 Object res = node.getProperty(entityEntry.getKey());
                                 if(res == null){
                                     res = node.getRealObjectInDB().getProperty(entityEntry.getKey());
-                                }
+                                }System.out.println("time :" + System.currentTimeMillis() + ", get result :" + res.toString());
                                 tempMap.put(entityEntry.getTransactionNum(), res);
                                 resultMap.put(entityEntry.getTransactionNum(), res);
                             }

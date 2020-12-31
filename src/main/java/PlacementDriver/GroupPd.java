@@ -61,6 +61,21 @@ public class GroupPd {
         int i = 0;
         for(String add : address){
             String[] socket = add.split(":");
+
+//            File file2 = new File(rootPath+"\\pd_" + socket[0] + "_" + socket[1] + "\\nodeIdGenerator");
+//            if(file.exists()){
+//                file2.delete();
+//            }
+//            File file3 = new File(rootPath+"\\pd_" + socket[0] + "_" + socket[1] + "\\relationIdGenerator");
+//            if(file.exists()){
+//                file3.delete();
+//            }
+//            File file4 = new File(rootPath+"\\pd_" + socket[0] + "_" + socket[1] + "\\versionControl");
+//            if(file.exists()){
+//                file4.delete();
+//            }
+
+
             final DTGPlacementDriverServerOptions opts = defaultDTGPlacementDriverServerOptions(socket[0], Integer.parseInt(socket[1]), rootPath+"\\pd_" + socket[0] + "_" + socket[1]);
             opts.getDtgPlacementDriverOptions().setRemotePd(true);
 

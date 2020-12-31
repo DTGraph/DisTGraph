@@ -52,9 +52,28 @@ public class DTGConstants {
     //if TX_LOG_SAVE_LEVEL==true, the log save with checksum;
     public static final boolean TX_LOG_SAVE_LEVEL            = false;
     public static final long    NULL_INDEX                   = -99998;
-    public static final int     FAILOVERRETRIES              = 5;
+    public static final int     FAILOVERRETRIES              = 1;
     public static final int     RETRIYRUNNERWAIT             = 500;
     public static final int     MAXWAITTIME                  = 100;
 
     public static final String NULLSTRING                    = "NONE_NULL";
+
+    public static final int    STORECOUNTSTATIC              = 3;
+
+    public static final String SERVER1                       = "192.168.1.151";
+    public static final int SERVER1PORT                      = 8184;
+    public static final String SERVER2                       = "192.168.1.144";
+    public static final int SERVER2PORT                      = 8184;
+    public static final String SERVER3                       = "192.168.1.199";
+    public static final int SERVER3PORT                      = 8184;
+    public static final String MASTER                        = "192.168.1.212";
+
+//    public static final String SERVER1                       = "127.0.0.1";
+//    public static final int SERVER1PORT                      = 8184;
+//    public static final String SERVER2                       = "127.0.0.1";
+//    public static final int SERVER2PORT                      = 8185;
+//    public static final String SERVER3                       = "127.0.0.1";
+//    public static final int SERVER3PORT                      = 8186;
+//    public static final String MASTER                        = "127.0.0.1";
+
 }

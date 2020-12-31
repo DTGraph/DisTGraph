@@ -4,6 +4,7 @@ import com.alipay.sofa.jraft.Lifecycle;
 import com.alipay.sofa.jraft.rhea.options.RpcOptions;
 import com.alipay.sofa.jraft.rhea.cmd.store.BaseRequest;
 import com.alipay.sofa.jraft.rhea.errors.Errors;
+import com.alipay.sofa.jraft.util.Endpoint;
 import raft.FailoverClosure;
 
 import java.util.concurrent.CompletableFuture;
@@ -37,4 +38,6 @@ public interface DTGRpcService extends Lifecycle<RpcOptions> {
      */
     <V> CompletableFuture<V> callAsyncWithRpc(final BaseRequest request, final FailoverClosure<V> closure,
                                               final Errors lastCause, final boolean requireLeader);
+
+    Endpoint getLeader(final long regionId, final boolean forceRefresh, final long timeoutMillis);
 }

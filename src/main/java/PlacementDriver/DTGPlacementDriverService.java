@@ -63,12 +63,11 @@ import storage.DTGCluster;
 import storage.DTGStore;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static config.MainType.NODETYPE;
 import static config.MainType.RELATIONTYPE;
@@ -148,6 +147,12 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
         invalidLocalCache();
     }
 
+    private Map<String, Integer> heartbeatListen = new HashMap<>();
+    private volatile String firstStore = null;
+    private AtomicInteger firstStoreNumber = new AtomicInteger(-1);
+    private volatile boolean lostStore = false;
+    private List<String> lostList = new LinkedList<>();
+
     public void handleStoreHeartbeatRequest(final StoreHeartbeatRequest request, final RequestProcessClosure<BaseRequest, BaseResponse> closure) {
         final StoreHeartbeatResponse response = new StoreHeartbeatResponse();
         response.setClusterId(request.getClusterId());
@@ -156,6 +161,57 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
             closure.sendResponse(response);
             return;
         }
+
+        long clusterId = request.getClusterId();
+        long storeId = request.getStats().getStoreId();
+        String heartbeatKey = clusterId + "-" + storeId;
+        if(firstStore == null){
+            firstStore = heartbeatKey;
+            firstStoreNumber.set(1);
+            heartbeatListen.put(firstStore, firstStoreNumber.get());
+        }
+        else if(firstStore.equals(heartbeatKey)){
+            heartbeatListen.put(firstStore, firstStoreNumber.incrementAndGet());
+            if(lostStore){
+                System.out.println("lost store and wait reconnect....");
+            }else{
+                for(Map.Entry<String, Integer> s : heartbeatListen.entrySet()){
+                    if(s.getKey().equals(firstStore))continue;
+                    else{
+                        if(s.getValue() < firstStoreNumber.get() - DefaultOptions.LOSTSTOREWAIT){
+                            System.out.println("lost store : " + s.getKey() +  " - " + s.getValue() + " - " + firstStoreNumber.get());
+                            lostStore = true;
+                            lostList.add(s.getKey());
+                            heartbeatListen.remove(s.getKey());
+                            break;
+                        }
+                    }
+                }
+            }
+        }else if(heartbeatListen.containsKey(heartbeatKey)){
+            int number = heartbeatListen.get(heartbeatKey) + 1;
+            heartbeatListen.put(heartbeatKey, number);
+            if(lostStore){
+                System.out.println("lost store and wait reconnect....");
+            }else{
+                if(number > firstStoreNumber.get() + DefaultOptions.LOSTSTOREWAIT){
+                    System.out.println("lost store : " + firstStore +  " - " + number + " - " + firstStoreNumber.get());
+                    lostStore = true;
+                    heartbeatListen.remove(firstStore);
+                    lostList.add(firstStore);
+                    firstStore = heartbeatKey;
+                    firstStoreNumber.set(number);
+                }
+            }
+        }else {
+            heartbeatListen.put(heartbeatKey, firstStoreNumber.get());
+            if(lostList.contains(heartbeatKey)){
+                lostList.remove(heartbeatKey);
+                System.out.println("reconnect success : " + heartbeatKey);
+                if(lostList.size() == 0 && lostStore)lostStore = false;
+            }
+        }
+
         try {
             // Only save the data
             final DTGStorePingEvent storePingEvent = new DTGStorePingEvent(request, this.metadataStore);
@@ -222,7 +278,7 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
                     regionPingEvent1.addInstruction(instruction);
                     this.metadataStore.updateNeedUpdateDefaultRegionLeader(false);
                     //this.lazyStoreEndPoint = lazyStore.getEndpoint();
-                    System.out.println("transferLeader!");
+                    System.out.println("transferLeader! store size = " + cluster.getStores().size() + ", store id = " + storeId);
                     //if(lazyStore.getEndpoint() == null){System.out.println("null endpoint");}
                 }
 
@@ -316,7 +372,7 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
     }
 
     public void handleGetClusterInfoRequest(final GetClusterInfoRequest request, final RequestProcessClosure<BaseRequest, BaseResponse> closure) {
-        final long clusterId = request.getClusterId();System.out.println("get cluster info" + clusterId);
+        final long clusterId = request.getClusterId();System.out.println("get cluster info : " + clusterId);
         final GetDTGClusterInfoResponse response = new GetDTGClusterInfoResponse();
         response.setClusterId(clusterId);
         if (!this.isLeader) {
@@ -366,6 +422,7 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
             closure.sendResponse(response);
             return;
         }
+
         try {
             final CompletableFuture<DTGStore> future = this.metadataStore.updateStoreInfo(clusterId, request.getStore());
             future.whenComplete((prevStore, throwable) -> {
@@ -560,9 +617,15 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
     }
 
     public void handleGetVersionId(final GetVersionRequest request, final RequestProcessClosure<BaseRequest, BaseResponse> closure ){
-        System.out.println("handleGetVersionId : prepare return version!");
+        //System.out.println("handleGetVersionId : prepare return version!");
         final GetVersionResponse response = new GetVersionResponse();
         try {
+            if(lostStore){
+                System.out.println("lost connection, refuse get version request....");
+                response.setValue(-1);
+                closure.sendResponse(response);
+                return;
+            }
             if (!this.isLeader) {
                 response.setError(Errors.NOT_LEADER);
                 closure.sendResponse(response);
@@ -584,7 +647,7 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
                     }
                     response.setValue(version);
                     closure.sendResponse(response);
-                    System.out.println("success get version : " + version[0] + " - " + version[1]);
+                    System.out.println("success get version : " + version[0]);
                 });
             }
             else{
@@ -599,7 +662,7 @@ public class DTGPlacementDriverService implements LeaderStateListener, Lifecycle
                     }
                     response.setValue(version);
                     closure.sendResponse(response);
-                    System.out.println("success get version : " + version);
+                    //System.out.println("success get version : " + version);
                 });
             }
         }catch (final Throwable t){

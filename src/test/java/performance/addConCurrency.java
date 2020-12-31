@@ -22,12 +22,14 @@ public class addConCurrency {
 
     @Test
     public void addTests(){
-        DTGDatabase db = new DTGDatabase();
-        db.init("192.168.1.178", 10086, "D:\\garbage");
         File file = new File("D:\\garbage\\txId");
         if(file.exists()){
             file.delete();
         }
+
+        DTGDatabase db = new DTGDatabase();
+        db.init("192.168.1.178", 10086, "D:\\garbage");
+
         OutPutCsv output = new OutPutCsv("D:\\distribute\\test\\addInConcurrency5000-10-00000000-" + pool_size + ".csv", "start,start2,end,cost");
 
         try (DTGTransaction tx = db.CreateTransaction()){

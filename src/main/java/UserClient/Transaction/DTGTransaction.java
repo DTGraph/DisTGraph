@@ -32,7 +32,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
+import static com.alipay.sofa.jraft.rhea.client.FutureHelper.DEFAULT_TIMEOUT_MILLIS;
+import static config.DTGConstants.STORECOUNTSTATIC;
 import static config.MainType.NODETYPE;
 import static config.MainType.RELATIONTYPE;
 
@@ -84,23 +87,44 @@ public class DTGTransaction implements AutoCloseable {
 //    }
 
     public Map<Integer, Object> start(){
-        if(!readOnly){
-            CompletableFuture<Long> future = new CompletableFuture();
-            transactionManager.applyRequestVersion(future);
-            this.version = FutureHelper.get(future);System.out.println("GET VERSION :" + version);
-            if(version == -1){
-                try {
+        return start(-1);
+    }
+
+    public Map<Integer, Object> start(int pool_size){
+        System.out.println(System.currentTimeMillis() + "  " + txId + " : start transaction");
+        long version2 = 0;
+        try{
+            if(true){
+                CompletableFuture<Long> future = new CompletableFuture();
+                transactionManager.applyRequestVersion(future);
+                //this.version = FutureHelper.get(future);
+                this.version = future.get(DEFAULT_TIMEOUT_MILLIS, TimeUnit.SECONDS);
+                if(version == -1){
                     throw new TransactionException("get an error version!");
-                } catch (TransactionException e) {
-                    e.printStackTrace();
                 }
-                return null;
+
             }
+            CompletableFuture<Long> future2 = new CompletableFuture();
+            transactionManager.applyRequestVersion(future2);
+            //version2 = FutureHelper.get(future2);
+            version2 = future2.get(DEFAULT_TIMEOUT_MILLIS, TimeUnit.SECONDS);
+        }catch (Exception e){
+            System.out.println(e);
+            return null;
         }
+        //if(!readOnly){
+
+
         this.isClose = false;
-        System.out.println(System.currentTimeMillis() + "   " + txId);
-        Map<Integer, Object> result =  store.applyRequest(this.entityEntryList, this.txId, this.readOnly, true,
-                this.failoverRetries, false, version, null);
+        System.out.println(System.currentTimeMillis() + "  " + txId + " : get version = " + version);
+        Map<Integer, Object> result;
+        if(pool_size == -1){
+            result =  store.applyRequest(this.entityEntryList, this.txId, this.readOnly, true,
+                    this.failoverRetries, false, version, ObjectAndByte.toByteArray(version2 + ""));
+        }else {
+            result =  store.applyRequest(this.entityEntryList, this.txId, this.readOnly, true,
+                    this.failoverRetries, false, version, null);
+        }
 
         Map<Integer, Long> firstGetList = new HashMap<>();
         if(this.isolateRead){
@@ -114,6 +138,16 @@ public class DTGTransaction implements AutoCloseable {
                     this.failoverRetries, true, version, ObjectAndByte.toByteArray(firstGetList.get(-1)));
             for(int t : result2.keySet()){
                 result.put(t, result2.get(t));
+            }
+        }
+
+        if(pool_size == -1){
+            if(!(result.containsKey(-2) && result.containsKey(-3) && result.containsKey(-4)) && STORECOUNTSTATIC == 3){
+                try {
+                    throw new TransactionException("CAN NOT CONNECT SOME STORE!");
+                } catch (TransactionException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return result;

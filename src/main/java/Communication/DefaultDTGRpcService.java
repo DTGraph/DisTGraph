@@ -104,6 +104,7 @@ public class DefaultDTGRpcService implements DTGRpcService {
 //        return closure.future();
 //    }
 
+    @Override
     public Endpoint getLeader(final long regionId, final boolean forceRefresh, final long timeoutMillis) {
         return this.pdClient.getLeader(regionId, forceRefresh, timeoutMillis);
     }

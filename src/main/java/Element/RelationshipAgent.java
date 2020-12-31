@@ -20,13 +20,14 @@ public class RelationshipAgent extends Agent{
         super(transactionManage);
     }
 
-    public int getStartNode(){
+    public NodeAgent getStartNode(){
         DTGTransaction transaction = super.transactionManage.getTransaction();
         EntityEntry entry = new EntityEntry();
         entry.setTransactionNum(transaction.getEntityNum());
         entry.setType(getType());
         entry.setOperationType(EntityEntry.GET);
         entry.setIsTemporalProperty(false);
+        entry.setKey("get-start-node");
         entry.setId(-2);
         entry.setStart(1);
         entry.setOther(-1);
@@ -34,16 +35,19 @@ public class RelationshipAgent extends Agent{
         entry.setParaId(getTransactionObjectId());
         transaction.addEntityEntries(entry);
         transaction.NotReadOnly();
-        return entry.getTransactionNum();
+        NodeAgent node = new NodeAgent(this.transactionManage);
+        node.setTransactionObjectId(entry.getTransactionNum());
+        return node;
     }
 
-    public int getEndNode(){
+    public NodeAgent getEndNode(){
         DTGTransaction transaction = super.transactionManage.getTransaction();
         EntityEntry entry = new EntityEntry();
         entry.setTransactionNum(transaction.getEntityNum());
         entry.setType(getType());
         entry.setOperationType(EntityEntry.GET);
         entry.setIsTemporalProperty(false);
+        entry.setKey("get-end-node");
         entry.setId(-2);
         entry.setStart(-1);
         entry.setOther(1);
@@ -51,7 +55,9 @@ public class RelationshipAgent extends Agent{
         entry.setParaId(getTransactionObjectId());
         transaction.addEntityEntries(entry);
         transaction.NotReadOnly();
-        return entry.getTransactionNum();
+        NodeAgent node = new NodeAgent(this.transactionManage);
+        node.setTransactionObjectId(entry.getTransactionNum());
+        return node;
     }
 
     @Override

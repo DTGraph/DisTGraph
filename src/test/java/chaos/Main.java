@@ -5,34 +5,41 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) throws Exception {
         Scanner sc = new Scanner(System.in);
-        String all = sc.nextLine();
-
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+        int s = sc.nextInt();
+        int t = sc.nextInt();
+        int[][] map = new int[n][n];
+        for(int i = 0; i < m; i++){
+            int n1 =sc.nextInt();
+            int n2 = sc.nextInt();
+            int val = sc.nextInt();
+            map[n1-1][n2-1] = val;
+        }
+        dfs(map, 0, 0, n, 0);
+        System.out.println(minsum);
     }
 
-    public static void dfs(Node n){
-        if(n == null || n.isVisit){
+    public static int max = Integer.MAX_VALUE;
+    public static int minsum = Integer.MAX_VALUE;
+
+    public static void dfs(int[][] map, int now,int sum, int n, int thiswaymax){
+        if(now == n-1){
+            if(thiswaymax < max){
+                max = thiswaymax;
+                minsum = sum;
+            }
             return;
         }
-        n.isVisit = true;
-        List<Node> near = n.getNear();
-        for(Node node : near){
-            dfs(node);
+        for(int i = now + 1; i < n; i++){
+            if(map[now][i] != 0 && map[now][i] <= max){
+                if(map[now][i] > thiswaymax){
+                    thiswaymax = map[now][i];
+                }
+                dfs(map, i, sum + map[now][i], n, thiswaymax);
+            }
         }
     }
 
-}
-
-
-class Node{
-    List<Node> near = new LinkedList<>();
-    boolean isVisit;
-
-    public void addNear(Node n){
-        near.add(n);
-    }
-
-    public List<Node> getNear() {
-        return near;
-    }
 }
 

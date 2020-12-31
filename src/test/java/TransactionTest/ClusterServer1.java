@@ -1,5 +1,6 @@
 package TransactionTest;
 
+import config.DTGConstants;
 import org.junit.Test;
 import storage.ClusterServer;
 
@@ -16,7 +17,7 @@ import java.io.IOException;
 public class ClusterServer1 {
 
     public static void main(String[] args) {
-        ClusterServer server = new ClusterServer("127.0.0.1", 8184, "D:\\garbage\\8084");
+        ClusterServer server = new ClusterServer(DTGConstants.SERVER1, DTGConstants.SERVER1PORT, "D:\\garbage\\8084");
         server.start();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {System.out.println("START SHUTDOWN");
                 server.shutdown();

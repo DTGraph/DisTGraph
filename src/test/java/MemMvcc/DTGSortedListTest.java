@@ -31,8 +31,8 @@ public class DTGSortedListTest {
         list1.insert(o6);
 
         list1.commitObject(1, 3);
-        list1.commitObject(2, 3);
-        list1.commitObject(3, 6);
+        list1.commitObject(2, 5);
+        list1.commitObject(3, 4);
         list1.commitObject(6, 7);
         list1.commitObject(0, 3);
 

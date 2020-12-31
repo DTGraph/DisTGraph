@@ -99,12 +99,12 @@ public class MemMVCC implements AutoCloseable {
     }
 
     public NodeObject getNodeById(long id, long version, boolean isCommit) {
-        String key = getStaticKey(NODETYPE, id, "");
+        String key = getStaticKey(NODETYPE, id, "");//System.out.println(key);
         DTGSortedList list = MVCCStaticMap.get(key);
         if(list == null){
             return null;
         }else {
-            Object res;//list.printList();list.printCommitList();//System.out.println(version);System.out.println(id);
+            Object res;//list.printList();list.printCommitList();System.out.println(version);System.out.println(id);
             if(isCommit){
                 MVCCObject o = list.find(version);
                 if(o == null){
@@ -187,7 +187,7 @@ public class MemMVCC implements AutoCloseable {
     public void setNodeTemporalProperty(long version, NodeObject node, String key, long start, long end,  Object value) throws IdNotExistException {
         String listKey = getTempKey(node.getId(), key);
         TempSortedList map = getMap(NODETYPE, listKey, version);
-        if(map == null)return;
+        if(map == null)return;System.out.println("time :" + System.currentTimeMillis() + ", set temporal property " + key + " , at time" + start + "-" + end + ", value " + value.toString());
         map.insert(version, value, start, end);
     }
 
